@@ -15,6 +15,22 @@
 //     import "some-package"
 //
 
+import {EditorState} from "@codemirror/state";
+import {EditorView, basicSetup} from "codemirror";
+import {javascript} from "@codemirror/lang-javascript";
+
+window.initCodeMirror = () => {
+  const editor = new EditorView({
+    state: EditorState.create({
+      doc: "// Your code here...",
+      extensions: [basicSetup, javascript()]
+    }),
+    parent: document.getElementById("editor")
+  });
+
+  return editor;
+};
+
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
