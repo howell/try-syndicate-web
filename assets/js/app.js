@@ -17,13 +17,14 @@
 
 import {EditorState} from "@codemirror/state";
 import {EditorView, basicSetup} from "codemirror";
-import {javascript} from "@codemirror/lang-javascript";
+import {StreamLanguage} from "@codemirror/language"
+import {scheme} from "@codemirror/legacy-modes/mode/scheme"
 
 window.initCodeMirror = () => {
   const editor = new EditorView({
     state: EditorState.create({
-      doc: "// Your code here...",
-      extensions: [basicSetup, javascript()]
+      doc: "\# Your code here...",
+      extensions: [basicSetup, StreamLanguage.define(scheme)]
     }),
     parent: document.getElementById("editor")
   });
