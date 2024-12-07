@@ -20,16 +20,31 @@ import {EditorView, basicSetup} from "codemirror";
 import {StreamLanguage} from "@codemirror/language"
 import {scheme} from "@codemirror/legacy-modes/mode/scheme"
 
-window.initCodeMirror = () => {
-  const editor = new EditorView({
-    state: EditorState.create({
-      doc: "\# Your code here...",
-      extensions: [basicSetup, StreamLanguage.define(scheme)]
-    }),
-    parent: document.getElementById("editor")
-  });
+let Hooks = {};
 
-  return editor;
+Hooks.CodeMirror = {
+  mounted() {
+    this.editor = new EditorView({
+      state: EditorState.create({
+        doc: "# Your code here...",
+        extensions: [basicSetup, StreamLanguage.define(scheme)]
+      }),
+      parent: this.el
+    });
+    this.el.closest("form").addEventListener("submit", (event) => {
+      console.log("editor doc: " + this.editor.state.doc.toString());
+      document.getElementById("code-input").value = this.editor.state.doc.toString();
+    });
+  },
+  updated() {
+    // Optionally handle updates if needed
+  },
+  destroyed() {
+    console.log("destroyed");
+    if (this.editor) {
+      this.editor.destroy();
+    }
+  }
 };
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
@@ -42,6 +57,7 @@ import topbar from "../vendor/topbar"
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
+  hooks: Hooks,
   params: {_csrf_token: csrfToken}
 })
 

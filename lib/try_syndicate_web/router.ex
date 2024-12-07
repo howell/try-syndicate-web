@@ -17,7 +17,7 @@ defmodule TrySyndicateWeb.Router do
   scope "/", TrySyndicateWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", EditorLive, :index
   end
 
   # Other scopes may use custom stacks.
