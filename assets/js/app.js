@@ -24,25 +24,39 @@ let Hooks = {};
 
 Hooks.CodeMirror = {
   mounted() {
-    this.editor = new EditorView({
-      state: EditorState.create({
-        doc: "# Your code here...",
-        extensions: [basicSetup, StreamLanguage.define(scheme)]
-      }),
-      parent: this.el
-    });
-    this.el.closest("form").addEventListener("submit", (event) => {
-      console.log("editor doc: " + this.editor.state.doc.toString());
-      document.getElementById("code-input").value = this.editor.state.doc.toString();
-    });
+    this.initializeEditor();
+    this.attachSubmitListener();
   },
+
   updated() {
-    // Optionally handle updates if needed
+    this.attachSubmitListener();
   },
+
   destroyed() {
     console.log("destroyed");
     if (this.editor) {
       this.editor.destroy();
+    }
+  },
+
+  initializeEditor() {
+    const code = this.el.dataset.code || "";
+    const active = this.el.dataset.active === "true";
+
+    this.editor = new EditorView({
+      state: EditorState.create({
+        doc: code,
+        extensions: [basicSetup, StreamLanguage.define(scheme), EditorView.editable.of(active)]
+      }),
+      parent: this.el
+    });
+  },
+
+  attachSubmitListener() {
+    if (this.el.dataset.active === "true") {
+      document.getElementById("run-button").addEventListener("click", () => {
+        document.getElementById("code-input").value = this.editor.state.doc.toString();
+      });
     }
   }
 };

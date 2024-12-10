@@ -1,13 +1,17 @@
 <div>
-<h1 class="text-3xl font-bold text-center mt-4">Welcome to Syndicate</h1>
+  <h1 class="text-3xl font-bold text-center mt-4">Welcome to Syndicate</h1>
 </div>
 
 <div class="flex flex-col justify-center mt-4 mx-4 w-full">
-  <form phx-submit="run_code">
-  <%= live_component %{module: TrySyndicateWeb.CodeMirrorComponent, id: "code_mirror"} %>
+  <%= for {submission, i} <- Enum.with_index(@submissions) do %>
+    <.code_mirror_line id={"editor_#{i + 1}"} label={i + 1} content={submission.code} active={false} output={submission.output} /> 
+  <% end %>
+
+  <form phx-submit="run_code" class="mt-4">
+    <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" /> 
+    <input type="hidden" name="code" id="code-input">
     <button id="run-button" class="border rounded-lg max-w-fit p-2 mt-4 justify-start">
-      Run Code
+      Run
     </button>
   </form>  
-  <pre id="output"><%= @output %></pre>
 </div>
