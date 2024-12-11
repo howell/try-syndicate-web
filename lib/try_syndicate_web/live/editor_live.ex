@@ -7,9 +7,9 @@ defmodule TrySyndicateWeb.EditorLive do
   def mount(_params, _session, socket) do
     if connected?(socket) do
       session_id = SessionManager.start_session()
-      {:ok, assign(socket, session_id: session_id, submissions: [], output: "")}
+      {:ok, assign(socket, session_id: session_id, submissions: [], program_output: "", program_error: "")}
     else
-      {:ok, assign(socket, submissions: [], output: "")}
+      {:ok, assign(socket, submissions: [], program_output: "", program_error: "")}
     end
   end
 

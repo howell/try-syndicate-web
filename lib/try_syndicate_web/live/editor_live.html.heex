@@ -1,17 +1,36 @@
-<div>
-  <h1 class="text-3xl font-bold text-center mt-4">Welcome to Syndicate</h1>
+<div class="h-full flex flex-col">
+  <h1 class="text-3xl font-bold text-center my-1">Welcome to Syndicate</h1>
+
+<div class="flex flex-row flex-grow w-full min-h-full h-full border-2 border-black">
+
+  <div class="flex flex-col w-1/2 h-full pl-2 border-r-2 border-black overflow-auto">
+    <%= for {submission, i} <- Enum.with_index(@submissions) do %>
+      <.code_mirror_line id={"editor_#{i + 1}"} label={i + 1} content={submission.code} active={false} output={submission.output} /> 
+    <% end %>
+  
+    <form phx-submit="run_code" class="">
+      <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" /> 
+      <input type="hidden" name="code" id="code-input">
+      <button id="run-button" class="border rounded-lg max-w-fit p-2 mt-4 justify-start">
+        Run
+      </button>
+    </form>  
+  </div>
+
+  <div class="flex flex-col w-1/2 h-full">
+    <div class="w-full h-1/2  border-b-2 border-black">
+      <h2 class="text-2xl font-bold text-center mt-4"><pre>StdOut</pre></h2>
+      <pre>
+        <%= @program_output %>
+      </pre>
+    </div>
+    <div class="w-full h-1/2">
+      <h2 class="text-2xl font-bold text-center mt-4"><pre>StdErr</pre></h2>
+      <pre>
+        <%= @program_error %>
+      </pre>
+    </div>
+  </div>
 </div>
 
-<div class="flex flex-col justify-center mt-4 mx-4 w-full">
-  <%= for {submission, i} <- Enum.with_index(@submissions) do %>
-    <.code_mirror_line id={"editor_#{i + 1}"} label={i + 1} content={submission.code} active={false} output={submission.output} /> 
-  <% end %>
-
-  <form phx-submit="run_code" class="mt-4">
-    <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" /> 
-    <input type="hidden" name="code" id="code-input">
-    <button id="run-button" class="border rounded-lg max-w-fit p-2 mt-4 justify-start">
-      Run
-    </button>
-  </form>  
 </div>
