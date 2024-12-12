@@ -21,9 +21,11 @@ defmodule TrySyndicateWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", TrySyndicateWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", TrySyndicateWeb do
+    pipe_through :api
+
+    post "/sessions/:session_id", SessionUpdateController, :receive_update
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:try_syndicate, :dev_routes) do

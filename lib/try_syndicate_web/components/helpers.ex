@@ -3,7 +3,7 @@ defmodule TrySyndicateWeb.Components.Helpers do
 
   def code_mirror_line(assigns) do
     ~H"""
-        <div class="flex flex-row justify-between mt-4">
+        <div class="flex flex-row justify-between mt-4 px-2">
           <div class="w-4 min-w-4 mr-2">
             <%= @label %>
           </div>
