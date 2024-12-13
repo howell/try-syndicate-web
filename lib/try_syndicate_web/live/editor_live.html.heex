@@ -13,7 +13,7 @@
     <form phx-submit="run_code" class="">
       <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" /> 
       <input type="hidden" name="code" id="code-input">
-      <button id="run-button" class="border rounded-lg max-w-fit p-2 mt-4 justify-start">
+      <button :if={@session_id} id="run-button" class="border rounded-lg max-w-fit p-2 mt-4 justify-start">
         Run
       </button>
     </form>  
