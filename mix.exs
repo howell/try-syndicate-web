@@ -58,7 +58,8 @@ defmodule TrySyndicate.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:uuid, "~> 1.1" }
+      {:uuid, "~> 1.1" },
+      {:mox, "~> 1.0", only: :test}
     ]
   end
 

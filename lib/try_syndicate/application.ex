@@ -16,7 +16,7 @@ defmodule TrySyndicate.Application do
       {Finch, name: TrySyndicate.Finch},
       # Start a worker by calling: TrySyndicate.Worker.start_link(arg)
       # {TrySyndicate.Worker, arg},
-      TrySyndicate.SessionManager,
+      TrySyndicate.ExternalSessionManager,
       # Start to serve requests, typically the last entry
       TrySyndicateWeb.Endpoint
     ]
