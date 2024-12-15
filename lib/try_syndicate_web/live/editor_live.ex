@@ -2,7 +2,6 @@ defmodule TrySyndicateWeb.EditorLive do
   use TrySyndicateWeb, :live_view
 
   alias TrySyndicate.SessionManager
-  import TrySyndicateWeb.Components.Helpers
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -55,5 +54,21 @@ defmodule TrySyndicateWeb.EditorLive do
       end
 
     {:noreply, update(socket, key, fn existing -> existing <> update_data end)}
+  end
+
+  def code_mirror_line(assigns) do
+    ~H"""
+        <div class="flex flex-row justify-between mt-4 px-2">
+          <div class="w-4 min-w-4 mr-2">
+            <%= @label %>
+          </div>
+         <div class="w-3/4">
+           <%= live_component %{module: TrySyndicateWeb.CodeMirrorComponent, id: @id, content: @content, active: @active }%>
+         </div>
+         <div class="w-1/4 ml-2">
+           <pre><%= @output %></pre>
+         </div>
+      </div>
+    """
   end
 end
