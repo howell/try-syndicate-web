@@ -24,6 +24,10 @@ FROM ${BUILDER_IMAGE} as builder
 RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
+# install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+&& apt-get install -y nodejs
+
 # prepare build dir
 WORKDIR /app
 
@@ -50,6 +54,10 @@ COPY priv priv
 COPY lib lib
 
 COPY assets assets
+
+# install Node.js dependencies
+WORKDIR /app/assets
+RUN npm install
 
 # compile assets
 RUN mix assets.deploy
