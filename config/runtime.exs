@@ -27,6 +27,11 @@ if config_env() == :prod do
       environment variable DATABASE_URL is missing.
       For example: ecto://USER:PASS@HOST/DATABASE
       """
+  config :try_syndicate, :sandbox_url, System.get_env("SANDBOX_URL") ||
+    raise """
+    environment variable SANDBOX_URL is missing.
+    """
+
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
