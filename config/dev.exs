@@ -29,6 +29,8 @@ config :try_syndicate, TrySyndicateWeb.Endpoint,
     tailwind: {Tailwind, :install_and_run, [:try_syndicate, ~w(--watch)]}
   ]
 
+config :try_syndicate, sandbox_url: "http://localhost:4001"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

@@ -8,6 +8,11 @@ import Config
 config :try_syndicate, TrySyndicateWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
+config :try_syndicate, :sandbox_url, System.get_env("SANDBOX_URL") ||
+    raise """
+    environment variable SANDBOX_URL is missing.
+    """
+
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: TrySyndicate.Finch
 

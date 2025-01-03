@@ -4,14 +4,16 @@ defmodule TrySyndicate.ExternalSessionManager do
 
   require Logger
 
-  @sandbox_url "http://localhost:4001"
-
   def init(state) do
     {:ok, state}
   end
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  end
+
+  def sandbox_url do
+    Application.fetch_env!(:try_syndicate, :sandbox_url)
   end
 
   @spec start_session() :: {:ok, String.t()} | {:error, String.t()}
@@ -25,7 +27,7 @@ defmodule TrySyndicate.ExternalSessionManager do
   end
 
   def execute_code(session_id, code) do
-    url = "#{@sandbox_url}/submit"
+    url = "#{sandbox_url()}/submit"
     body = Jason.encode!(%{session_id: session_id, code: code})
     headers = [{"Content-Type", "application/json"}]
 
@@ -52,7 +54,7 @@ defmodule TrySyndicate.ExternalSessionManager do
   end
 
   defp start_repl_session(session_id) do
-    url = "#{@sandbox_url}/new"
+    url = "#{sandbox_url()}/new"
     body = Jason.encode!(%{session_id: session_id})
     headers = [{"Content-Type", "application/json"}]
 
