@@ -7,7 +7,12 @@ import Config
 # before starting your production server.
 config :try_syndicate, TrySyndicateWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
-  https: [port: 443],
+  https: [
+    port: 443,
+    cipher_suite: :strong,
+    keyfile: "/etc/letsencrypt/live/try-syndicate.org/privkey.pem",
+    certfile: "/etc/letsencrypt/live/try-syndicate.org/fullchain.pem"
+  ],
   force_ssl: [rewrite_on: [:x_forwarded_proto]]
 
 # Configures Swoosh API Client
