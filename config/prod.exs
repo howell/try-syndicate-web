@@ -6,14 +6,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :try_syndicate, TrySyndicateWeb.Endpoint,
-  cache_static_manifest: "priv/static/cache_manifest.json",
-  https: [
-    port: 443,
-    cipher_suite: :strong,
-    keyfile: "/etc/letsencrypt/live/try-syndicate.org/privkey.pem",
-    certfile: "/etc/letsencrypt/live/try-syndicate.org/fullchain.pem"
-  ],
-  force_ssl: [rewrite_on: [:x_forwarded_proto]]
+  cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: TrySyndicate.Finch
