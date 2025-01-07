@@ -56,6 +56,9 @@ Hooks.CodeMirror = {
     if (this.el.dataset.active === "true") {
       document.getElementById("run-button").addEventListener("click", () => {
         document.getElementById("code-input").value = this.editor.state.doc.toString();
+        this.editor.dispatch({
+          changes: { from: 0, to: this.editor.state.doc.length, insert: "" }
+        });
       });
     }
   }
