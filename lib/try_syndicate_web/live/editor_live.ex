@@ -133,7 +133,7 @@ defmodule TrySyndicateWeb.EditorLive do
       <button phx-click="toggle_cheatsheet">
         <h2 class="text-xl font-bold">Cheat Sheet</h2>
       </button>
-        <div :if={@open} class="flex flex-row gap-20 justify-center mt-2 p-2 bg-gray-100">
+        <div :if={@open} class="flex flex-row gap-20 justify-center mt-2 p-2 bg-slate-50 border border-black rounded-lg">
           <%= for {title, rows} <- @tables do %>
             <%= render_table(assign(assigns, title: title, rows: rows)) %>
           <% end %>
