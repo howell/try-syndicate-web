@@ -227,11 +227,11 @@ defmodule TrySyndicateWeb.EditorLive do
   defp repl_commands_rows do
     assigns = []
     [
-      {~H"(spawn <i>expr</i> ...)", ""},
-      {~H"(assert <i>expr</i>)", ""},
-      {~H"(retract <i>expr</i>)", ""},
-      {~H"(send <i>expr</i>)", ""},
-      {~H"(query/set <i>pattern</i> <i>expr</i>)", ""}
+      {~H"(spawn <i>expr</i> ...)", "Spawn an actor"},
+      {~H"(assert <i>expr</i>)", "Inject assertion"},
+      {~H"(retract <i>expr</i>)", "Withdraw injected assertion"},
+      {~H"(send <i>expr</i>)", "Broadcast message"},
+      {~H"(query/set <i>pattern</i> <i>expr</i>)", "Build a set based on matching assertions"}
     ]
   end
 
