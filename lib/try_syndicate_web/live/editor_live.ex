@@ -124,85 +124,115 @@ defmodule TrySyndicateWeb.EditorLive do
   end
 
   def cheatsheet(assigns) do
+    assigns = assign(assigns, tables: [
+      {"REPL Commands", repl_commands_rows()},
+      {"Syndicate Basics", syndicate_basics_rows()}
+    ])
     ~H"""
     <div class="my-4">
       <button phx-click="toggle_cheatsheet">
         <h2 class="text-xl font-bold">Cheat Sheet</h2>
       </button>
-      <%= if @open do %>
-        <div class="flex flex-row gap-20 justify-center mt-2">
-          <div>
-            <h3 class="text-lg font-bold">Syndicate Basics</h3>
-            <ul class="list-disc list-inside space-y-2">
-              <li><code>(spawn <i>expr</i> ...)</code> - Spawn an actor</li>
-              <li><code>(react <i>expr</i> ...)</code> - Start a new facet for an actor</li>
-              <p>
-                Inside of <code>spawn</code>
-                and <code>react</code>, use the following forms to define behavior:
-              </p>
-              <li><code>(assert <i>expr</i>)</code> - Assert a value to the dataspace</li>
-              <li><code>(send! <i>expr</i>)</code> - Broadcast a message to the dataspace</li>
-              <li>
-                <code>(field [<i>field-name</i> <i>init-expr</i>] ...)</code>
-                - Define a mutable field, or fields, with an initial value
-                <ul class="list-disc list-inside ml-4 space-y-1">
-                  <li><code>(<i>field-name</i>)</code> - Read the current value of a field</li>
-                  <li>
-                    <code>(<i>field-name</i> <i>expr</i>)</code> - Assign a new value to a field
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <code>(on <i>event</i> <i>expr</i> ...)</code>
-                - Install an event handler. An <code><i>event</i></code>
-                may be one of the following:
-                <ul class="list-disc list-inside ml-4">
-                  <li>
-                    <code>(asserted <i>pattern</i>)</code>
-                    - Matches detection of an assertion matching the <i>pattern</i>
-                  </li>
-                  <li>
-                    <code>(retracted <i>pattern</i>)</code>
-                    - Matches detection of the removal of an assertion matching the <i>pattern</i>
-                  </li>
-                  <li>
-                    <code>(message <i>pattern</i>)</code>
-                    - Matches a message broadcast matching the <i>pattern</i>
-                  </li>
-                  Within a <i>pattern</i>, a <code>$</code> prefix creates a binding variable
-                </ul>
-              </li>
-              <li>
-                <code>(on-start <i>expr</i> ...)</code>
-                - Adds a handler that runs when the facet starts
-              </li>
-              <li>
-                <code>(on-stop <i>expr</i> ...)</code>
-                - Adds a handler that runs when the facet terminates
-              </li>
-              <li>
-                <code>(stop <i>facet-id</i>))</code>
-                - Terminate the designated facet and its children
-                <ul class="list-disc list-inside ml-4">
-                  <li><code>(current-facet-id)</code> - Returns the ID of the current facet</li>
-                </ul>
-              </li>
-              <li><code>(stop-current-facet)</code> - Terminate the current facet</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold">REPL Commands</h3>
-            <ul class="list-disc list-inside">
-              <li><code>(spawn <i>expr</i> ...)</code></li>
-              <li><code>(assert <i>expr</i>)</code></li>
-              <li><code>(retract <i>expr</i>)</code></li>
-              <li><code>(send <i>expr</i>)</code></li>
-              <li><code>(query/set <i>pattern</i> <i>expr</i>)</code></li>
-            </ul>
-          </div>
+        <div :if={@open} class="flex flex-row gap-20 justify-center mt-2">
+          <%= for {title, rows} <- @tables do %>
+            <%= render_table(assign(assigns, title: title, rows: rows)) %>
+          <% end %>
         </div>
-      <% end %>
     </div>
     """
   end
+
+  defp render_table(assigns) do
+    ~H"""
+    <div>
+      <h3 class="text-lg font-bold"><%= @title %></h3>
+      <table class="table-auto">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Command</th>
+            <th class="px-4 py-2">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for {command, description} <- @rows do %>
+            <tr>
+              <%= table_cell(command) %>
+              <%= table_cell(description) %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    """
+  end
+
+  defp table_cell(content) do
+    assigns = []
+
+    ~H"""
+    <td class="border px-4 py-2"><%= content %></td>
+    """
+  end
+
+
+  defp syndicate_basics_rows do
+    assigns = []
+    [
+      {~H"(spawn <i>expr</i> ...)", "Spawn an actor"},
+      {~H"(react <i>expr</i> ...)", "Start a new facet for an actor"},
+      {~H"(assert <i>expr</i>)", "Assert a value to the dataspace"},
+      {~H"(send! <i>expr</i>)", "Broadcast a message to the dataspace"},
+      {~H"(field [<i>field-name</i> <i>init-expr</i>] ...)",
+       ~H"""
+       Define a mutable field, or fields, with an initial value
+       <ul class="list-disc list-inside ml-4 space-y-1">
+         <li><code>(<i>field-name</i>)</code> - Read the current value of a field</li>
+         <li><code>(<i>field-name</i> <i>expr</i>)</code> - Assign a new value to a field</li>
+       </ul>
+       """},
+      {~H"(on <i>event</i> <i>expr</i> ...)",
+       ~H"""
+       Install an event handler. An <code><i>event</i></code>
+       may be one of the following:
+       <ul class="list-disc list-inside ml-4">
+         <li>
+           <code>(asserted <i>pattern</i>)</code>
+           - Matches detection of an assertion matching the <i>pattern</i>
+         </li>
+         <li>
+           <code>(retracted <i>pattern</i>)</code>
+           - Matches detection of the removal of an assertion matching the <i>pattern</i>
+         </li>
+         <li>
+           <code>(message <i>pattern</i>)</code>
+           - Matches a message broadcast matching the <i>pattern</i>
+         </li>
+         Within a <i>pattern</i>, a <code>$</code>
+         prefix creates a binding variable
+       </ul>
+       """},
+      {~H"(on-start <i>expr</i> ...)", "Adds a handler that runs when the facet starts"},
+      {~H"(on-stop <i>expr</i> ...)", "Adds a handler that runs when the facet terminates"},
+      {~H"(stop <i>facet-id</i>))",
+       ~H"""
+       Terminate the designated facet and its children
+       <ul class="list-disc list-inside ml-4">
+         <li><code>(current-facet-id)</code> - Returns the ID of the current facet</li>
+       </ul>
+       """},
+      {~H"(stop-current-facet)", "Terminate the current facet"}
+    ]
+  end
+
+  defp repl_commands_rows do
+    assigns = []
+    [
+      {~H"(spawn <i>expr</i> ...)", ""},
+      {~H"(assert <i>expr</i>)", ""},
+      {~H"(retract <i>expr</i>)", ""},
+      {~H"(send <i>expr</i>)", ""},
+      {~H"(query/set <i>pattern</i> <i>expr</i>)", ""}
+    ]
+  end
+
 end
