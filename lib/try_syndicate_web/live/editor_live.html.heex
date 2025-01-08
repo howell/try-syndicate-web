@@ -1,38 +1,56 @@
 <div class="h-full flex flex-col">
   <h1 class="text-3xl font-bold text-center my-1">Welcome to Syndicate</h1>
 
-<div class="flex flex-row flex-grow w-full min-h-full h-full border-2 border-black">
+  <div class="flex flex-row flex-grow w-full min-h-full h-full border-2 border-black">
+    <div class="flex flex-col w-1/2 h-full pl-2 border-r-2 border-black overflow-auto">
+      <h2 class="text-2xl font-bold text-center mt-4"><pre>Code</pre></h2>
 
-  <div class="flex flex-col w-1/2 h-full pl-2 border-r-2 border-black overflow-auto">
-    <h2 class="text-2xl font-bold text-center mt-4"><pre>Code</pre></h2>
+      <%= for {submission, i} <- Enum.with_index(@submissions) do %>
+        <.code_mirror_line
+          id={"editor_#{i + 1}"}
+          label={i + 1}
+          content={submission.code}
+          active={false}
+          output={submission.output}
+        />
+      <% end %>
 
-    <%= for {submission, i} <- Enum.with_index(@submissions) do %>
-      <.code_mirror_line id={"editor_#{i + 1}"} label={i + 1} content={submission.code} active={false} output={submission.output} /> 
-    <% end %>
-  
-    <form phx-submit="run_code" class="">
-      <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" /> 
-      <input type="hidden" name="code" id="code-input">
-      <button :if={@session_id} id="run-button" class="border rounded-lg max-w-fit p-2 mt-4 justify-start">
-        Run
-      </button>
-    </form>  
-  </div>
+      <form phx-submit="run_code" class="">
+        <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" />
+        <input type="hidden" name="code" id="code-input" />
+        <button
+          :if={@session_id}
+          id="run-button"
+          class="border rounded-lg max-w-fit p-2 mt-4 justify-start"
+        >
+          Run
+        </button>
+      </form>
+    </div>
 
-  <div class="flex flex-col w-1/2 h-full">
-    <div class="w-full h-1/2  border-b-2 border-black overflow-auto">
-      <h2 class="text-2xl font-bold text-center mt-4"><pre>StdOut</pre></h2>
-      <pre class="px-2">
+    <div class="flex flex-col w-1/2 h-full">
+      <div class="w-full h-1/2  border-b-2 border-black overflow-auto">
+        <h2 class="text-2xl font-bold text-center mt-4"><pre>StdOut</pre></h2>
+        <pre class="px-2">
         <%= @program_output %>
       </pre>
-    </div>
-    <div class="w-full h-1/2 overflow-auto">
-      <h2 class="text-2xl font-bold text-center mt-4"><pre>StdErr</pre></h2>
-      <pre class="px-2">
+      </div>
+      <div class="w-full h-1/2 overflow-auto">
+        <h2 class="text-2xl font-bold text-center mt-4"><pre>StdErr</pre></h2>
+        <pre class="px-2">
         <%= @program_error %>
       </pre>
+      </div>
     </div>
-  </div>
-</div>
 
+    <%= if @stale do %>
+      <div class="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+          <h2 class="text-2xl font-bold mb-4">Session Finished</h2>
+          <p class="mb-4">Your session has expired.</p>
+          <button phx-click="start_new_session" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Start New Session</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>

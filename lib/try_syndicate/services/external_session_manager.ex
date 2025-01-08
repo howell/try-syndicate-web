@@ -44,11 +44,24 @@ defmodule TrySyndicate.ExternalSessionManager do
     end
   end
 
+  def session_status(session_id) do
+    GenServer.call(__MODULE__, {:session_status, session_id})
+  end
+
   def handle_call({:start_session, session_id}, _from, state) do
     Logger.info("Starting session: #{session_id}")
 
     case start_repl_session(session_id) do
       :ok -> {:reply, :ok, Map.put(state, session_id, :active)}
+      {:error, reason} -> {:reply, {:error, reason}, state}
+    end
+  end
+
+  def handle_call({:session_status, session_id}, _from, state) do
+    url = "#{sandbox_url()}/status/#{session_id}"
+    case Finch.build(:get, url) |> Finch.request(TrySyndicate.Finch) do
+      {:ok, %Finch.Response{status: 200}} -> {:reply, {:ok, :active}, state}
+      {:ok, %Finch.Response{status: 404}} -> {:reply, {:ok, :inactive}, state}
       {:error, reason} -> {:reply, {:error, reason}, state}
     end
   end
