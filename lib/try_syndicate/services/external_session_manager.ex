@@ -26,6 +26,10 @@ defmodule TrySyndicate.ExternalSessionManager do
     end
   end
 
+  def notify_termination(session_id, reason) do
+    GenServer.cast(__MODULE__, {:terminate_session, session_id, reason})
+  end
+
   def execute_code(session_id, code) do
     url = "#{sandbox_url()}/submit"
     body = Jason.encode!(%{session_id: session_id, code: code})
@@ -58,12 +62,38 @@ defmodule TrySyndicate.ExternalSessionManager do
   end
 
   def handle_call({:session_status, session_id}, _from, state) do
-    url = "#{sandbox_url()}/status/#{session_id}"
-    case Finch.build(:get, url) |> Finch.request(TrySyndicate.Finch) do
-      {:ok, %Finch.Response{status: 200}} -> {:reply, {:ok, :active}, state}
-      {:ok, %Finch.Response{status: 404}} -> {:reply, {:ok, :inactive}, state}
-      {:error, reason} -> {:reply, {:error, reason}, state}
+    if Map.get(state, session_id) == :active do
+      query_session_status(session_id, state)
+    else
+      {:reply, {:ok, :inactive}, state}
     end
+  end
+
+  @spec query_session_status(any(), any()) ::
+          {:reply,
+           {:error, %{:__exception__ => true, :__struct__ => atom(), optional(atom()) => any()}}
+           | {:ok, :active | :inactive}, any()}
+  @spec query_session_status(any(), any()) ::
+          {:reply,
+           {:error, %{:__exception__ => true, :__struct__ => atom(), optional(atom()) => any()}}
+           | {:ok, :active | :inactive}, any()}
+  def query_session_status(session_id, state) do
+    url = "#{sandbox_url()}/status/#{session_id}"
+
+    case Finch.build(:get, url) |> Finch.request(TrySyndicate.Finch) do
+      {:ok, %Finch.Response{status: 200}} ->
+        {:reply, {:ok, :active}, state}
+
+      {:ok, %Finch.Response{status: 404}} ->
+        {:reply, {:ok, :inactive}, Map.delete(state, session_id)}
+
+      {:error, reason} ->
+        {:reply, {:error, reason}, state}
+    end
+  end
+
+  def handle_cast({:terminate_session, session_id, _reason}, state) do
+    {:noreply, Map.delete(state, session_id)}
   end
 
   defp start_repl_session(session_id) do

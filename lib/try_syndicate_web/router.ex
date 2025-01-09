@@ -24,7 +24,8 @@ defmodule TrySyndicateWeb.Router do
   scope "/api", TrySyndicateWeb do
     pipe_through :api
 
-    post "/sessions/:session_id", SessionUpdateController, :receive_update
+    post "/sessions/:session_id/output", SessionUpdateController, :receive_update
+    post "/sessions/:session_id/terminate", SessionUpdateController, :terminate_session
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
