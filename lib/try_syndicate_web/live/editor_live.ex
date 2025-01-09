@@ -86,7 +86,8 @@ defmodule TrySyndicateWeb.EditorLive do
   end
 
   def handle_event("start_new_session", _params, socket) do
-    begin_session(socket)
+    {:ok, socket} = begin_session(socket)
+    {:noreply, socket}
   end
 
   def handle_event("toggle_cheatsheet", _params, socket) do
@@ -101,6 +102,10 @@ defmodule TrySyndicateWeb.EditorLive do
       end
 
     {:noreply, update(socket, key, fn existing -> existing <> update_data end)}
+  end
+
+  def handle_info(%{event: "terminate", payload: %{reason: _reason}}, socket) do
+    {:noreply, assign(socket, stale: true)}
   end
 
   def code_mirror_line(assigns) do

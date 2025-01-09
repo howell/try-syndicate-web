@@ -26,7 +26,7 @@ defmodule TrySyndicateWeb.SessionUpdateController do
     reason = Map.get(params, "reason")
     Logger.info("Received termination notice for session #{session_id}")
     SessionManager.notify_termination(session_id, reason)
-    TrySyndicateWeb.Endpoint.broadcast("session:#{session_id}", "terminate", %{})
+    TrySyndicateWeb.Endpoint.broadcast("session:#{session_id}", "terminate", %{reason: reason})
     send_resp(conn, 200, "")
   end
 end
