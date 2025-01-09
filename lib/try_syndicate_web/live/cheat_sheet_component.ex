@@ -9,8 +9,13 @@ defmodule TrySyndicateWeb.CheatSheetComponent do
 
     ~H"""
     <div class="my-4">
-      <button phx-click="toggle_cheatsheet">
+      <button phx-click="toggle_cheatsheet" class="flex items-center gap-2">
         <h2 class="text-xl font-bold">Cheat Sheet</h2>
+        <%= if @open do %>
+          <i class="fas fa-chevron-up"></i>
+        <% else %>
+          <i class="fas fa-chevron-down"></i>
+        <% end %>
       </button>
       <div :if={@open} class="flex flex-row gap-20 justify-center mt-2 p-2 bg-slate-50 border border-black rounded-lg">
         <%= for {title, rows} <- @tables do %>
