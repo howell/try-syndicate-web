@@ -35,21 +35,7 @@ defmodule TrySyndicate.ExternalSessionManager do
   end
 
   def execute_code(session_id, code) do
-    url = "#{sandbox_url()}/submit"
-    body = Jason.encode!(%{session_id: session_id, code: code})
-    headers = [{"Content-Type", "application/json"}]
-
-    case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do
-      {:ok, %Finch.Response{body: body}} ->
-        case Jason.decode(body) do
-          {:ok, %{"status" => "ok", "result" => output}} -> {:ok, output}
-          {:ok, %{"status" => reason}} -> {:error, reason}
-          {:error, reason} -> {:error, reason}
-        end
-
-      {:error, reason} ->
-        {:error, reason}
-    end
+    GenServer.call(__MODULE__, {:execute_code, session_id, code})
   end
 
   def session_status(session_id) do
@@ -62,6 +48,17 @@ defmodule TrySyndicate.ExternalSessionManager do
     case start_repl_session(session_id) do
       :ok -> {:reply, :ok, Map.put(state, session_id, :active)}
       {:error, reason} -> {:reply, {:error, reason}, state}
+    end
+  end
+
+  def handle_call({:execute_code, session_id, code}, _from, state) do
+    if Map.get(state, session_id) == :active do
+      case send_code(session_id, code) do
+        {:ok, output} -> {:reply, {:ok, output}, state}
+        {:error, reason} -> {:reply, {:error, reason}, Map.delete(state, session_id)}
+      end
+    else
+      {:reply, {:error, "Session expired"}, state}
     end
   end
 
@@ -131,6 +128,24 @@ defmodule TrySyndicate.ExternalSessionManager do
     case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do
       {:ok, %Finch.Response{status: 200}} -> :ok
       {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp send_code(session_id, code) do
+    url = "#{sandbox_url()}/submit"
+    body = Jason.encode!(%{session_id: session_id, code: code})
+    headers = [{"Content-Type", "application/json"}]
+
+    case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do
+      {:ok, %Finch.Response{body: body}} ->
+        case Jason.decode(body) do
+          {:ok, %{"status" => "ok", "result" => output}} -> {:ok, output}
+          {:ok, %{"status" => reason}} -> {:error, reason}
+          {:error, reason} -> {:error, reason}
+        end
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 end
