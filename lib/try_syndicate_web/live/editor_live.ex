@@ -94,6 +94,13 @@ defmodule TrySyndicateWeb.EditorLive do
     {:noreply, update(socket, :cheatsheet_open, &(!&1))}
   end
 
+  def handle_event("keep_alive", _params, socket) do
+    if Map.get(socket.assigns, :session_id) && not Map.get(socket.assigns, :stale) do
+      SessionManager.keep_alive(socket.assigns.session_id)
+    end
+    {:noreply, socket}
+  end
+
   def handle_info(%{event: "update", payload: %{type: update_type, data: update_data}}, socket) do
     key =
       case update_type do

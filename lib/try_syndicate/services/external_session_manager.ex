@@ -30,6 +30,10 @@ defmodule TrySyndicate.ExternalSessionManager do
     GenServer.cast(__MODULE__, {:terminate_session, session_id, reason})
   end
 
+  def keep_alive(session_id) do
+    GenServer.cast(__MODULE__, {:keep_alive, session_id})
+  end
+
   def execute_code(session_id, code) do
     url = "#{sandbox_url()}/submit"
     body = Jason.encode!(%{session_id: session_id, code: code})
@@ -94,6 +98,29 @@ defmodule TrySyndicate.ExternalSessionManager do
 
   def handle_cast({:terminate_session, session_id, _reason}, state) do
     {:noreply, Map.delete(state, session_id)}
+  end
+
+  def handle_cast({:keep_alive, session_id}, state) do
+    if Map.get(state, session_id) == :active do
+      if send_keep_alive(session_id) == :ok do
+        {:noreply, state}
+      else
+        {:noreply, Map.delete(state, session_id)}
+      end
+    else
+      {:noreply, state}
+    end
+  end
+
+  defp send_keep_alive(session_id) do
+    url = "#{sandbox_url()}/keep_alive"
+    body = Jason.encode!(%{session_id: session_id})
+    headers = [{"Content-Type", "application/json"}]
+
+    case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do
+      {:ok, %Finch.Response{status: 200}} -> :ok
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   defp start_repl_session(session_id) do

@@ -64,6 +64,20 @@ Hooks.CodeMirror = {
   }
 };
 
+Hooks.KeepAlive = {
+  mounted() {
+    const minutes = this.el.dataset.minutes || 5;
+    const millis = minutes * 60 * 1000;
+    this.interval = setInterval(() => {
+      this.pushEvent("keep_alive");
+    }, millis);
+  },
+
+  destroyed() {
+    clearInterval(this.interval);
+  }
+};
+
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
