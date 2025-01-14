@@ -126,8 +126,20 @@ defmodule TrySyndicate.ExternalSessionManager do
     headers = [{"Content-Type", "application/json"}]
 
     case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do
-      {:ok, %Finch.Response{status: 200}} -> :ok
-      {:error, reason} -> {:error, reason}
+      {:ok, %Finch.Response{status: 200}} ->
+        :ok
+
+      {:ok, %Finch.Response{status: 500, body: body}} ->
+        case Jason.decode(body) do
+          {:ok, %{"reason" => reason}} -> {:error, reason}
+          _ -> {:error, "Unknown error"}
+        end
+
+      {:ok, %Finch.Response{status: status}} ->
+        {:error, "Unexpected status code: #{status}"}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
