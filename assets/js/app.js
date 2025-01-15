@@ -43,6 +43,7 @@ Hooks.CodeMirror = {
   },
 
   destroyed() {
+    console.log("destroyed()");
     if (this.active) console.log("active destroyed");
     if (this.editor) {
       console.log("destroyed");
