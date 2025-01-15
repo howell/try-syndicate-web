@@ -32,7 +32,16 @@ defmodule TrySyndicateWeb.EditorLive do
       {:error, reason} ->
         next_sock =
           put_flash(socket, :error, "Failed to start session: #{inspect(reason)}")
-          |> assign(session_id: nil, submissions: [], program_output: "", program_error: "")
+          |> assign(
+            session_id: nil,
+            submissions: [],
+            program_output: "",
+            program_error: "",
+            stale: false,
+            cheatsheet_open: Map.get(socket.assigns, :cheatsheet_open, false)
+          )
+
+        Logger.debug("Failed to start session: #{inspect(reason)}")
 
         {:ok, next_sock}
 
@@ -98,6 +107,7 @@ defmodule TrySyndicateWeb.EditorLive do
     if Map.get(socket.assigns, :session_id) && not Map.get(socket.assigns, :stale) do
       SessionManager.keep_alive(socket.assigns.session_id)
     end
+
     {:noreply, socket}
   end
 
@@ -135,5 +145,4 @@ defmodule TrySyndicateWeb.EditorLive do
     </div>
     """
   end
-
 end
