@@ -26,40 +26,54 @@ Hooks.CodeMirror = {
   mounted() {
     this.initializeEditor();
     this.attachSubmitListener();
+    if (this.active) console.log("mounted");
   },
 
   updated() {
+    if (this.active) console.log("updated");
     this.attachSubmitListener();
   },
 
+  disconnected() {
+    if (this.active) console.log("disconnected");
+  },
+
+  reconnected() {
+    if (this.active) console.log("reconnected");
+  },
+
   destroyed() {
-    console.log("destroyed");
+    if (this.active) console.log("active destroyed");
     if (this.editor) {
+      console.log("destroyed");
       this.editor.destroy();
     }
   },
 
   initializeEditor() {
     const code = this.el.dataset.code || "";
-    const active = this.el.dataset.active === "true";
+    this.active = this.el.dataset.active === "true";
 
     this.editor = new EditorView({
       state: EditorState.create({
         doc: code,
-        extensions: [basicSetup, StreamLanguage.define(scheme), EditorView.editable.of(active)]
+        extensions: [basicSetup, StreamLanguage.define(scheme), EditorView.editable.of(this.active)]
       }),
       parent: this.el
     });
   },
 
   attachSubmitListener() {
-    if (this.el.dataset.active === "true") {
-      document.getElementById("run-button").addEventListener("click", () => {
-        document.getElementById("code-input").value = this.editor.state.doc.toString();
-        this.editor.dispatch({
-          changes: { from: 0, to: this.editor.state.doc.length, insert: "" }
+    if (this.active) {
+      const runButton = document.getElementById("run-button");
+      if (runButton) {
+        runButton.addEventListener("click", () => {
+          document.getElementById("code-input").value = this.editor.state.doc.toString();
+          this.editor.dispatch({
+            changes: { from: 0, to: this.editor.state.doc.length, insert: "" }
+          });
         });
-      });
+      }
     }
   }
 };
