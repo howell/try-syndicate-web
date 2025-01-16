@@ -10,6 +10,7 @@ export const options = {
     ],
 };
 
+const DEBUG = true;
 const ENV = 'dev';
 const HOST = ENV === 'dev' ? 'localhost:4000' : 'try-syndicate.org';
 const PROTOS = ENV === 'dev' ? '' : 's';
@@ -46,31 +47,30 @@ export default function () {
 
     const sendNextMessage = () => {
         curSeqNo++;
-        console.log(`sendNextMessage, topic=${topic}, curSeqNo=${curSeqNo}`);
+        log(`sendNextMessage, topic=${topic}, curSeqNo=${curSeqNo}`);
         const runCodeMessage = createRunCodeMessage(curSeqNo, topic, selectRandom(CODE_OPTIONS));
-        console.log(`Sending message: ${JSON.stringify(runCodeMessage)}`);
+        log(`Sending message: ${JSON.stringify(runCodeMessage)}`);
         socket.send(JSON.stringify(runCodeMessage));
     };
 
     socket.onopen = () => {
-        console.log(`WebSocket connection for ${topic} opened`);
+        log(`WebSocket connection for ${topic} opened`);
         socket.send(JSON.stringify(joinMessage));
     };
 
     socket.onmessage = (message) => {
-        console.log(`Received message: ${message.data}`);
+        log(`Received message: ${message.data}`);
         checkPhxResponse(message, curSeqNo);
         setTimeout(sendNextMessage, 2000);
     };
 
     socket.onerror = (e) => {
-        console.error('An unexpected error occurred: ', e);
+        log('An unexpected error occurred: ', e);
     };
 
     socket.onclose = () => {
-        console.log(`WebSocket connection for ${topic} closed`);
+        log(`WebSocket connection for ${topic} closed`);
     };
-
 
     setTimeout(() => {
         socket.close();
@@ -89,8 +89,7 @@ function checkPhxResponse(message, seqNo) {
         if (msgJson[3] === 'phx_reply') {
             check(msgJson, {
                 'Response status is "ok"': (r) => typeof r[4] === 'object' && r[4].status === 'ok',
-
-            })
+            });
         }
     }
 }
@@ -108,7 +107,7 @@ function extractLiveViewMetadata(response) {
         fail("websocket csrf token not found");
     }
 
-    console.log(`Extracted CSRF Token: ${csrfToken}`);
+    log(`Extracted CSRF Token: ${csrfToken}`);
 
     if (!check(phxSession, { "found phx-session": (str) => !!str })) {
         fail("session token not found");
@@ -147,4 +146,10 @@ function encodeMsg(id, seq, topic, event, msg) {
 
 function selectRandom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function log(...args) {
+    if (DEBUG) {
+        console.log(...args);
+    }
 }
