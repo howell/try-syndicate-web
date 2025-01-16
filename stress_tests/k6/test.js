@@ -27,17 +27,7 @@ export default function () {
 
     const wsUrl = `ws${PROTOS}://${HOST}/live/websocket?_csrf_token=${csrfToken}&vsn=2.0.0`;
 
-    const joinMessage = JSON.stringify(
-        encodeMsg(null, 0, topic, "phx_join", {
-            url: ENDPOINT,
-            params: {
-                _csrf_token: csrfToken,
-                _mounts: 0,
-            },
-            session: phxSession,
-            static: phxStatic,
-        })
-    );
+    const joinMessage = createJoinMessage(csrfToken, topic, phxSession, phxStatic);
 
     const response = ws.connect(wsUrl,
         {
@@ -48,7 +38,7 @@ export default function () {
         function (socket) {
             socket.on('open', function () {
                 console.log(`WebSocket connection for ${topic} opened`);
-                socket.send(joinMessage);
+                socket.send(JSON.stringify(joinMessage));
                 console.log('Join message sent');
             });
 
@@ -102,6 +92,18 @@ function extractLiveViewMetadata(response) {
     }
 
     return { csrfToken, phxSession, phxStatic, phxId };
+}
+
+function createJoinMessage(csrfToken, topic, phxSession, phxStatic) {
+    return encodeMsg(null, 0, topic, "phx_join", {
+        url: ENDPOINT,
+        params: {
+            _csrf_token: csrfToken,
+            _mounts: 0,
+        },
+        session: phxSession,
+        static: phxStatic,
+    });
 }
 
 function encodeMsg(id, seq, topic, event, msg) {
