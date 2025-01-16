@@ -15,6 +15,14 @@ const HOST = ENV === 'dev' ? 'localhost:4000' : 'try-syndicate.org';
 const PROTOS = ENV === 'dev' ? '' : 's';
 const ENDPOINT = `http${PROTOS}://${HOST}`;
 
+const CODE_OPTIONS = [
+    "(+ 1 2)",
+    "(spawn (assert 'hello))",
+    "(query/set 'hello 42)",
+    "(assert 5)",
+    "(retract 5)",
+];
+
 export default function () {
     const res = http.get(ENDPOINT);
     check(res, {
@@ -27,9 +35,8 @@ export default function () {
 
     const wsUrl = `ws${PROTOS}://${HOST}/live/websocket?_csrf_token=${csrfToken}&vsn=2.0.0`;
 
-    const joinMessage = createJoinMessage(csrfToken, topic, phxSession, phxStatic);
-
-    let nextMessageChecker = makeOkMessageChecker()
+    let curSeqNo = 0;
+    const joinMessage = createJoinMessage(curSeqNo, csrfToken, topic, phxSession, phxStatic);
 
     const socket = new WebSocket(wsUrl, {
         headers: {
@@ -37,17 +44,23 @@ export default function () {
         }
     });
 
+    const sendNextMessage = () => {
+        curSeqNo++;
+        console.log(`sendNextMessage, topic=${topic}, curSeqNo=${curSeqNo}`);
+        const runCodeMessage = createRunCodeMessage(curSeqNo, topic, selectRandom(CODE_OPTIONS));
+        console.log(`Sending message: ${JSON.stringify(runCodeMessage)}`);
+        socket.send(JSON.stringify(runCodeMessage));
+    };
+
     socket.onopen = () => {
         console.log(`WebSocket connection for ${topic} opened`);
         socket.send(JSON.stringify(joinMessage));
-        console.log('Join message sent');
     };
 
     socket.onmessage = (message) => {
         console.log(`Received message: ${message.data}`);
-        if (nextMessageChecker) {
-            nextMessageChecker = nextMessageChecker.receive(message)
-        }
+        checkPhxResponse(message, curSeqNo);
+        setTimeout(sendNextMessage, 2000);
     };
 
     socket.onerror = (e) => {
@@ -61,42 +74,25 @@ export default function () {
 
     setTimeout(() => {
         socket.close();
-        if (nextMessageChecker) {
-            check(nextMessageChecker, {
-                'No hanging message checkers': (s) => s.status !== 'timeout'
-            });
-        }
     }, 10000);
 }
 
-function makeOkMessageChecker(waitTime = 2000) {
-    const checker = {
-        receive: function (message) {
-            check(this.status, {
-                'Received response in time': (s) => s !== 'timeout'
-            });
-            this.status = 'received';
-            const msgJson = JSON.parse(message.data);
+function checkPhxResponse(message, seqNo) {
+    const msgJson = JSON.parse(message.data);
+    check(msgJson, {
+        'Response is JSON': (r) => !!r
+    });
+    if (msgJson) {
+        check(msgJson, {
+            'Response format': (r) => Array.isArray(r) && r.length >= 5,
+        });
+        if (msgJson[3] === 'phx_reply') {
             check(msgJson, {
-                'Response is JSON': (r) => !!r
-            });
-            if (msgJson) {
-                check(msgJson, {
-                    'Response format': (r) => Array.isArray(r),
-                    'Response is "phx_reply"': (r) => r[3] === 'phx_reply',
-                    'Response status is "ok"': (r) => typeof r[4] === 'object' && r[4].status === 'ok',
-                });
-            }
-            return null;
-        },
-        status: "waiting"
-    };
-    setTimeout(() => {
-        if (checker.status === "waiting") {
-            checker.status = "timeout";
+                'Response status is "ok"': (r) => typeof r[4] === 'object' && r[4].status === 'ok',
+
+            })
         }
-    }, waitTime);
-    return checker;
+    }
 }
 
 function extractLiveViewMetadata(response) {
@@ -125,8 +121,8 @@ function extractLiveViewMetadata(response) {
     return { csrfToken, phxSession, phxStatic, phxId };
 }
 
-function createJoinMessage(csrfToken, topic, phxSession, phxStatic) {
-    return encodeMsg(null, 0, topic, "phx_join", {
+function createJoinMessage(seqNo, csrfToken, topic, phxSession, phxStatic) {
+    return encodeMsg(null, seqNo, topic, "phx_join", {
         url: ENDPOINT,
         params: {
             _csrf_token: csrfToken,
@@ -137,6 +133,18 @@ function createJoinMessage(csrfToken, topic, phxSession, phxStatic) {
     });
 }
 
+function createRunCodeMessage(seqNo, topic, code) {
+    return encodeMsg(null, seqNo, topic, "event", {
+        type: "form",
+        event: "run_code",
+        value: `code=${encodeURIComponent(code)}`,
+    });
+}
+
 function encodeMsg(id, seq, topic, event, msg) {
     return [`${id}`, `${seq}`, topic, event, msg];
+}
+
+function selectRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
