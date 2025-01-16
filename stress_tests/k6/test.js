@@ -1,20 +1,36 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import { setTimeout } from 'k6/timers';
 import { WebSocket } from 'k6/experimental/websockets';
 
 export const options = {
-    stages: [
-        { duration: '3s', target: 3 }, // Ramp up to 10 users
-        // { duration: '1m', target: 10 }, // Hold at 10 users
-        // { duration: '30s', target: 0 }, // Ramp down to 0 user
-    ],
+    scenarios: {
+        begin: {
+            executor: 'per-vu-iterations',
+            vus: 10,
+            iterations: 1,
+            maxDuration: '1m',
+            gracefulStop: '10s',
+        },
+        heavy: {
+            executor: 'per-vu-iterations',
+            startTime: '1m',
+            vus: 20,
+            iterations: 1,
+            maxDuration: '5m',
+            gracefulStop: '30s',
+        }
+    },
 };
 
-const DEBUG = true;
+const DEBUG = false;
 const ENV = 'dev';
 const HOST = ENV === 'dev' ? 'localhost:4000' : 'try-syndicate.org';
 const PROTOS = ENV === 'dev' ? '' : 's';
 const ENDPOINT = `http${PROTOS}://${HOST}`;
+
+const BETWEEN_MESSAGES_DELAY = 2000;
+const MAX_MESSAGES = 5;
 
 const CODE_OPTIONS = [
     "(+ 1 2)",
@@ -37,6 +53,7 @@ export default function () {
     const wsUrl = `ws${PROTOS}://${HOST}/live/websocket?_csrf_token=${csrfToken}&vsn=2.0.0`;
 
     let curSeqNo = 0;
+    let messagesSent = 0;
     const joinMessage = createJoinMessage(curSeqNo, csrfToken, topic, phxSession, phxStatic);
 
     const socket = new WebSocket(wsUrl, {
@@ -51,6 +68,7 @@ export default function () {
         const runCodeMessage = createRunCodeMessage(curSeqNo, topic, selectRandom(CODE_OPTIONS));
         log(`Sending message: ${JSON.stringify(runCodeMessage)}`);
         socket.send(JSON.stringify(runCodeMessage));
+        messagesSent++;
     };
 
     socket.onopen = () => {
@@ -61,7 +79,11 @@ export default function () {
     socket.onmessage = (message) => {
         log(`Received message: ${message.data}`);
         checkPhxResponse(message, curSeqNo);
-        setTimeout(sendNextMessage, 2000);
+        if (messagesSent < MAX_MESSAGES) {
+            setTimeout(sendNextMessage, BETWEEN_MESSAGES_DELAY);
+        } else {
+            socket.close();
+        }
     };
 
     socket.onerror = (e) => {
@@ -71,10 +93,6 @@ export default function () {
     socket.onclose = () => {
         log(`WebSocket connection for ${topic} closed`);
     };
-
-    setTimeout(() => {
-        socket.close();
-    }, 10000);
 }
 
 function checkPhxResponse(message, seqNo) {

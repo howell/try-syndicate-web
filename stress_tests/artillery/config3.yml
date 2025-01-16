@@ -1,0 +1,42 @@
+config:
+  target: "wss://try-syndicate.org" # Base URL of your app
+  phases:
+    - duration: 2 # Duration of the test in seconds
+      arrivalRate: 1 # Number of users arriving per second
+  defaults:
+    headers:
+      User-Agent: "Artillery Load Test" # Set a custom User-Agent
+  ws:
+    headers:
+      Origin: "https://try-syndicate.org"
+      Connection: "Upgrade"
+
+scenarios:
+  - name: "Test LiveView with CSRF Token"
+    engine: ws
+    flow:
+      - log: "Fetching the LiveView page to extract the CSRF token"
+      - get:
+          url: "https://try-syndicate.org" # Make a GET request to fetch the LiveView page
+          capture:
+            selector: "meta[name='csrf-token']"
+            attr: "content"
+            # regex: '_csrf_token=([a-zA-Z0-9-_]+)'
+            as: csrf_token
+      # - think: 1 # Simulate a user pausing for 1 second
+      - log: "Connecting to LiveView WebSocket, liveview url:"
+      - log: "wss://try-syndicate.org/live/websocket?_csrf_token={{ csrf_token }}&_mounts=0&vsn=2.0.0"
+      - connect:
+          url: '/live/websocket?_csrf_token={{ csrf_token }}&_mounts=0&vsn=2.0.0'
+          # url: "wss://try-syndicate.org/live/websocket?_csrf_token={{ csrf_token }}&_mounts=0&vsn=2.0.0"
+          # connect: "wss://try-syndicate.org/live/websocket?_csrf_token={{ csrf_token }}&_mounts=0&vsn=2.0.0"
+          send: '{"topic":"lv:123","event":"phx_join","payload":{},"ref":"1"}'
+          # connection:
+            # url: "wss://try-syndicate.org/live/websocket?_csrf_token={{ csrf_token }}" # Insert captured CSRF token
+          # open:
+            # Simulate LiveView events
+            # sendMessage:
+              # - type: "text"
+                # data: '{"topic":"lv:123","event":"phx_join","payload":{},"ref":"1"}'
+          close:
+            after: 30 # Keep the WebSocket connection open for 30 seconds
