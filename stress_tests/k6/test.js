@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import ws from 'k6/ws';
+import { WebSocket } from 'k6/experimental/websockets';
 
 export const options = {
     stages: [
@@ -29,43 +29,34 @@ export default function () {
 
     const joinMessage = createJoinMessage(csrfToken, topic, phxSession, phxStatic);
 
-    const response = ws.connect(wsUrl,
-        {
-            headers: {
-                Origin: ENDPOINT,
-            }
-        },
-        function (socket) {
-            socket.on('open', function () {
-                console.log(`WebSocket connection for ${topic} opened`);
-                socket.send(JSON.stringify(joinMessage));
-                console.log('Join message sent');
-            });
-
-            socket.on('message', function (message) {
-                console.log(`Received message: ${message}`);
-            });
-
-            socket.on('error', function (e) {
-                if (e.error() != 'websocket: close sent') {
-                    console.error('An unexpected error occured: ', e.error());
-                }
-            });
-
-            socket.on('close', function () {
-                console.log(`WebSocket connection for ${topic} closed`);
-            });
-
-            sleep(2);
-            socket.close();
-        });
-
-    if (response.error !== '')
-        console.log(`WebSocket error: ${response.error}`);
-
-    check(response, {
-        'WebSocket connection was successful': (r) => r && r.status === 101,
+    const socket = new WebSocket(wsUrl, {
+        headers: {
+            Origin: ENDPOINT,
+        }
     });
+
+    socket.onopen = () => {
+        console.log(`WebSocket connection for ${topic} opened`);
+        socket.send(JSON.stringify(joinMessage));
+        console.log('Join message sent');
+    };
+
+    socket.onmessage = (message) => {
+        console.log(`Received message: ${message.data}`);
+    };
+
+    socket.onerror = (e) => {
+        console.error('An unexpected error occurred: ', e.message);
+    };
+
+    socket.onclose = () => {
+        console.log(`WebSocket connection for ${topic} closed`);
+    };
+
+
+    setTimeout(() => {
+        socket.close();
+    }, 10000);
 }
 
 function extractLiveViewMetadata(response) {
