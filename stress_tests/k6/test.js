@@ -29,6 +29,8 @@ export default function () {
 
     const joinMessage = createJoinMessage(csrfToken, topic, phxSession, phxStatic);
 
+    let nextMessageChecker = makeOkMessageChecker()
+
     const socket = new WebSocket(wsUrl, {
         headers: {
             Origin: ENDPOINT,
@@ -43,10 +45,13 @@ export default function () {
 
     socket.onmessage = (message) => {
         console.log(`Received message: ${message.data}`);
+        if (nextMessageChecker) {
+            nextMessageChecker = nextMessageChecker.receive(message)
+        }
     };
 
     socket.onerror = (e) => {
-        console.error('An unexpected error occurred: ', e.message);
+        console.error('An unexpected error occurred: ', e);
     };
 
     socket.onclose = () => {
@@ -56,7 +61,42 @@ export default function () {
 
     setTimeout(() => {
         socket.close();
+        if (nextMessageChecker) {
+            check(nextMessageChecker, {
+                'No hanging message checkers': (s) => s.status !== 'timeout'
+            });
+        }
     }, 10000);
+}
+
+function makeOkMessageChecker(waitTime = 2000) {
+    const checker = {
+        receive: function (message) {
+            check(this.status, {
+                'Received response in time': (s) => s !== 'timeout'
+            });
+            this.status = 'received';
+            const msgJson = JSON.parse(message.data);
+            check(msgJson, {
+                'Response is JSON': (r) => !!r
+            });
+            if (msgJson) {
+                check(msgJson, {
+                    'Response format': (r) => Array.isArray(r),
+                    'Response is "phx_reply"': (r) => r[3] === 'phx_reply',
+                    'Response status is "ok"': (r) => typeof r[4] === 'object' && r[4].status === 'ok',
+                });
+            }
+            return null;
+        },
+        status: "waiting"
+    };
+    setTimeout(() => {
+        if (checker.status === "waiting") {
+            checker.status = "timeout";
+        }
+    }, waitTime);
+    return checker;
 }
 
 function extractLiveViewMetadata(response) {
