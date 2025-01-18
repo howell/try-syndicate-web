@@ -6,6 +6,8 @@
 
 ## Features
 - loadable library of examples
+- visualization of running dataspace
+- visualization of facets in actor
 - support additional flavors of syndicate
   - typed syndicate-classic
   - syndicate-rkt ("modern syndicate")
