@@ -40,6 +40,7 @@ Hooks.CodeMirror = {
 
   reconnected() {
     if (this.active) console.log("reconnected");
+    this.initializeEditor();
   },
 
   destroyed() {
