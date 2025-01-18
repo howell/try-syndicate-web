@@ -1,7 +1,9 @@
 defmodule TrySyndicateWeb.EditorLive do
+  alias TrySyndicate.ExampleSupport
   use TrySyndicateWeb, :live_view
 
   alias TrySyndicate.SessionManager
+  alias TrySyndicate.ExampleSupport
   alias TrySyndicateWeb.CheatSheetComponent
 
   require Logger
@@ -25,6 +27,7 @@ defmodule TrySyndicateWeb.EditorLive do
         next_sock =
           put_flash(socket, :error, "Failed to start session: #{inspect(reason)}")
           |> init_assigns()
+
         Logger.debug("Failed to start session: #{inspect(reason)}")
 
         {:ok, next_sock}
@@ -43,17 +46,21 @@ defmodule TrySyndicateWeb.EditorLive do
   def init_assigns(socket, assigns \\ []) do
     defaults = [
       session_id: nil,
-           submissions: [],
-           program_output: "",
-           program_error: "",
-           stale: false,
+      submissions: [],
+      program_output: "",
+      program_error: "",
+      stale: false,
       cheatsheet_open: false,
-      examples: []
+      current_flavor: :classic,
+      editor_prefill: "",
     ]
-    attrs = for {key, default_value} <- defaults, into: %{} do
-      val = assigns[key] || socket.assigns[key] || default_value
-      {key, val}
-    end
+
+    attrs =
+      for {key, default_value} <- defaults, into: %{} do
+        val = assigns[key] || socket.assigns[key] || default_value
+        {key, val}
+      end
+
     assign(socket, attrs)
   end
 
@@ -96,6 +103,20 @@ defmodule TrySyndicateWeb.EditorLive do
     {:noreply, update(socket, :cheatsheet_open, &(!&1))}
   end
 
+  def handle_event("example_selected", %{"selection" => example_name}, socket) do
+    case ExampleSupport.fetch_example(socket.assigns.current_flavor, example_name) do
+      {:ok, content} ->
+        Logger.debug("Loaded example: #{example_name}")
+        socket = socket
+        |> assign(editor_prefill: content)
+        |> push_event("example_selected", %{content: content})
+        {:noreply, socket}
+
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, "Failed to load example: #{reason}")}
+    end
+  end
+
   def handle_event("keep_alive", _params, socket) do
     if Map.get(socket.assigns, :session_id) && not Map.get(socket.assigns, :stale) do
       SessionManager.keep_alive(socket.assigns.session_id)
@@ -135,6 +156,26 @@ defmodule TrySyndicateWeb.EditorLive do
       <div class="w-1/4 ml-2">
         <pre><%= @output %></pre>
       </div>
+    </div>
+    """
+  end
+
+  def example_select(assigns) do
+    ~H"""
+    <div class="mb-4">
+      <form phx-change="example_selected">
+        <label for="example-select" class="block text-sm font-medium text-gray-700">Examples:</label>
+        <select
+          id="example-select"
+          name="selection"
+          class="mt-1 block w-auto pl-3 pr-10 py-2 text-base
+            border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" >
+          <option value="" selected disabled>Try an Example</option>
+          <%= for example <- ExampleSupport.available_examples(@flavor) do %>
+            <option value={example}><%= example %></option>
+          <% end %>
+        </select>
+      </form>
     </div>
     """
   end

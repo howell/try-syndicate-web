@@ -63,12 +63,20 @@ Hooks.CodeMirror = {
       }),
       parent: this.el
     });
+    if (this.active) {
+      window.addEventListener("phx:example_selected", (e) => {
+        this.editor.dispatch({
+          changes: { from: 0, to: this.editor.state.doc.length, insert: e.detail.content }
+        });
+      });
+    }
   },
 
   attachSubmitListener() {
     if (this.active) {
       const runButton = document.getElementById("run-button");
-      if (runButton) {
+      if (runButton && runButton !== this.runButton) {
+        this.runButton = runButton;
         runButton.addEventListener("click", () => {
           document.getElementById("code-input").value = this.editor.state.doc.toString();
           this.editor.dispatch({
