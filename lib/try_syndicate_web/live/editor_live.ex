@@ -15,15 +15,7 @@ defmodule TrySyndicateWeb.EditorLive do
         begin_session(socket)
       end
     else
-      {:ok,
-       assign(socket,
-         session_id: nil,
-         submissions: [],
-         program_output: "",
-         program_error: "",
-         stale: false,
-         cheatsheet_open: false
-       )}
+      {:ok, init_assigns(socket)}
     end
   end
 
@@ -32,15 +24,7 @@ defmodule TrySyndicateWeb.EditorLive do
       {:error, reason} ->
         next_sock =
           put_flash(socket, :error, "Failed to start session: #{inspect(reason)}")
-          |> assign(
-            session_id: nil,
-            submissions: [],
-            program_output: "",
-            program_error: "",
-            stale: false,
-            cheatsheet_open: Map.get(socket.assigns, :cheatsheet_open, false)
-          )
-
+          |> init_assigns()
         Logger.debug("Failed to start session: #{inspect(reason)}")
 
         {:ok, next_sock}
@@ -52,16 +36,25 @@ defmodule TrySyndicateWeb.EditorLive do
 
         TrySyndicateWeb.Endpoint.subscribe("session:#{session_id}")
 
-        {:ok,
-         assign(socket,
-           session_id: session_id,
+        {:ok, init_assigns(socket, session_id: session_id)}
+    end
+  end
+
+  def init_assigns(socket, assigns \\ []) do
+    defaults = [
+      session_id: nil,
            submissions: [],
            program_output: "",
            program_error: "",
            stale: false,
-           cheatsheet_open: false
-         )}
+      cheatsheet_open: false,
+      examples: []
+    ]
+    attrs = for {key, default_value} <- defaults, into: %{} do
+      val = assigns[key] || socket.assigns[key] || default_value
+      {key, val}
     end
+    assign(socket, attrs)
   end
 
   def rejoin_session(socket, session_id) do
