@@ -1,8 +1,7 @@
 # TODO items
 
-## Minor Improvements
-- add a break/kill button for the session
-- add a current memory use indicator
+# Bugs
+- it's possible for the output updates from the sandbox to be received out of order
 
 ## Features
 - loadable library of examples
@@ -13,3 +12,7 @@
   - syndicate-rkt ("modern syndicate")
   - syndicate-js?
 - sharable sessions
+
+## Minor Improvements
+- add a break/kill button for the session
+- add a current memory use indicator
