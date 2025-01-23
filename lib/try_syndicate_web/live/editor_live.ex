@@ -145,7 +145,8 @@ defmodule TrySyndicateWeb.EditorLive do
       <div class="w-4 min-w-4 mr-2">
         <%= @label %>
       </div>
-      <div class="w-3/4">
+      <div class="flex flex-col gap-2 w-full">
+        <div class="w-full">
         <%= live_component(%{
           module: TrySyndicateWeb.CodeMirrorComponent,
           id: @id,
@@ -153,8 +154,9 @@ defmodule TrySyndicateWeb.EditorLive do
           active: @active
         }) %>
       </div>
-      <div class="w-1/4 ml-2">
+        <div class="">
         <pre><%= @output %></pre>
+        </div>
       </div>
     </div>
     """
