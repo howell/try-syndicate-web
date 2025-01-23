@@ -5,7 +5,6 @@
 - should avoid printing/sending large inputs and outpus
 
 ## Features
-- loadable library of examples
 - visualization of running dataspace
 - visualization of facets in actor
 - support additional flavors of syndicate
