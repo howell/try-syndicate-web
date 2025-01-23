@@ -163,8 +163,8 @@ defmodule TrySyndicateWeb.EditorLive do
   def example_select(assigns) do
     ~H"""
     <div class="mb-4">
-      <form phx-change="example_selected">
-        <label for="example-select" class="block text-sm font-medium text-gray-700">Examples:</label>
+      <form class="flex flex-row items-center w-min-content gap-2" phx-change="example_selected">
+        <label for="example-select" class="block font-medium text-gray-700">Examples:</label>
         <select
           id="example-select"
           name="selection"
