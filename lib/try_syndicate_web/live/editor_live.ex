@@ -52,7 +52,7 @@ defmodule TrySyndicateWeb.EditorLive do
       stale: false,
       cheatsheet_open: false,
       current_flavor: :classic,
-      editor_prefill: "",
+      editor_prefill: ""
     ]
 
     attrs =
@@ -107,9 +107,12 @@ defmodule TrySyndicateWeb.EditorLive do
     case ExampleSupport.fetch_example(socket.assigns.current_flavor, example_name) do
       {:ok, content} ->
         Logger.debug("Loaded example: #{example_name}")
-        socket = socket
-        |> assign(editor_prefill: content)
-        |> push_event("example_selected", %{content: content})
+
+        socket =
+          socket
+          |> assign(editor_prefill: content)
+          |> push_event("example_selected", %{content: content})
+
         {:noreply, socket}
 
       {:error, reason} ->
@@ -147,15 +150,15 @@ defmodule TrySyndicateWeb.EditorLive do
       </div>
       <div class="flex flex-col gap-2 w-full">
         <div class="w-full">
-        <%= live_component(%{
-          module: TrySyndicateWeb.CodeMirrorComponent,
-          id: @id,
-          content: @content,
-          active: @active
-        }) %>
-      </div>
+          <%= live_component(%{
+            module: TrySyndicateWeb.CodeMirrorComponent,
+            id: @id,
+            content: @content,
+            active: @active
+          }) %>
+        </div>
         <div class="">
-        <pre><%= @output %></pre>
+          <pre><%= @output %></pre>
         </div>
       </div>
     </div>
@@ -171,7 +174,8 @@ defmodule TrySyndicateWeb.EditorLive do
           id="example-select"
           name="selection"
           class="mt-1 block w-auto pl-3 pr-10 py-2 text-base
-            border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" >
+            border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
           <option value="" selected disabled>Try an Example</option>
           <%= for example <- Enum.sort(ExampleSupport.available_examples(@flavor)) do %>
             <option value={example}><%= example %></option>
@@ -181,5 +185,4 @@ defmodule TrySyndicateWeb.EditorLive do
     </div>
     """
   end
-
 end
