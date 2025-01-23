@@ -2,6 +2,7 @@
 
 # Bugs
 - it's possible for the output updates from the sandbox to be received out of order
+- should avoid printing/sending large inputs and outpus
 
 ## Features
 - loadable library of examples
