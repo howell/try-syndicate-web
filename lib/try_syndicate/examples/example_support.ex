@@ -3,7 +3,7 @@ defmodule TrySyndicate.ExampleSupport do
   @type flavor :: :classic
   @flavors [:classic]
 
-  @examples_root Application.app_dir(:try_syndicate, "priv/examples")
+  @examples_root Application.app_dir(:try_syndicate, "priv/static/examples")
 
   @spec available_examples() :: %{flavor => [String.t()]}
   def available_examples() do
