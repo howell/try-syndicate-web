@@ -3,8 +3,6 @@ defmodule TrySyndicate.ExampleSupport do
   @type flavor :: :classic
   @flavors [:classic]
 
-  @examples_root List.to_string(:code.priv_dir(:try_syndicate)) <> "/static/examples" # Application.app_dir(:try_syndicate, "priv/static/examples")
-
   @spec available_examples() :: %{flavor => [String.t()]}
   def available_examples() do
     for flavor <- @flavors, into: %{} do
@@ -31,7 +29,7 @@ defmodule TrySyndicate.ExampleSupport do
 
   @spec example_path(flavor, String.t()) :: String.t()
   def example_path(flavor, name) do
-    @examples_root <> "/" <> to_string(flavor) <> "/" <> name
+    Application.app_dir(:try_syndicate, "priv/static/examples/#{flavor}/#{name}")
   end
 
   @spec format_example(String.t()) :: String.t()
