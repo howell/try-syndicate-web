@@ -29,7 +29,7 @@ defmodule TrySyndicate.ExampleSupport do
 
   @spec example_path(flavor, String.t()) :: String.t()
   def example_path(flavor, name) do
-    Application.app_dir(:try_syndicate, "priv/static/examples/#{flavor}/#{name}")
+    Application.app_dir(:try_syndicate, "priv/examples/#{flavor}/#{name}")
   end
 
   @spec format_example(String.t()) :: String.t()
