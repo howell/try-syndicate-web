@@ -43,6 +43,7 @@ defmodule TrySyndicate.ExampleSupport do
     |> String.split("\n")
     |> Enum.drop_while(&!hash_lang?(&1))
     |> Enum.drop_while(&String.starts_with?(&1, "#lang"))
+    |> Enum.drop_while(&String.trim(&1) == "")
     |> Enum.join("\n")
   end
 

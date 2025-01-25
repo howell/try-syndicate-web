@@ -59,6 +59,11 @@ defmodule TrySyndicate.ExampleSupportTest do
       content = "a\nb\nc\n#lang racket\n(content)"
       assert ExampleSupport.remove_hash_lang(content) == "(content)"
     end
+
+    test "removes empty lines after the #lang" do
+      content = "#lang racket\n\n\n(content)"
+      assert ExampleSupport.remove_hash_lang(content) == "(content)"
+    end
   end
 
   describe "hash_lang?/1" do
