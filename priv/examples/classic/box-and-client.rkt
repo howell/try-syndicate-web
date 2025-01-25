@@ -1,5 +1,5 @@
 #lang syndicate
-;; Simple mutable box and count-to-infinity box client.
+;; Simple mutable box and box client.
 
 (message-struct set-box (new-value))
 (assertion-struct box-state (value))
