@@ -1,7 +1,7 @@
 # TODO items
 
 # Bugs
-- it's possible for the output updates from the sandbox to be received out of order
+- pending outputs can build up without limit if an update is lost
 - should avoid printing/sending large inputs and outpus
 
 ## Features

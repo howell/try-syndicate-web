@@ -5,20 +5,19 @@ defmodule TrySyndicateWeb.SessionUpdateController do
   require Logger
 
   def receive_update(conn, params) do
-    session_id = params["session_id"]
-    update_type = Map.get(params, "type")
-    update_data = Map.get(params, "data")
+    case params do
+      %{"session_id" => session_id, "type" => update_type, "seq_no" => seq_no, "data" => data} ->
+        Logger.info(
+          "Received update for session #{session_id} on #{inspect(update_type)}(#{seq_no}): #{inspect(data)}"
+        )
 
-    Logger.info(
-      "Received update for session #{session_id} with #{inspect(update_type)}: #{inspect(update_data)}"
-    )
+        SessionManager.receive_output(session_id, update_type, seq_no, data)
+        send_resp(conn, 200, "")
 
-    TrySyndicateWeb.Endpoint.broadcast("session:#{session_id}", "update", %{
-      type: update_type,
-      data: update_data
-    })
-
-    send_resp(conn, 200, "")
+      _ ->
+        Logger.warning("Received unknown update message: #{inspect(params)}")
+        send_resp(conn, 400, "")
+    end
   end
 
   def terminate_session(conn, params) do
