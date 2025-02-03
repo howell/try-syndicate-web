@@ -135,7 +135,7 @@ defmodule TrySyndicateWeb.EditorLive do
         "stderr" -> :program_error
       end
 
-    {:noreply, update(socket, key, fn existing -> existing <> update_data end)}
+    {:noreply, update(socket, key, fn existing -> existing <> Enum.join(update_data, "") end)}
   end
 
   def handle_info(%{event: "terminate", payload: %{reason: _reason}}, socket) do

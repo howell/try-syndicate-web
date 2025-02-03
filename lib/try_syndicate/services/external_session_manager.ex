@@ -7,7 +7,7 @@ defmodule TrySyndicate.ExternalSessionManager do
   defmodule OutputStatus do
     @type t() :: %__MODULE__{
             next_expected_seq: non_neg_integer(),
-            pending: [{non_neg_integer(), String.t()}]
+            pending: [{non_neg_integer(), any()}]
           }
     defstruct [:next_expected_seq, :pending]
 
@@ -15,8 +15,8 @@ defmodule TrySyndicate.ExternalSessionManager do
       %__MODULE__{next_expected_seq: expected_seq, pending: []}
     end
 
-    @spec handle_session_output(OutputStatus.t(), non_neg_integer(), String.t()) ::
-            {[String.t()], OutputStatus.t()}
+    @spec handle_session_output(OutputStatus.t(), non_neg_integer(), any()) ::
+            {[any()], OutputStatus.t()}
     def handle_session_output(
           %__MODULE__{next_expected_seq: expected_seq, pending: pending} = status,
           seq_no,
@@ -46,8 +46,8 @@ defmodule TrySyndicate.ExternalSessionManager do
       end
     end
 
-    @spec collect_ready([{non_neg_integer(), String.t()}], non_neg_integer()) ::
-            {[String.t()], [{non_neg_integer(), String.t()}], non_neg_integer()}
+    @spec collect_ready([{non_neg_integer(), any()}], non_neg_integer()) ::
+            {[any()], [{non_neg_integer(), any()}], non_neg_integer()}
     def collect_ready(pending, expected_seq) do
       sorted = Enum.sort_by(pending, &elem(&1, 0))
 
@@ -252,7 +252,7 @@ defmodule TrySyndicate.ExternalSessionManager do
         if ready_output != [] do
           TrySyndicateWeb.Endpoint.broadcast("session:#{session_id}", "update", %{
             type: src,
-            data: Enum.join(ready_output, "")
+            data: ready_output
           })
         end
 
