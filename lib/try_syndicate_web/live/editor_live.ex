@@ -149,7 +149,10 @@ defmodule TrySyndicateWeb.EditorLive do
   end
 
   def add_step(socket, data) do
-    update(socket, :trace_steps, fn existing -> Map.put(existing, map_size(existing) + 1, data) end)
+    update(socket, :trace_steps, fn existing ->
+      Enum.with_index(data, map_size(existing))
+      |> Enum.reduce(existing, fn {step, index}, existing -> Map.put(existing, index, step) end)
+    end)
     |> update(:current_trace_step, fn curr -> curr || 0 end)
   end
 
