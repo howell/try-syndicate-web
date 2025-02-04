@@ -52,7 +52,9 @@ defmodule TrySyndicateWeb.EditorLive do
       stale: false,
       cheatsheet_open: false,
       current_flavor: :classic,
-      editor_prefill: ""
+      editor_prefill: "",
+      trace_steps: %{},
+      current_trace_step: false
     ]
 
     attrs =
@@ -129,17 +131,26 @@ defmodule TrySyndicateWeb.EditorLive do
   end
 
   def handle_info(%{event: "update", payload: %{type: update_type, data: update_data}}, socket) do
-    key =
+    next_sock =
       case update_type do
-        "stdout" -> :program_output
-        "stderr" -> :program_error
+        "trace" -> add_step(socket, update_data)
+        "stdout" -> add_output(socket, :program_output, update_data)
+        "stderr" -> add_output(socket, :program_error, update_data)
       end
-
-    {:noreply, update(socket, key, fn existing -> existing <> Enum.join(update_data, "") end)}
+      {:noreply, next_sock}
   end
 
   def handle_info(%{event: "terminate", payload: %{reason: _reason}}, socket) do
     {:noreply, assign(socket, stale: true)}
+  end
+
+  def add_output(socket, key, data) do
+    update(socket, key, fn existing -> existing <> Enum.join(data, "") end)
+  end
+
+  def add_step(socket, data) do
+    update(socket, :trace_steps, fn existing -> Map.put(existing, map_size(existing) + 1, data) end)
+    |> update(:current_trace_step, fn curr -> curr || 0 end)
   end
 
   def code_mirror_line(assigns) do
@@ -182,6 +193,14 @@ defmodule TrySyndicateWeb.EditorLive do
           <% end %>
         </select>
       </form>
+    </div>
+    """
+  end
+
+  def trace_view(assigns) do
+    ~H"""
+    <div>
+      This is where the trace goes!
     </div>
     """
   end

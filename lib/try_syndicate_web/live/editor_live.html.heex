@@ -54,6 +54,10 @@
       </div>
     </div>
 
+    <div :if={@current_trace_step}>
+      <.trace_view id="trace_view" steps={@trace_steps} current current_flavor={@current_flavor} />
+    </div>
+
     <%= if @stale do %>
       <div class="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-lg text-center">
