@@ -77,7 +77,8 @@ defmodule TrySyndicate.ExternalSessionManager do
         id: id,
         sources: %{
           "stdout" => OutputStatus.new(0),
-          "stderr" => OutputStatus.new(0)
+          "stderr" => OutputStatus.new(0),
+          "trace" => OutputStatus.new(0)
         }
       }
     end
@@ -243,6 +244,7 @@ defmodule TrySyndicate.ExternalSessionManager do
   defp handle_output(session_id, src, seq_no, data, state) do
     case Map.get(state, session_id) do
       nil ->
+        Logger.warning("Received output for unknown session: #{session_id}")
         state
 
       session ->
