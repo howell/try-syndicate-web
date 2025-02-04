@@ -130,6 +130,22 @@ defmodule TrySyndicateWeb.EditorLive do
     {:noreply, socket}
   end
 
+  def handle_event("step_first", _params, socket) do
+    {:noreply, assign(socket, current_trace_step: 0)}
+  end
+
+  def handle_event("step_prev", _params, socket) do
+    {:noreply, assign(socket, current_trace_step: socket.assigns.current_trace_step - 1)}
+  end
+
+  def handle_event("step_next", _params, socket) do
+    {:noreply, assign(socket, current_trace_step: socket.assigns.current_trace_step + 1)}
+  end
+
+  def handle_event("step_current", _params, socket) do
+    {:noreply, assign(socket, current_trace_step: map_size(socket.assigns.trace_steps) - 1)}
+  end
+
   def handle_info(%{event: "update", payload: %{type: update_type, data: update_data}}, socket) do
     next_sock =
       case update_type do
@@ -137,7 +153,8 @@ defmodule TrySyndicateWeb.EditorLive do
         "stdout" -> add_output(socket, :program_output, update_data)
         "stderr" -> add_output(socket, :program_error, update_data)
       end
-      {:noreply, next_sock}
+
+    {:noreply, next_sock}
   end
 
   def handle_info(%{event: "terminate", payload: %{reason: _reason}}, socket) do
@@ -148,6 +165,7 @@ defmodule TrySyndicateWeb.EditorLive do
     update(socket, key, fn existing -> existing <> Enum.join(data, "") end)
   end
 
+  @spec add_step(map(), [any()]) :: map()
   def add_step(socket, data) do
     update(socket, :trace_steps, fn existing ->
       Enum.with_index(data, map_size(existing))
@@ -202,9 +220,38 @@ defmodule TrySyndicateWeb.EditorLive do
 
   def trace_view(assigns) do
     ~H"""
-    <div>
-      This is where the trace goes!
+    <div class="mt-4 w-auto mx-auto flex flex-col gap-4 items-center">
+      <h2 class="text-center text-2xl">Execution State</h2>
+      <div class="flex flex-row gap-4">
+        <.trace_button label="First" action="step_first" disabled={@current_trace_step == 0} />
+        <.trace_button label="Previous" action="step_prev" disabled={@current_trace_step == 0} />
+        <.trace_button
+          label="Next"
+          action="step_next"
+          disabled={@current_trace_step == map_size(@trace_steps) - 1}
+        />
+        <.trace_button
+          label="Current"
+          action="step_current"
+          disabled={@current_trace_step == map_size(@trace_steps) - 1}
+        />
+      </div>
+      <pre>
+        <%= inspect(@trace_steps[@current_trace_step]) %>
+      </pre>
     </div>
+    """
+  end
+
+  def trace_button(assigns) do
+    ~H"""
+    <button
+      class="rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
+      phx-click={@action}
+      disabled={@disabled}
+    >
+      <%= @label %>
+    </button>
     """
   end
 end
