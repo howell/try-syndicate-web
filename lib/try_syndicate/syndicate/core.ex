@@ -6,71 +6,98 @@ defmodule TrySyndicate.Syndicate.Core do
   @type action() :: patch() | :quit | spawn() | message()
   @type event() :: patch() | message() | false
 
-  @spec json_to_trie(term()) :: trie() | nil
+  @spec json_to_trie(term()) :: {:ok, trie()} | {:error, String.t()}
   def json_to_trie(json) do
-    cond do
-      is_list(json) and Enum.all?(json, &is_binary/1) ->
-        json
-
-      true ->
-        nil
+    if is_list(json) and Enum.all?(json, &is_binary/1) do
+      {:ok, json}
+    else
+      {:error, "Invalid trie: expected list of strings"}
     end
   end
 
-  @spec json_to_patch(term()) :: patch() | nil
+  @spec json_to_patch(term()) :: {:ok, patch()} | {:error, String.t()}
   def json_to_patch(json) do
-    cond do
-      is_map(json) && json["added"] && json["removed"] ->
-        added = json_to_trie(json["added"])
-        removed = json_to_trie(json["removed"])
-        added && removed && {added, removed}
-
-      true ->
-        nil
+    if is_map(json) and json["added"] && json["removed"] do
+      with {:ok, added} <- json_to_trie(json["added"]),
+           {:ok, removed} <- json_to_trie(json["removed"]) do
+        {:ok, {added, removed}}
+      else
+        {:error, reason} -> {:error, "Invalid patch: " <> reason}
+      end
+    else
+      {:error, "Invalid patch JSON: missing 'added' or 'removed'"}
     end
   end
 
-  @spec json_to_spawn(term()) :: spawn() | nil
+  @spec json_to_spawn(term()) :: {:ok, spawn()} | {:error, String.t()}
   def json_to_spawn(json) do
     cond do
-      is_map(json) && json["type"] == "spawn" && json["initial_assertions"] ->
-        trie = json_to_trie(json["initial_assertions"])
-        trie && {:spawn, trie}
+      not is_list(json) ->
+        {:error, "Invalid spawn JSON: expected a list"}
+
+      length(json) != 2 and hd(json) == "spawn" ->
+        {:error, "Invalid spawn JSON: expected a list with two elements, starting with 'spawn'"}
 
       true ->
-        nil
+        with {:ok, trie} <- json_to_trie(hd(tl(json))) do
+          {:ok, {:spawn, trie}}
+        else
+          {:error, reason} -> {:error, "Invalid spawn assertions: " <> reason}
+        end
     end
   end
 
-  @spec json_to_quit(term()) :: :quit | nil
+  @spec json_to_quit(term()) :: {:ok, :quit} | {:error, String.t()}
   def json_to_quit(json) do
     if json == "quit" do
-      :quit
+      {:ok, :quit}
     else
-      nil
+      {:error, "Not a quit command"}
     end
   end
 
-  @spec json_to_message(term()) :: message() | nil
+  @spec json_to_message(term()) :: {:ok, message()} | {:error, String.t()}
   def json_to_message(json) do
-    if is_list(json) and length(json) == 2 and json[0] == "message" do
-      {:message, json[1]}
+    if is_list(json) and length(json) == 2 and hd(json) == "message" do
+      {:ok, {:message, Enum.at(json, 1)}}
     else
-      nil
+      {:error, "Invalid message format"}
     end
   end
 
-  @spec json_to_action(term()) :: action() | nil
+  @spec json_to_action(term()) :: {:ok, action()} | {:error, String.t()}
   def json_to_action(json) do
-    json_to_quit(json) || json_to_message(json) || json_to_spawn(json) || json_to_patch(json)
+    case json_to_quit(json) do
+      {:ok, result} -> {:ok, result}
+      {:error, _} ->
+        case json_to_message(json) do
+          {:ok, result} -> {:ok, result}
+          {:error, _} ->
+            case json_to_spawn(json) do
+              {:ok, result} -> {:ok, result}
+              {:error, _} ->
+                case json_to_patch(json) do
+                  {:ok, result} -> {:ok, result}
+                  {:error, _} -> {:error, "Invalid action"}
+                end
+            end
+        end
+    end
   end
 
-  @spec json_to_event(term()) :: event() | nil
+  @spec json_to_event(term()) :: {:ok, event()} | {:error, String.t()}
   def json_to_event(json) do
     if json == false do
-      false
+      {:ok, false}
     else
-      json_to_message(json) || json_to_patch(json)
+      case json_to_message(json) do
+        {:ok, result} -> {:ok, result}
+        {:error, _} ->
+          case json_to_patch(json) do
+            {:ok, result} -> {:ok, result}
+            {:error, _} -> {:error, "Invalid event"}
+          end
+      end
     end
   end
 end
