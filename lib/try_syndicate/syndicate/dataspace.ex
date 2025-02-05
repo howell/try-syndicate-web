@@ -30,12 +30,13 @@ defmodule TrySyndicate.Syndicate.Dataspace do
            {:ok, active_actor} <- parse_active_actor(json["active_actor"]),
            {:ok, recent_messages} <- parse_recent_messages(json["recent_messages"]),
            {:ok, pending_actions} <- parse_pending_acts(json["pending_actions"]) do
-        {:ok, %__MODULE__{
-          actors: actors,
-          active_actor: active_actor,
-          recent_messages: recent_messages,
-          pending_actions: pending_actions
-        }}
+        {:ok,
+         %__MODULE__{
+           actors: actors,
+           active_actor: active_actor,
+           recent_messages: recent_messages,
+           pending_actions: pending_actions
+         }}
       else
         {:error, reason} -> {:error, reason}
       end
@@ -55,6 +56,7 @@ defmodule TrySyndicate.Syndicate.Dataspace do
             else
               {:halt, {:error, "Invalid actor: missing valid 'id'"}}
             end
+
           {:error, reason} ->
             {:halt, {:error, "Invalid actor: " <> reason}}
         end
@@ -64,7 +66,8 @@ defmodule TrySyndicate.Syndicate.Dataspace do
     end
   end
 
-  @spec parse_active_actor(term()) :: {:ok, :none | {actor_id(), Core.event()}} | {:error, String.t()}
+  @spec parse_active_actor(term()) ::
+          {:ok, :none | {actor_id(), Core.event()}} | {:error, String.t()}
   def parse_active_actor(json) do
     cond do
       json == false ->
@@ -83,46 +86,47 @@ defmodule TrySyndicate.Syndicate.Dataspace do
 
   @spec parse_recent_messages(term()) :: {:ok, [String.t()]} | {:error, String.t()}
   def parse_recent_messages(json) do
-    if is_list(json) and Enum.all?(json, &is_binary/1) do
-      {:ok, json}
+    if is_list(json) do
+      parse_list(json, &Core.json_to_message/1)
     else
-      {:error, "Invalid recent_messages: expected a list of strings"}
+      {:error, "Invalid recent_messages: expected a list"}
     end
   end
 
-  @spec parse_pending_acts(term()) :: {:ok, [{SpaceTime.t(), [Core.action()]}]} | {:error, String.t()}
+  def parse_list(json, parser) do
+    Enum.reduce_while(json, {:ok, []}, fn item_json, {:ok, acc} ->
+      case parser.(item_json) do
+        {:ok, item} -> {:cont, {:ok, [item | acc]}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+    |> (fn
+          {:ok, items} -> {:ok, Enum.reverse(items)}
+          error -> error
+        end).()
+  end
+
+  @spec parse_pending_acts(term()) ::
+          {:ok, [{SpaceTime.t(), [Core.action()]}]} | {:error, String.t()}
   def parse_pending_acts(json) do
     if is_list(json) and Enum.all?(json, &is_map/1) do
-      Enum.reduce_while(json, {:ok, []}, fn action_json, {:ok, acc} ->
-        case SpaceTime.from_json(action_json["origin"]) do
-          {:ok, space_time} ->
-            actions_result =
-              Enum.reduce_while(action_json["actions"], {:ok, []}, fn act, {:ok, acts_acc} ->
-                case Core.json_to_action(act) do
-                  {:ok, action} ->
-                    {:cont, {:ok, acts_acc ++ [action]}}
-                  {:error, reason} ->
-                    {:halt, {:error, "Invalid action: " <> reason}}
-                end
-              end)
-
-            case actions_result do
-              {:ok, actions} ->
-                {:cont, {:ok, [{space_time, actions} | acc]}}
-              {:error, reason} ->
-                {:halt, {:error, reason}}
-            end
-
-          {:error, reason} ->
-            {:halt, {:error, "Invalid origin in pending act: " <> reason}}
-        end
-      end)
-      |> (fn
-            {:ok, acts} -> {:ok, Enum.reverse(acts)}
-            error -> error
-          end).()
+      parse_list(json, &parse_pending_action/1)
     else
       {:error, "Invalid pending_actions: expected a list of maps"}
+    end
+  end
+
+  def parse_pending_action(json) do
+    if is_map(json) && json["origin"] && is_list(json["actions"]) do
+      with {:ok, origin} <- SpaceTime.from_json(json["origin"]),
+           {:ok, actions} <- parse_list(json["actions"], &Core.json_to_action/1) do
+        {:ok, {origin, actions}}
+      else
+        {:error, reason} -> {:error, reason}
+      end
+    else
+      {:error,
+       "Invalid pending action JSON: expected an object with 'origin' and 'actions' fields #{inspect(json)}"}
     end
   end
 end

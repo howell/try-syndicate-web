@@ -205,9 +205,9 @@ defmodule TrySyndicate.Syndicate.JsonTest do
 
   describe "Dataspace.parse_recent_messages/1" do
     test "parses valid list of strings" do
-      msgs = ["hello", "world"]
+      msgs = [["message", "hello"], ["message", "world"]]
       assert {:ok, result} = Dataspace.parse_recent_messages(msgs)
-      assert result == msgs
+      assert result == [{:message, "hello"}, {:message, "world"}]
     end
 
     test "returns error for list with non-string elements" do
