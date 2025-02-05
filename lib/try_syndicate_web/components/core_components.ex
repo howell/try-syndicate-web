@@ -17,7 +17,7 @@ defmodule TrySyndicateWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import TrySyndicateWeb.Gettext
+  use Gettext, backend: TrySyndicateWeb.Gettext
 
   @doc """
   Renders a modal.
