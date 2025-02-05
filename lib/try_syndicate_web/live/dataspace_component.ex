@@ -6,19 +6,21 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     %{
       actor_box_width: 150,
       actor_box_height: 50,
+      actor_x_offset: 100,
       vertical_spacing: 20,
       vertical_padding: 40,
       assertions_box_width: 100,
       assertions_box_height: 40,
       dataspace_box_width: 100,
-      component_x_offset: 200,
-      dataspace_box_x: 50
+      dataspace_box_x: 300
     }
   end
 
   attr :dataspace, Dataspace, required: true
+
   def dataspace(assigns) do
     the_dims = dims()
+
     assigns
     |> assign(:svg_height, svg_height(assigns.dataspace, the_dims))
     |> assign(:dims, the_dims)
@@ -37,7 +39,36 @@ defmodule TrySyndicateWeb.DataspaceComponent do
           <.actor_box n={i} id={id} actor={actor} dims={@dims} />
         <% end %>
       </g>
+      <.dataspace_box dataspace={@dataspace} dims={@dims} svg_height={@svg_height} />
     </svg>
+    """
+  end
+
+  attr :dataspace, Dataspace, required: true
+  attr :svg_height, :integer, required: true
+  attr :dims, :map, required: true
+
+  def dataspace_box(assigns) do
+    ~H"""
+    <g id="dataspace-state">
+      <rect
+        x={@dims.dataspace_box_x}
+        y="0"
+        width={@dims.dataspace_box_width}
+        height={@svg_height}
+        fill="none"
+        stroke="black"
+        stroke-width="2"
+      />
+      <text
+        x={@dims.dataspace_box_x + @dims.dataspace_box_width / 2}
+        y="20"
+        text-anchor="middle"
+        font-weight="bold"
+      >
+        Dataspace
+      </text>
+    </g>
     """
   end
 
@@ -50,7 +81,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     ~H"""
     <g id={"actor_#{@id}"}>
       <text
-        x={@dims.component_x_offset + @dims.actor_box_width / 2}
+        x={@dims.actor_x_offset + @dims.actor_box_width / 2}
         y={actor_y(@n, @dims) - 5}
         text-anchor="middle"
         font-size="12"
@@ -59,7 +90,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         <%= @id %>
       </text>
       <rect
-        x={@dims.component_x_offset}
+        x={@dims.actor_x_offset}
         y={actor_y(@n, @dims)}
         width={@dims.actor_box_width}
         height={@dims.actor_box_height}
@@ -70,7 +101,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         stroke-width="2"
       />
       <text
-        x={@dims.component_x_offset + @dims.actor_box_width / 2}
+        x={@dims.actor_x_offset + @dims.actor_box_width / 2}
         y={actor_y(@n, @dims) + @dims.actor_box_height / 2}
         dominant-baseline="middle"
         text-anchor="middle"
