@@ -9,9 +9,10 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       actor_x_offset: 100,
       vertical_spacing: 20,
       vertical_padding: 40,
+      assertions_box_x_offset: 10,
       assertions_box_width: 100,
       assertions_box_height: 40,
-      dataspace_box_width: 100,
+      dataspace_box_width: 400,
       dataspace_box_x: 300
     }
   end
@@ -110,6 +111,37 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       >
         <%= @actor.name %>
       </text>
+      <line
+        x1={@dims.actor_x_offset + @dims.actor_box_width}
+        y1={actor_y(@n, @dims) + @dims.actor_box_height / 2}
+        x2={@dims.dataspace_box_x + @dims.assertions_box_x_offset}
+        y2={actor_y(@n, @dims) + @dims.actor_box_height / 2}
+        stroke="black"
+      />
+      <.assertions_box n={@n} assertions={@actor.assertions} dims={@dims} />
+    </g>
+    """
+  end
+
+  attr :n, :integer, required: true
+  attr :dims, :map, required: true
+  attr :assertions, :any, required: true
+
+  def assertions_box(assigns) do
+    ~H"""
+    <g
+      id={"assertions_#{@n}"}
+      transform={"translate(#{@dims.dataspace_box_x + @dims.assertions_box_x_offset}, #{actor_y(@n, @dims) + @dims.actor_box_height / 2 - @dims.assertions_box_height / 2})"}
+    >
+      <rect
+        width={@dims.assertions_box_width}
+        height={@dims.assertions_box_height}
+        fill="white"
+        stroke="#333"
+        rx="3"
+        ry="3"
+        style="cursor:pointer;"
+      />
     </g>
     """
   end
