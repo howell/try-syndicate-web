@@ -222,9 +222,12 @@ defmodule TrySyndicateWeb.EditorLive do
     ~H"""
     <div class="mt-4 w-auto mx-auto flex flex-col gap-4 items-center">
       <h2 class="text-center text-2xl">Execution State</h2>
-      <div class="flex flex-row gap-4">
+      <div class="flex flex-row items-center gap-4">
         <.trace_button label="First" action="step_first" disabled={@current_trace_step == 0} />
         <.trace_button label="Previous" action="step_prev" disabled={@current_trace_step == 0} />
+        <span class="text-lg text-center">
+          <%= @current_trace_step + 1 %> / <%= map_size(@trace_steps) %>
+        </span>
         <.trace_button
           label="Next"
           action="step_next"
@@ -237,7 +240,7 @@ defmodule TrySyndicateWeb.EditorLive do
         />
       </div>
       <pre>
-        <%= inspect(@trace_steps[@current_trace_step]) %>
+        <%= inspect(@trace_steps[@current_trace_step], pretty: true) %>
       </pre>
     </div>
     """
