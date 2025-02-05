@@ -40,8 +40,8 @@ defmodule TrySyndicateWeb.CheatSheetComponent do
         <tbody>
           <%= for {command, description} <- @rows do %>
             <tr>
-              <%= table_cell(command) %>
-              <%= table_cell(description) %>
+              <.table_cell><%= command %></.table_cell>
+              <.table_cell><%= description %></.table_cell>
             </tr>
           <% end %>
         </tbody>
@@ -50,11 +50,10 @@ defmodule TrySyndicateWeb.CheatSheetComponent do
     """
   end
 
-  defp table_cell(content) do
-    assigns = []
-
+  slot :inner_block, required: true
+  defp table_cell(assigns) do
     ~H"""
-    <td class="border px-4 py-2"><%= content %></td>
+    <td class="border px-4 py-2"><%= render_slot(@inner_block) %></td>
     """
   end
 
