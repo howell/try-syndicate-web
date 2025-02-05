@@ -9,11 +9,14 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       actor_x_offset: 100,
       vertical_spacing: 20,
       vertical_padding: 40,
+      horizontal_padding: 40,
       assertions_box_x_offset: 10,
       assertions_box_width: 100,
       assertions_box_height: 40,
-      dataspace_box_width: 400,
-      dataspace_box_x: 300
+      dataspace_box_width: 800,
+      dataspace_box_x: 300,
+      pending_actions_box_width: 300,
+      action_height: 20
     }
   end
 
@@ -69,6 +72,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       >
         Dataspace
       </text>
+      <.pending_actions_box dims={@dims} pending_actions={@dataspace.pending_actions} />
     </g>
     """
   end
@@ -150,6 +154,67 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     dims.vertical_padding + n * (dims.actor_box_height + dims.vertical_spacing)
   end
 
+  attr :dims, :map, required: true
+  attr :pending_actions, :list, required: true
+
+  def pending_actions_box(assigns) do
+    ~H"""
+    <g
+      id="pending-actions"
+      transform={"translate(#{@dims.dataspace_box_x + @dims.dataspace_box_width - @dims.pending_actions_box_width - @dims.horizontal_padding}, #{@dims.vertical_padding})"}
+    >
+      <text
+        x={@dims.pending_actions_box_width / 2}
+        y={-6}
+        dominant-baseline="middle"
+        text-anchor="middle"
+        fill="#000"
+        font-size="12"
+      >
+        Pending Actions
+      </text>
+      <%= for {{origin, actions}, i} <- Enum.sort_by(@pending_actions, fn {st, _} -> st.time end) |> Enum.with_index() do %>
+        <rect
+          x={0}
+          y={i * @dims.assertions_box_height}
+          width={@dims.pending_actions_box_width}
+          height={max(@dims.action_height, @dims.action_height * length(actions))}
+          fill="none"
+          stroke="black"
+          stroke-width="1"
+        />
+        <text
+          x={-2}
+          y={i * (@dims.assertions_box_height + @dims.vertical_spacing) + @dims.action_height / 2}
+          dominant-baseline="middle"
+          text-anchor="end"
+          fill="#000"
+          font-size="12"
+          font-family="monospace"
+        >
+          <%= origin.space %>
+        </text>
+        <%= for {action, j} <- Enum.with_index(actions) do %>
+          <text
+            dominant-baseline="middle"
+            text-anchor="start"
+            fill="#000"
+            font-size="12"
+            font-family="monospace"
+            x={2}
+            y={
+              i * (@dims.assertions_box_height + @dims.vertical_spacing) + j * @dims.action_height +
+                @dims.action_height / 2
+            }
+          >
+            <%= truncate(render_action(action), 35) %>
+          </text>
+        <% end %>
+      <% end %>
+    </g>
+    """
+  end
+
   # Calculate the height of the SVG based on the number of actors and states
   def svg_height(ds, dims) do
     num_actors = map_size(ds.actors)
@@ -162,5 +227,26 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       num_actors * actor_height + dims.vertical_padding,
       num_states * state_height + dims.vertical_padding
     )
+  end
+
+  def truncate(string, length) do
+    if String.length(string) > length do
+      String.slice(string, 0..(length - 1)) <> "..."
+    else
+      string
+    end
+  end
+
+  def render_action(action) do
+    case action do
+      {:spawn, trie} -> "spawn #{render_trie(trie)}"
+      {:quit} -> "quit"
+      {:message, message} -> "message #{message}"
+      {added, removed} -> "patch +#{render_trie(added)}, -#{render_trie(removed)}"
+    end
+  end
+
+  def render_trie(trie) do
+    "{#{Enum.join(trie, ",")}}"
   end
 end
