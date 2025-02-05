@@ -4,7 +4,7 @@ defmodule TrySyndicateWeb.EditorLive do
 
   alias TrySyndicate.SessionManager
   alias TrySyndicate.ExampleSupport
-  alias TrySyndicateWeb.CheatSheetComponent
+  alias TrySyndicateWeb.{CheatSheetComponent, DataspaceComponent}
 
   require Logger
 
@@ -239,6 +239,8 @@ defmodule TrySyndicateWeb.EditorLive do
           disabled={@current_trace_step == map_size(@trace_steps) - 1}
         />
       </div>
+      <DataspaceComponent.dataspace dataspace={@trace_steps[@current_trace_step]} />
+
       <pre>
         <%= inspect(@trace_steps[@current_trace_step], pretty: true) %>
       </pre>
