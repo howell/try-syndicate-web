@@ -77,6 +77,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   end
 
   attr :dataspace, Dataspace, required: true
+  attr :layout_actions, :list, required: true
+  attr :actions_height, :integer, required: true
   attr :svg_height, :integer, required: true
   attr :dims, :map, required: true
 
@@ -101,7 +103,11 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       >
         Dataspace
       </text>
-      <.pending_actions_box dims={@dims} pending_actions={@layout_actions} actions_height={@actions_height} />
+      <.pending_actions_box
+        dims={@dims}
+        pending_actions={@layout_actions}
+        actions_height={@actions_height}
+      />
     </g>
     """
   end
@@ -188,12 +194,9 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     """
   end
 
-  def actor_y(n, dims) do
-    dims.vertical_padding + n * (dims.actor_box_height + dims.vertical_spacing)
-  end
-
   attr :dims, :map, required: true
   attr :pending_actions, :list, required: true
+  attr :actions_height, :integer, required: true
 
   def pending_actions_box(assigns) do
     ~H"""
@@ -249,10 +252,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         stroke-width="1"
       />
       <foreignObject width={@dims.pending_actions_box_width} height={@layout.height}>
-        <div
-          xmlns="http://www.w3.org/1999/xhtml"
-          class="text-left text-xs overflow-auto p-2"
-        >
+        <div xmlns="http://www.w3.org/1999/xhtml" class="text-left text-xs overflow-auto p-2">
           <ul class="gap-y-2 divide-y divide-slate-300 divide-dashed">
             <%= for action <- @actions do %>
               <li><code><pre><%= render_action(action) %></pre></code></li>
@@ -266,11 +266,9 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   # Calculate the height of the SVG based on the number of actors and states
   def svg_height(ds, dims, actor_height, actions_height) do
-
     max(
       actor_height + 2 * dims.vertical_padding,
       actions_height + 2 * dims.vertical_padding
-
     )
   end
 
@@ -366,7 +364,11 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
     Enum.map_reduce(pending_actions, vertical_padding, fn {st, actions}, y_offset ->
       action_lines = Enum.sum(Enum.map(actions, &lines_for_action/1))
-      height = action_height * max(1, action_lines) + 2 * action_padding + action_padding * length(actions)
+
+      height =
+        action_height * max(1, action_lines) + 2 * action_padding +
+          action_padding * length(actions)
+
       layout = %{y: y_offset, height: height}
 
       {{st, actions, layout}, y_offset + height}
