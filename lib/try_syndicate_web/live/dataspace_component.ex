@@ -3,19 +3,23 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   alias TrySyndicate.Syndicate.{Dataspace, Actor, Core, SpaceTime}
 
   def dims() do
+    dataspace_width = 1000
+    assertion_action_width = dataspace_width * 2 / 5
+
     %{
       actor_box_width: 150,
       actor_box_height: 50,
       actor_x_offset: 100,
-      vertical_spacing: 20,
+      vertical_spacing: 30,
       vertical_padding: 40,
       horizontal_padding: 40,
       assertions_box_x_offset: 10,
-      assertions_box_width: 100,
-      assertions_box_height: 40,
-      dataspace_box_width: 800,
+      assertions_box_width: assertion_action_width,
+      assertions_box_height: 20,
+      assertions_box_padding: 4,
+      dataspace_box_width: dataspace_width,
       dataspace_box_x: 300,
-      pending_actions_box_width: 300,
+      pending_actions_box_width: assertion_action_width,
       action_height: 20
     }
   end
@@ -24,28 +28,40 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   def dataspace(assigns) do
     the_dims = dims()
+    {layout_actors, actor_height} = sort_and_layout_actors(assigns.dataspace.actors, the_dims)
 
     assigns
-    |> assign(:svg_height, svg_height(assigns.dataspace, the_dims))
+    |> assign(:svg_height, svg_height(assigns.dataspace, the_dims, actor_height))
     |> assign(:dims, the_dims)
+    |> assign(:actor_height, actor_height)
+    |> assign(:layout_actors, layout_actors)
     |> render_dataspace_with_dims()
   end
 
   attr :svg_height, :integer, required: true
   attr :dataspace, Dataspace, required: true
+  attr :layout_actors, :list, required: true
+  attr :actor_height, :integer, required: true
   attr :dims, :map, required: true
 
   def render_dataspace_with_dims(assigns) do
     ~H"""
     <svg id="ds_diagram" width="100%" height={@svg_height}>
       <g id="actors">
-        <%= for {{id, actor}, i} <- Enum.with_index(@dataspace.actors) do %>
-          <.actor_box n={i} id={id} actor={actor} dims={@dims} />
+        <%= for {id, actor, layout} <- @layout_actors do %>
+          <.actor_box id={id} actor={actor} layout={layout} dims={@dims} />
         <% end %>
       </g>
       <.dataspace_box dataspace={@dataspace} dims={@dims} svg_height={@svg_height} />
     </svg>
     """
+  end
+
+  @spec sort_and_layout_actors(%{Dataspace.actor_id() => Actor.t()}, map()) ::
+          {[{Dataspace.actor_id(), Actor.t(), actor_layout()}], integer()}
+  def sort_and_layout_actors(actors, dims) do
+    {actors, height} = compute_actor_layout(actors, dims)
+    {Enum.sort_by(actors, fn {_, _, layout} -> layout.c_y end), height}
   end
 
   attr :dataspace, Dataspace, required: true
@@ -78,8 +94,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   end
 
   attr :id, :string, required: true
-  attr :n, :integer, required: true
   attr :actor, Actor, required: true
+  attr :layout, :map, required: true
   attr :dims, :map, required: true
 
   def actor_box(assigns) do
@@ -87,7 +103,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     <g id={"actor_#{@id}"}>
       <text
         x={@dims.actor_x_offset + @dims.actor_box_width / 2}
-        y={actor_y(@n, @dims) - 5}
+        y={@layout.c_y - 5}
         text-anchor="middle"
         font-size="12"
         fill="gray"
@@ -96,7 +112,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       </text>
       <rect
         x={@dims.actor_x_offset}
-        y={actor_y(@n, @dims)}
+        y={@layout.c_y}
         width={@dims.actor_box_width}
         height={@dims.actor_box_height}
         fill="#eef"
@@ -107,7 +123,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       />
       <text
         x={@dims.actor_x_offset + @dims.actor_box_width / 2}
-        y={actor_y(@n, @dims) + @dims.actor_box_height / 2}
+        y={@layout.c_y + @dims.actor_box_height / 2}
         dominant-baseline="middle"
         text-anchor="middle"
         fill="#000"
@@ -117,35 +133,44 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       </text>
       <line
         x1={@dims.actor_x_offset + @dims.actor_box_width}
-        y1={actor_y(@n, @dims) + @dims.actor_box_height / 2}
+        y1={@layout.c_y + @dims.actor_box_height / 2}
         x2={@dims.dataspace_box_x + @dims.assertions_box_x_offset}
-        y2={actor_y(@n, @dims) + @dims.actor_box_height / 2}
+        y2={@layout.s_y + @layout.assertions_box_height / 2}
         stroke="black"
       />
-      <.assertions_box n={@n} assertions={@actor.assertions} dims={@dims} />
+      <.assertions_box assertions={@actor.assertions} layout={@layout} dims={@dims} />
     </g>
     """
   end
 
-  attr :n, :integer, required: true
   attr :dims, :map, required: true
   attr :assertions, :any, required: true
+  attr :layout, :map, required: true
 
   def assertions_box(assigns) do
     ~H"""
-    <g
-      id={"assertions_#{@n}"}
-      transform={"translate(#{@dims.dataspace_box_x + @dims.assertions_box_x_offset}, #{actor_y(@n, @dims) + @dims.actor_box_height / 2 - @dims.assertions_box_height / 2})"}
-    >
+    <g transform={"translate(#{@dims.dataspace_box_x + @dims.assertions_box_x_offset}, #{@layout.s_y})"}>
       <rect
         width={@dims.assertions_box_width}
-        height={@dims.assertions_box_height}
+        height={@layout.assertions_box_height}
         fill="white"
         stroke="#333"
         rx="3"
         ry="3"
         style="cursor:pointer;"
       />
+      <foreignObject width={@dims.assertions_box_width} height={@layout.assertions_box_height}>
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          class="width-full height-full text-left text-xs overflow-auto p-2"
+        >
+          <ul>
+            <%= for assertion <- @assertions do %>
+              <li><code><pre><%= assertion %></pre></code></li>
+            <% end %>
+          </ul>
+        </div>
+      </foreignObject>
     </g>
     """
   end
@@ -194,7 +219,19 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         >
           <%= origin.space %>
         </text>
-        <%= for {action, j} <- Enum.with_index(actions) do %>
+        <foreignObject width={@dims.pending_actions_box_width} height={@dims.assertions_box_height}>
+          <div
+            xmlns="http://www.w3.org/1999/xhtml"
+            class="width-full height-full text-center text-xs overflow-auto"
+          >
+            <ul>
+              <%= for {action, j} <- Enum.with_index(actions) do %>
+                <li><code><pre><%= render_action(action) %></pre></code></li>
+              <% end %>
+            </ul>
+          </div>
+        </foreignObject>
+        <%!-- <%= for {action, j} <- Enum.with_index(actions) do %>
           <text
             dominant-baseline="middle"
             text-anchor="start"
@@ -209,22 +246,20 @@ defmodule TrySyndicateWeb.DataspaceComponent do
           >
             <%= truncate(render_action(action), 35) %>
           </text>
-        <% end %>
+        <% end %> --%>
       <% end %>
     </g>
     """
   end
 
   # Calculate the height of the SVG based on the number of actors and states
-  def svg_height(ds, dims) do
-    num_actors = map_size(ds.actors)
+  def svg_height(ds, dims, actor_height) do
     num_states = length(ds.pending_actions)
 
-    actor_height = dims.actor_box_height + dims.vertical_spacing
     state_height = dims.assertions_box_height + dims.vertical_spacing
 
     max(
-      num_actors * actor_height + dims.vertical_padding,
+      actor_height + dims.vertical_padding,
       num_states * state_height + dims.vertical_padding
     )
   end
@@ -248,5 +283,40 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   def render_trie(trie) do
     "{#{Enum.join(trie, ",")}}"
+  end
+
+  @type actor_layout() :: %{
+          c_y: integer(),
+          s_y: integer(),
+          assertions_box_height: integer(),
+          block_height: integer()
+        }
+
+  @spec compute_actor_layout(%{Dataspace.actor_id() => Actor.t()}, map()) ::
+          {[{Dataspace.actor_id(), Actor.t(), actor_layout()}], integer()}
+  def compute_actor_layout(actors, dims) do
+    actor_box_height = dims[:actor_box_height]
+    state_item_height = dims[:assertions_box_height]
+    assertions_box_padding = dims[:assertions_box_padding]
+    vertical_spacing = dims[:vertical_spacing]
+    vertical_padding = dims[:vertical_padding]
+
+    Enum.map_reduce(actors, vertical_padding, fn {id, actor}, y_offset ->
+      assertions_box_height = assertions_box_padding * 2 + max(length(actor.assertions), 1) * state_item_height
+      actor_height = actor_box_height
+
+      block_height = max(actor_box_height, assertions_box_height)
+      c_y = y_offset + (block_height - actor_height) / 2
+      s_y = y_offset + (block_height - assertions_box_height) / 2
+
+      layout = %{
+        c_y: c_y,
+        s_y: s_y,
+        assertions_box_height: assertions_box_height,
+        block_height: block_height
+      }
+
+      {{id, actor, layout}, y_offset + block_height + vertical_spacing}
+    end)
   end
 end
