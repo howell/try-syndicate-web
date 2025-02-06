@@ -55,7 +55,13 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     <svg id="ds_diagram" width="100%" height={@svg_height}>
       <g id="actors">
         <%= for {id, actor, layout} <- @layout_actors do %>
-          <.actor_box id={id} actor={actor} layout={layout} dims={@dims} />
+          <.actor_box
+            id={id}
+            actor={actor}
+            layout={layout}
+            dims={@dims}
+            active={@dataspace.active_actor}
+          />
         <% end %>
       </g>
       <.dataspace_box
@@ -114,6 +120,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   attr :id, :string, required: true
   attr :actor, Actor, required: true
+  attr :active, :any, required: true
   attr :layout, :map, required: true
   attr :dims, :map, required: true
 
@@ -134,7 +141,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         y={@layout.c_y}
         width={@dims.actor_box_width}
         height={@dims.actor_box_height}
-        fill="#eef"
+        fill={if is_active?(@id, @active), do: "#50d979", else: "#eef"}
+        opacity=".75"
         stroke="#333"
         rx="5"
         ry="5"
@@ -160,6 +168,10 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       <.assertions_box assertions={@actor.assertions} layout={@layout} dims={@dims} />
     </g>
     """
+  end
+
+  def is_active?(actor_id, active_actor) do
+    active_actor != :none && elem(active_actor, 0) == actor_id
   end
 
   attr :dims, :map, required: true
