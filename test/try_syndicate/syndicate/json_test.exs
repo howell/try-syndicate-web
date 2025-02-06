@@ -22,7 +22,8 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 10564}
           }
         ],
-        "recent_messages" => []
+        "recent_messages" => [],
+        "last_op" => false
       }
 
       assert {:ok, dataspace} = Dataspace.from_json(json)
@@ -30,6 +31,7 @@ defmodule TrySyndicate.Syndicate.JsonTest do
       assert dataspace.actors == %{}
       assert length(dataspace.pending_actions) == 1
       assert dataspace.recent_messages == []
+      assert dataspace.last_op == false
     end
 
     test "parses JSON with actors and pending actions" do
@@ -78,7 +80,8 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 10564}
           }
         ],
-        "recent_messages" => []
+        "recent_messages" => [],
+        "last_op" => "action-interpreted"
       }
 
       assert {:ok, dataspace} = Dataspace.from_json(json)
@@ -86,6 +89,7 @@ defmodule TrySyndicate.Syndicate.JsonTest do
       assert map_size(dataspace.actors) == 1
       assert length(dataspace.pending_actions) == 2
       assert dataspace.recent_messages == []
+      assert dataspace.last_op == "action-interpreted"
     end
 
     test "parses JSON with actors and pending actions (without data key)" do
@@ -134,7 +138,8 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 10564}
           }
         ],
-        "recent_messages" => []
+        "recent_messages" => [],
+        "last_op" => "spawn-actor"
       }
 
       assert {:ok, dataspace} = Dataspace.from_json(json)
@@ -142,6 +147,7 @@ defmodule TrySyndicate.Syndicate.JsonTest do
       assert map_size(dataspace.actors) == 1
       assert length(dataspace.pending_actions) == 2
       assert dataspace.recent_messages == []
+      assert dataspace.last_op == "spawn-actor"
     end
   end
 
@@ -160,13 +166,15 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 100}
           }
         ],
-        "recent_messages" => []
+        "recent_messages" => [],
+        "last_op" => false
       }
       assert {:ok, dataspace} = Dataspace.from_json(json)
       assert dataspace.active_actor == :none
       assert dataspace.actors == %{}
       assert length(dataspace.pending_actions) == 1
       assert dataspace.recent_messages == []
+      assert dataspace.last_op == false
     end
   end
 

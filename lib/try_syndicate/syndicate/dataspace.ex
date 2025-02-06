@@ -10,14 +10,16 @@ defmodule TrySyndicate.Syndicate.Dataspace do
           actors: %{actor_id() => Actor.t()},
           active_actor: :none | {actor_id(), Core.event()},
           recent_messages: [String.t()],
-          pending_actions: [{SpaceTime.t(), [Core.action()]}]
+          pending_actions: [{SpaceTime.t(), [Core.action()]}],
+          last_op: false | String.t()
         }
 
   @fields [
     :actors,
     :active_actor,
     :recent_messages,
-    :pending_actions
+    :pending_actions,
+    :last_op
   ]
 
   @enforce_keys @fields
@@ -29,13 +31,15 @@ defmodule TrySyndicate.Syndicate.Dataspace do
       with {:ok, actors} <- parse_actors(json["actors"]),
            {:ok, active_actor} <- parse_active_actor(json["active_actor"]),
            {:ok, recent_messages} <- parse_recent_messages(json["recent_messages"]),
-           {:ok, pending_actions} <- parse_pending_acts(json["pending_actions"]) do
+           {:ok, pending_actions} <- parse_pending_acts(json["pending_actions"]),
+           {:ok, last_op} <- parse_last_op(json["last_op"]) do
         {:ok,
          %__MODULE__{
            actors: actors,
            active_actor: active_actor,
            recent_messages: recent_messages,
-           pending_actions: pending_actions
+           pending_actions: pending_actions,
+           last_op: last_op
          }}
       else
         {:error, reason} -> {:error, reason}
@@ -81,6 +85,15 @@ defmodule TrySyndicate.Syndicate.Dataspace do
 
       true ->
         {:error, "Invalid active actor JSON"}
+    end
+  end
+
+  @spec parse_last_op(term()) :: {:ok, nil | atom()} | {:error, String.t()}
+  def parse_last_op(json) do
+    if json == false or is_binary(json) do
+      {:ok, json}
+    else
+      {:error, "Invalid last_op JSON: expected a string or false"}
     end
   end
 
