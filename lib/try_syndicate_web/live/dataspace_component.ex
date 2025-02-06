@@ -94,8 +94,9 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       />
       <text
         x={@dims.dataspace_box_x + @dims.dataspace_box_width / 2}
-        y="20"
+        y="24"
         text-anchor="middle"
+        font-size="24"
         font-weight="bold"
       >
         Dataspace
@@ -202,11 +203,12 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     >
       <text
         x={@dims.pending_actions_box_width / 2}
-        y={@dims.vertical_padding / 2}
+        y={@dims.vertical_padding / 2 + 4}
         dominant-baseline="middle"
         text-anchor="middle"
         fill="#000"
-        font-size="12"
+        font-size="14"
+        font-weight="bold"
       >
         Pending Actions
       </text>
