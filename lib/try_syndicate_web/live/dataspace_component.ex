@@ -131,6 +131,16 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         pending_actions={@layout_actions}
         actions_height={@actions_height}
       />
+      <text
+        :if={@dataspace.last_op}
+        x={@dims.dataspace_box_x + @dims.dataspace_box_width / 2}
+        y={@svg_height - 16}
+        text-anchor="middle"
+        font-size="16"
+        font-family="monospace"
+      >
+        Last Operation: <%= @dataspace.last_op %>
+      </text>
     </g>
     """
   end
