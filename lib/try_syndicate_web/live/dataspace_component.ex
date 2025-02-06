@@ -37,7 +37,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       sort_and_layout_actors(assigns.dataspace.actors, assigns.dataspace.active_actor, the_dims)
 
     {layout_actions, actions_height} =
-      compute_pending_actions_layout(assigns.dataspace.pending_actions, the_dims)
+      sort_and_layout_actions(assigns.dataspace.pending_actions, the_dims)
 
     assigns
     |> assign(:svg_height, svg_height(the_dims, actor_height, actions_height))
@@ -271,7 +271,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       >
         Pending Actions
       </text>
-      <%= for {origin, actions, layout} <- Enum.sort_by(@pending_actions, fn {st, _, _} -> st.time end) do %>
+      <%= for {origin, actions, layout} <- @pending_actions do %>
         <.pending_actions_item origin={origin} actions={actions} layout={layout} dims={@dims} />
       <% end %>
     </g>
@@ -441,14 +441,16 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   @type pending_actions_layout() :: %{y: integer(), height: integer()}
 
-  @spec compute_pending_actions_layout([{SpaceTime.t(), [Core.action()]}], map()) ::
+  @spec sort_and_layout_actions([{SpaceTime.t(), [Core.action()]}], map()) ::
           {[{SpaceTime.t(), [Core.action()], pending_actions_layout()}], integer()}
-  def compute_pending_actions_layout(pending_actions, dims) do
+  def sort_and_layout_actions(pending_actions, dims) do
     action_height = dims[:action_height]
     action_padding = dims[:action_padding]
     vertical_padding = dims[:vertical_padding]
 
-    Enum.map_reduce(pending_actions, vertical_padding, fn {st, actions}, y_offset ->
+    pending_actions
+    |> Enum.sort_by(fn {st, _} -> st.time end)
+    |> Enum.map_reduce(vertical_padding, fn {st, actions}, y_offset ->
       height = height_for_actions(actions, action_height, action_padding)
 
       layout = %{y: y_offset, height: height}
