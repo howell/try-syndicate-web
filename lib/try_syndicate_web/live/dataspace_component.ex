@@ -339,7 +339,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         stroke-width="1"
       />
       <foreignObject width={@width} height={@height}>
-        <div xmlns="http://www.w3.org/1999/xhtml" class="text-left text-xs overflow-auto p-2">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="text-left text-xs truncate overflow-auto p-2">
           <ul class="gap-y-2 divide-y divide-slate-300 divide-dashed">
             <%= for action <- @actions do %>
               <li><code><pre><%= render_action(action) %></pre></code></li>
