@@ -380,6 +380,9 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
       {added, removed} ->
         "patch #{render_trie(added, "+", "\n      ")}\n#{render_trie(removed, "-", "\n      ")}"
+
+      :boot ->
+        "boot"
     end
   end
 
@@ -392,7 +395,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   def lines_for_action(act) do
     case act do
       {:spawn, trie} -> max(1, trie_size(trie))
-      {:quit} -> 1
+      :quit -> 1
+      :boot -> 1
       {:message, _message} -> 1
       {added, removed} -> max(1, trie_size(added) + trie_size(removed))
     end

@@ -77,7 +77,7 @@ defmodule TrySyndicate.Syndicate.Dataspace do
       json == false ->
         {:ok, :none}
 
-      is_map(json) and is_binary(json["actor"]) and json["event"] ->
+      is_map(json) and is_binary(json["actor"]) and Map.has_key?(json, "event") ->
         case Core.json_to_event(json["event"]) do
           {:ok, event} -> {:ok, {json["actor"], event}}
           {:error, reason} -> {:error, "Invalid active actor event: " <> reason}

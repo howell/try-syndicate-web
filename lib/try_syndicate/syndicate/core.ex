@@ -3,8 +3,8 @@ defmodule TrySyndicate.Syndicate.Core do
   @type patch() :: {trie(), trie()}
   @type spawn() :: {:spawn, trie()}
   @type message() :: {:message, term()}
-  @type action() :: patch() | :quit | spawn() | message()
-  @type event() :: patch() | message() | false
+  @type action() :: event() | :quit | spawn()
+  @type event() :: patch() | message() | false | :boot
 
   @spec json_to_trie(term()) :: {:ok, trie()} | {:error, String.t()}
   def json_to_trie(json) do
@@ -17,7 +17,7 @@ defmodule TrySyndicate.Syndicate.Core do
 
   @spec json_to_patch(term()) :: {:ok, patch()} | {:error, String.t()}
   def json_to_patch(json) do
-    if is_map(json) and json["added"] && json["removed"] do
+    if (is_map(json) and json["added"]) && json["removed"] do
       with {:ok, added} <- json_to_trie(json["added"]),
            {:ok, removed} <- json_to_trie(json["removed"]) do
         {:ok, {added, removed}}
@@ -68,13 +68,19 @@ defmodule TrySyndicate.Syndicate.Core do
   @spec json_to_action(term()) :: {:ok, action()} | {:error, String.t()}
   def json_to_action(json) do
     case json_to_quit(json) do
-      {:ok, result} -> {:ok, result}
+      {:ok, result} ->
+        {:ok, result}
+
       {:error, _} ->
         case json_to_message(json) do
-          {:ok, result} -> {:ok, result}
+          {:ok, result} ->
+            {:ok, result}
+
           {:error, _} ->
             case json_to_spawn(json) do
-              {:ok, result} -> {:ok, result}
+              {:ok, result} ->
+                {:ok, result}
+
               {:error, _} ->
                 case json_to_patch(json) do
                   {:ok, result} -> {:ok, result}
@@ -87,17 +93,24 @@ defmodule TrySyndicate.Syndicate.Core do
 
   @spec json_to_event(term()) :: {:ok, event()} | {:error, String.t()}
   def json_to_event(json) do
-    if json == false do
-      {:ok, false}
-    else
-      case json_to_message(json) do
-        {:ok, result} -> {:ok, result}
-        {:error, _} ->
-          case json_to_patch(json) do
-            {:ok, result} -> {:ok, result}
-            {:error, _} -> {:error, "Invalid event"}
-          end
-      end
+    cond do
+      json == false ->
+        {:ok, false}
+
+      json == "boot" ->
+        {:ok, :boot}
+
+      true ->
+        case json_to_message(json) do
+          {:ok, result} ->
+            {:ok, result}
+
+          {:error, _} ->
+            case json_to_patch(json) do
+              {:ok, result} -> {:ok, result}
+              {:error, _} -> {:error, "Invalid event"}
+            end
+        end
     end
   end
 end
