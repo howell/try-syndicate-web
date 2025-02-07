@@ -201,9 +201,9 @@ defmodule TrySyndicate.Syndicate.JsonTest do
     end
 
     test "parses valid active actor JSON" do
-      event_json = %{"actor" => "1", "event" => ["message", "ok"]}
+      event_json = %{"actor" => "1", "event" => ["message", "ok"], "actions" => false}
       assert {:ok, active} = Dataspace.parse_active_actor(event_json)
-      assert active == {"1", {:message, "ok"}}
+      assert active == {"1", {:message, "ok"}, false}
     end
 
     test "returns error for incomplete active actor JSON" do

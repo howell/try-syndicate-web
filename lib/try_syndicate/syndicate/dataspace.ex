@@ -8,7 +8,7 @@ defmodule TrySyndicate.Syndicate.Dataspace do
 
   @type t() :: %__MODULE__{
           actors: %{actor_id() => Actor.t()},
-          active_actor: :none | {actor_id(), Core.event()},
+          active_actor: :none | {actor_id(), Core.event(), false | [Core.action()]},
           recent_messages: [String.t()],
           pending_actions: [{SpaceTime.t(), [Core.action()]}],
           last_op: false | String.t()
@@ -77,10 +77,16 @@ defmodule TrySyndicate.Syndicate.Dataspace do
       json == false ->
         {:ok, :none}
 
-      is_map(json) and is_binary(json["actor"]) and Map.has_key?(json, "event") ->
-        case Core.json_to_event(json["event"]) do
-          {:ok, event} -> {:ok, {json["actor"], event}}
-          {:error, reason} -> {:error, "Invalid active actor event: " <> reason}
+      is_map(json) and is_binary(json["actor"]) and Map.has_key?(json, "event") and
+          Map.has_key?(json, "actions") ->
+        with {:ok, event} <- Core.json_to_event(json["event"]),
+             {:ok, actions} <-
+               parse_optional(json["actions"], fn json ->
+                 parse_list(json, &Core.json_to_action/1)
+               end) do
+          {:ok, {json["actor"], event, actions}}
+        else
+          {:error, reason} -> {:error, "Invalid active actor: " <> reason}
         end
 
       true ->
@@ -117,6 +123,14 @@ defmodule TrySyndicate.Syndicate.Dataspace do
           {:ok, items} -> {:ok, Enum.reverse(items)}
           error -> error
         end).()
+  end
+
+  def parse_optional(json, parser) do
+    if json do
+      parser.(json)
+    else
+      {:ok, json}
+    end
   end
 
   @spec parse_pending_acts(term()) ::
