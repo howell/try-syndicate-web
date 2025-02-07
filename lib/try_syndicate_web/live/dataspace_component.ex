@@ -247,7 +247,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       <foreignObject width={@dims.assertions_box_width} height={@layout.assertions_box_height}>
         <div
           xmlns="http://www.w3.org/1999/xhtml"
-          class="width-full height-full text-left text-xs overflow-auto p-2"
+          class="width-full height-full text-left truncate text-xs overflow-auto p-2"
         >
           <ul>
             <%= for assertion <- @assertions do %>
