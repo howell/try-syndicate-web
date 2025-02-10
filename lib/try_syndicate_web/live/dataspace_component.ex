@@ -27,6 +27,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   def event_green(), do: "#50d979"
   def event_opacity(), do: "0.75"
+  def action_red(), do: "#ff6161"
 
   attr :dataspace, Dataspace, required: true
 
@@ -68,6 +69,16 @@ defmodule TrySyndicateWeb.DataspaceComponent do
           orient="0"
         >
           <polygon points="0 0, 3 6, 6 0" fill={event_green()} />
+        </marker>
+        <marker
+          id="arrowhead-red-right"
+          markerWidth="6"
+          markerHeight="6"
+          refX="3"
+          refY="0"
+          orient="-90"
+        >
+          <polygon points="0 0, 3 6, 6 0" fill={action_red()} />
         </marker>
       </defs>
       <g id="actors">
@@ -193,10 +204,30 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         stroke="black"
       />
       <.assertions_box assertions={@actor.assertions} layout={@layout} dims={@dims} />
+      <.event_dispatch
+        :if={is_receiving_event?(@id, @active)}
+        id={@id}
+        dims={@dims}
+        layout={@layout}
+        active={@active}
+      />
+      <.produced_actions
+        :if={is_producing_actions?(@id, @active)}
+        id={@id}
+        dims={@dims}
+        layout={@layout}
+        active={@active}
+      />
+    </g>
+    """
+  end
+
+  def event_dispatch(assigns) do
+    ~H"""
+    <g>
       <.boxed_actions
-        :if={is_active?(@id, @active)}
         x={@dims.dataspace_box_x + @dims.assertions_box_x_offset}
-        y={@layout.c_y - @layout.event_height - @dims.vertical_padding}
+        y={@layout.event_y}
         actions={[elem(@active, 1)]}
         width={@dims.assertions_box_width}
         height={@layout.event_height}
@@ -204,7 +235,6 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         fill={event_green()}
       />
       <polyline
-        :if={is_active?(@id, @active)}
         points={event_to_actor_points(@dims, @layout)}
         stroke={event_green()}
         fill="none"
@@ -215,17 +245,57 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     """
   end
 
+  def produced_actions(assigns) do
+    ~H"""
+    <g>
+      <.boxed_actions
+        x={@dims.dataspace_box_x + @dims.assertions_box_x_offset}
+        y={@layout.actions_y}
+        actions={elem(@active, 2)}
+        width={@dims.assertions_box_width}
+        height={@layout.actions_height}
+        opacity={event_opacity()}
+        fill={action_red()}
+      />
+      <polyline
+        points={actor_to_actions_points(@dims, @layout)}
+        stroke={action_red()}
+        fill="none"
+        stroke-width="2"
+        marker-end="url(#arrowhead-red-right)"
+      />
+    </g>
+    """
+  end
+
   def is_active?(actor_id, active_actor) do
     active_actor != :none && elem(active_actor, 0) == actor_id
   end
 
-  defp event_to_actor_points(dims, layout) do
+  def is_receiving_event?(actor_id, active_actor) do
+    is_active?(actor_id, active_actor) && elem(active_actor, 1) != :boot
+  end
+
+  def is_producing_actions?(actor_id, active_actor) do
+    is_active?(actor_id, active_actor) && elem(active_actor, 2)
+  end
+
+  def event_to_actor_points(dims, layout) do
     event_box_x = dims.dataspace_box_x + dims.assertions_box_x_offset
-    event_box_mid_y = layout.c_y - layout.event_height / 2 - dims.vertical_padding
+    event_box_mid_y = layout.event_y + layout.event_height / 2
     actor_mid_x = dims.actor_x_offset + dims.actor_box_width / 2
     before_actor_id_y = layout.c_y - 28
 
     "#{event_box_x},#{event_box_mid_y} #{actor_mid_x},#{event_box_mid_y} #{actor_mid_x},#{before_actor_id_y}"
+  end
+
+  defp actor_to_actions_points(dims, layout) do
+    actor_box_mid_x = dims.actor_x_offset + dims.actor_box_width / 2
+    actor_box_end_y = layout.c_y + dims.actor_box_height
+    actions_box_x = dims.dataspace_box_x + dims.assertions_box_x_offset - 10
+    actions_box_mid_y = layout.actions_y + layout.actions_height / 2
+
+    "#{actor_box_mid_x},#{actor_box_end_y} #{actor_box_mid_x},#{actions_box_mid_y} #{actions_box_x},#{actions_box_mid_y}"
   end
 
   attr :dims, :map, required: true
@@ -411,7 +481,11 @@ defmodule TrySyndicateWeb.DataspaceComponent do
           c_y: integer(),
           s_y: integer(),
           assertions_box_height: integer(),
-          block_height: integer()
+          block_height: integer(),
+          event_y: integer(),
+          event_height: integer(),
+          actions_y: integer(),
+          actions_height: integer()
         }
 
   @spec compute_actor_layout(%{Dataspace.actor_id() => Actor.t()}, term(), map()) ::
@@ -423,33 +497,47 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     vertical_spacing = dims[:vertical_spacing]
     vertical_padding = dims[:vertical_padding]
 
-    Enum.map_reduce(actors, vertical_padding, fn {id, actor}, y_offset ->
-      assertions_box_height =
-        assertions_box_padding * 2 + max(length(actor.assertions), 1) * state_item_height
+    Enum.map_reduce(actors, vertical_padding, fn
+      {id, actor}, y_offset ->
+        assertions_box_height =
+          assertions_box_padding * 2 + max(length(actor.assertions), 1) * state_item_height
 
-      event_height =
-        if is_active?(id, active_actor),
-          do:
-            height_for_actions([elem(active_actor, 1)], dims.action_height, dims.action_padding),
-          else: 0
+        {event_height, actions_height} =
+          case(active_actor) do
+            {^id, evt, acts} ->
+              {height_for_actions([evt], dims.action_height, dims.action_padding),
+               if(acts,
+                 do: height_for_actions(acts, dims.action_height, dims.action_padding),
+                 else: 0
+               )}
 
-      event_space = if event_height > 0, do: event_height + vertical_padding, else: 0
+            _ ->
+              {0, 0}
+          end
 
-      actor_height = actor_box_height
+        event_space = if event_height > 0, do: event_height + vertical_padding, else: 0
+        action_space = if actions_height > 0, do: actions_height + vertical_padding, else: 0
 
-      block_height = max(actor_box_height, assertions_box_height + event_space)
-      c_y = y_offset + event_height + (block_height - actor_height) / 2
-      s_y = y_offset + event_height + (block_height - assertions_box_height) / 2
+        actor_height = actor_box_height
 
-      layout = %{
-        c_y: c_y,
-        s_y: s_y,
-        assertions_box_height: assertions_box_height,
-        event_height: event_height,
-        block_height: block_height
-      }
+        block_height = max(actor_box_height, assertions_box_height + event_space + action_space)
+        c_y = y_offset + event_height + (block_height - actor_height) / 2
+        s_y = y_offset + event_height + (block_height - assertions_box_height) / 2
+        event_y = c_y - event_height - vertical_padding
+        actions_y = c_y + (actor_box_height / 2) + max(actor_box_height, assertions_box_height) / 2 + vertical_padding
 
-      {{id, actor, layout}, y_offset + block_height + vertical_spacing + vertical_padding}
+        layout = %{
+          c_y: c_y,
+          s_y: s_y,
+          assertions_box_height: assertions_box_height,
+          event_y: event_y,
+          event_height: event_height,
+          actions_y: actions_y,
+          actions_height: actions_height,
+          block_height: block_height
+        }
+
+        {{id, actor, layout}, y_offset + block_height + vertical_spacing + vertical_padding}
     end)
   end
 
