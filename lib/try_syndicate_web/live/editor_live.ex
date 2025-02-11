@@ -105,7 +105,7 @@ defmodule TrySyndicateWeb.EditorLive do
     {:noreply, update(socket, :cheatsheet_open, &(!&1))}
   end
 
-  def handle_event("example_selected", %{"selection" => example_name}, socket) do
+  def handle_event("example_selected", %{"value" => example_name}, socket) do
     case ExampleSupport.fetch_example(socket.assigns.current_flavor, example_name) do
       {:ok, content} ->
         Logger.debug("Loaded example: #{example_name}")
@@ -199,21 +199,21 @@ defmodule TrySyndicateWeb.EditorLive do
 
   def example_select(assigns) do
     ~H"""
-    <div class="mb-4">
-      <form class="flex flex-row items-center w-min-content gap-2" phx-change="example_selected">
-        <label for="example-select" class="block font-medium text-gray-700">Examples:</label>
-        <select
-          id="example-select"
-          name="selection"
-          class="mt-1 block w-auto pl-3 pr-10 py-2 text-base
+    <div class="mb-4 flex flex-row items-center w-min-content gap-2">
+      <label for="example-select" class="block font-medium text-gray-700">Examples:</label>
+      <select
+        phx-hook="Formless"
+        data-event="example_selected"
+        id="example-select"
+        name="selection"
+        class="mt-1 block w-auto pl-3 pr-10 py-2 text-base
             border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        >
-          <option value="" selected disabled>Try an Example</option>
-          <%= for example <- Enum.sort(ExampleSupport.available_examples(@flavor)) do %>
-            <option value={example}><%= example %></option>
-          <% end %>
-        </select>
-      </form>
+      >
+        <option value="" selected disabled>Try an Example</option>
+        <%= for example <- Enum.sort(ExampleSupport.available_examples(@flavor)) do %>
+          <option value={example}><%= example %></option>
+        <% end %>
+      </select>
     </div>
     """
   end
@@ -251,6 +251,7 @@ defmodule TrySyndicateWeb.EditorLive do
   def trace_button(assigns) do
     ~H"""
     <button
+      type="button"
       class="rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
       phx-click={@action}
       disabled={@disabled}

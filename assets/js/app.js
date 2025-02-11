@@ -102,6 +102,16 @@ Hooks.KeepAlive = {
   }
 };
 
+Hooks.Formless = {
+  mounted() {
+    this.el.addEventListener('change', event => {
+      const eventName = this.el.dataset.event
+
+      this.pushEvent(eventName, { value: event.target.value })
+    })
+  }
+};
+
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
