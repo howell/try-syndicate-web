@@ -449,7 +449,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         "message #{message}"
 
       {added, removed} ->
-        "patch #{render_trie(added, "+", "\n      ")}\n#{render_trie(removed, "-", "\n      ")}"
+        updates = Enum.join(prefix_all(added, "+") ++ prefix_all(removed, "-"), "\n      ")
+        "patch #{updates}"
 
       :boot ->
         "boot"
@@ -457,8 +458,12 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   end
 
   def render_trie(trie, prefix \\ "", joiner \\ "") do
-    Enum.map(trie, &(prefix <> &1))
+    prefix_all(trie, prefix)
     |> Enum.join(joiner)
+  end
+
+  def prefix_all(l, prefix) do
+    Enum.map(l, &(prefix <> &1))
   end
 
   @spec lines_for_action(Core.action()) :: non_neg_integer()
@@ -524,7 +529,10 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         c_y = y_offset + event_height + (block_height - actor_height) / 2
         s_y = y_offset + event_height + (block_height - assertions_box_height) / 2
         event_y = c_y - event_height - vertical_padding
-        actions_y = c_y + (actor_box_height / 2) + max(actor_box_height, assertions_box_height) / 2 + vertical_padding
+
+        actions_y =
+          c_y + actor_box_height / 2 + max(actor_box_height, assertions_box_height) / 2 +
+            vertical_padding
 
         layout = %{
           c_y: c_y,
