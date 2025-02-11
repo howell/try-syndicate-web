@@ -84,7 +84,7 @@ defmodule TrySyndicate.Syndicate.Core do
               {:error, _} ->
                 case json_to_patch(json) do
                   {:ok, result} -> {:ok, result}
-                  {:error, _} -> {:error, "Invalid action"}
+                  {:error, _} -> {:error, "Invalid action: #{inspect(json)}"}
                 end
             end
         end
@@ -108,7 +108,7 @@ defmodule TrySyndicate.Syndicate.Core do
           {:error, _} ->
             case json_to_patch(json) do
               {:ok, result} -> {:ok, result}
-              {:error, _} -> {:error, "Invalid event"}
+              {:error, _} -> {:error, "Invalid event: #{inspect(json)}"}
             end
         end
     end
