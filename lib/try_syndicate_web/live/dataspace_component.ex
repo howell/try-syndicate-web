@@ -442,15 +442,15 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       {:spawn, trie} ->
         "spawn #{render_trie(trie, "", "\n      ")}"
 
-      {:quit} ->
-        "quit"
-
       {:message, message} ->
         "message #{message}"
 
       {added, removed} ->
         updates = Enum.join(prefix_all(added, "+") ++ prefix_all(removed, "-"), "\n      ")
         "patch #{updates}"
+
+      :quit ->
+        "quit"
 
       :boot ->
         "boot"
