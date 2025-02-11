@@ -240,10 +240,6 @@ defmodule TrySyndicateWeb.EditorLive do
         />
       </div>
       <DataspaceComponent.dataspace dataspace={@trace_steps[@current_trace_step]} />
-
-      <pre>
-        <%= inspect(@trace_steps[@current_trace_step], pretty: true) %>
-      </pre>
     </div>
     """
   end
