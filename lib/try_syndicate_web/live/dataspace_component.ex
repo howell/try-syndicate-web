@@ -13,7 +13,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       vertical_spacing: 30,
       vertical_padding: 40,
       horizontal_padding: 40,
-      assertions_box_x_offset: 10,
+      assertions_box_x_offset: 50,
       assertions_box_width: assertion_action_width,
       assertions_box_height: 20,
       assertions_box_padding: 4,
