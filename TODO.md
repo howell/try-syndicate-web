@@ -5,7 +5,6 @@
 - should avoid printing/sending large inputs and outpus
 
 ## Features
-- visualization of running dataspace
 - visualization of facets in actor
 - support additional flavors of syndicate
   - typed syndicate-classic
@@ -16,3 +15,4 @@
 ## Minor Improvements
 - add a break/kill button for the session
 - add a current memory use indicator
+- add a timeline slider for dataspace trace view
