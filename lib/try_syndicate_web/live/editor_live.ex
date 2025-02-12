@@ -39,8 +39,29 @@ defmodule TrySyndicateWeb.EditorLive do
 
         TrySyndicateWeb.Endpoint.subscribe("session:#{session_id}")
 
-        {:ok, init_assigns(socket, session_id: session_id)}
+        {:ok, init_assigns(socket, init_session_state(session_id))}
     end
+  end
+
+  @type session_state() :: %{
+          session_id: String.t(),
+          program_output: String.t(),
+          program_error: String.t(),
+          stale: boolean(),
+          trace_steps: %{integer() => any()},
+          current_trace_step: integer() | false
+        }
+
+  @spec init_session_state(String.t()) :: session_state()
+  def init_session_state(session_id) do
+    %{
+      session_id: session_id,
+      stale: false,
+      program_output: "",
+      program_error: "",
+      trace_steps: %{},
+      current_trace_step: false
+    }
   end
 
   def init_assigns(socket, assigns \\ []) do
