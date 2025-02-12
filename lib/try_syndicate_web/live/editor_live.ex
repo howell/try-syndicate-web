@@ -269,7 +269,7 @@ defmodule TrySyndicateWeb.EditorLive do
     ~H"""
     <button
       type="button"
-      class="rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4"
+      class={"rounded bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 #{if @disabled, do: "invisible", else: ""}"}
       phx-click={@action}
       disabled={@disabled}
     >
