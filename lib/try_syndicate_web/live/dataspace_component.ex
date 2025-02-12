@@ -42,6 +42,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
     assigns
     |> assign(:svg_height, svg_height(the_dims, actor_height, actions_height))
+    |> assign(:svg_width, svg_width(the_dims))
     |> assign(:dims, the_dims)
     |> assign(:actor_height, actor_height)
     |> assign(:layout_actors, layout_actors)
@@ -51,6 +52,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   end
 
   attr :svg_height, :integer, required: true
+  attr :svg_width, :integer, required: true
   attr :dataspace, Dataspace, required: true
   attr :layout_actors, :list, required: true
   attr :actor_height, :integer, required: true
@@ -58,7 +60,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   def render_dataspace_with_dims(assigns) do
     ~H"""
-    <svg id="ds_diagram" width="100%" height={@svg_height}>
+    <svg id="ds_diagram" width={@svg_width} height={@svg_height}>
       <defs>
         <marker
           id="arrowhead-green-down"
@@ -421,12 +423,15 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     """
   end
 
-  # Calculate the height of the SVG based on the number of actors and states
   def svg_height(dims, actor_height, actions_height) do
     max(
       actor_height + 2 * dims.vertical_padding,
       actions_height + 2 * dims.vertical_padding
     )
+  end
+
+  def svg_width(dims) do
+    2 * dims.dataspace_box_x + dims.dataspace_box_width
   end
 
   def truncate(string, length) do
