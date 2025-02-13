@@ -3,6 +3,7 @@ defmodule TrySyndicateWeb.EditorLive do
   use TrySyndicateWeb, :live_view
 
   alias TrySyndicate.SessionManager
+  alias TrySyndicate.Syndicate.DataspaceTrace
   alias TrySyndicate.ExampleSupport
   alias TrySyndicateWeb.{CheatSheetComponent, DataspaceComponent}
 
@@ -48,9 +49,14 @@ defmodule TrySyndicateWeb.EditorLive do
           program_output: String.t(),
           program_error: String.t(),
           stale: boolean(),
-          trace_steps: %{integer() => any()},
+          trace_steps: DataspaceTrace.t(),
           current_trace_step: integer() | false
         }
+
+  @default_trace_filter %{
+    names: ["repl-supervisor", "drivers/repl", "drivers/timer", "drivers/timestate"],
+    pids: ["()", "(meta)"]
+  }
 
   @spec init_session_state(String.t()) :: session_state()
   def init_session_state(session_id) do
@@ -59,7 +65,7 @@ defmodule TrySyndicateWeb.EditorLive do
       stale: false,
       program_output: "",
       program_error: "",
-      trace_steps: %{},
+      trace_steps: DataspaceTrace.new(@default_trace_filter),
       current_trace_step: false
     }
   end
@@ -74,8 +80,9 @@ defmodule TrySyndicateWeb.EditorLive do
       cheatsheet_open: false,
       current_flavor: :classic,
       editor_prefill: "",
-      trace_steps: %{},
-      current_trace_step: false
+      trace_steps: DataspaceTrace.new(@default_trace_filter),
+      current_trace_step: false,
+      current_trace_filter: @default_trace_filter
     ]
 
     attrs =
@@ -164,7 +171,8 @@ defmodule TrySyndicateWeb.EditorLive do
   end
 
   def handle_event("step_current", _params, socket) do
-    {:noreply, assign(socket, current_trace_step: map_size(socket.assigns.trace_steps) - 1)}
+    {:noreply,
+     assign(socket, current_trace_step: map_size(socket.assigns.trace_steps.filtered) - 1)}
   end
 
   def handle_info(%{event: "update", payload: %{type: update_type, data: update_data}}, socket) do
@@ -189,8 +197,7 @@ defmodule TrySyndicateWeb.EditorLive do
   @spec add_step(map(), [any()]) :: map()
   def add_step(socket, data) do
     update(socket, :trace_steps, fn existing ->
-      Enum.with_index(data, map_size(existing))
-      |> Enum.reduce(existing, fn {step, index}, existing -> Map.put(existing, index, step) end)
+      Enum.reduce(data, existing, fn step, existing -> DataspaceTrace.add_step(existing, step) end)
     end)
     |> update(:current_trace_step, fn curr -> curr || 0 end)
   end
@@ -247,20 +254,21 @@ defmodule TrySyndicateWeb.EditorLive do
         <.trace_button label="First" action="step_first" disabled={@current_trace_step == 0} />
         <.trace_button label="Previous" action="step_prev" disabled={@current_trace_step == 0} />
         <span class="text-lg text-center">
-          <%= @current_trace_step + 1 %> / <%= map_size(@trace_steps) %>
+          <%= @current_trace_step + 1 %> / <%= map_size(@trace_steps.filtered) %>
         </span>
         <.trace_button
           label="Next"
           action="step_next"
-          disabled={@current_trace_step == map_size(@trace_steps) - 1}
+          disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
         />
         <.trace_button
           label="Current"
           action="step_current"
-          disabled={@current_trace_step == map_size(@trace_steps) - 1}
+          disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
         />
       </div>
-      <DataspaceComponent.dataspace dataspace={@trace_steps[@current_trace_step]} />
+      <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+      <pre><%= inspect(elem(@trace_steps.filtered[@current_trace_step], 0), pretty: true) %></pre>
     </div>
     """
   end
