@@ -126,6 +126,7 @@ defmodule TrySyndicateWeb.EditorLive do
 
   def handle_event("start_new_session", _params, socket) do
     {:ok, socket} = begin_session(socket)
+    Logger.debug("Starting new session. Assigns:\n#{inspect(socket.assigns, pretty: true)}")
     {:noreply, socket}
   end
 
