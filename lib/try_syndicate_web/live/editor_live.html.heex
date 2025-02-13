@@ -70,6 +70,11 @@
     <% end %>
   </div>
   <div :if={@current_trace_step}>
-    <.trace_view id="trace_view" trace_steps={@trace_steps} current_trace_step={@current_trace_step} />
+    <.trace_view
+      id="trace_view"
+      trace_steps={@trace_steps}
+      current_trace_step={@current_trace_step}
+      trace_filter_open={@trace_filter_open}
+    />
   </div>
 </div>
