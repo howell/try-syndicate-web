@@ -26,12 +26,15 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   def new(filter \\ %{names: [], pids: []}), do: %{trace: %{}, filter: filter, filtered: %{}}
 
   @spec apply_filter(raw_trace(), filter()) :: t()
-  def apply_filter(%{}, filter), do: %{trace: %{}, filter: filter, filtered: %{}}
+  def apply_filter(trace, filter) when map_size(trace) == 0,
+    do: %{trace: %{}, filter: filter, filtered: %{}}
 
   def apply_filter(trace, filter) do
+    base = %{0 => {filter_ds(trace[0], filter), 0}}
+
     filtered =
-      Enum.reduce(0..(map_size(trace) - 1), %{}, fn {time, dataspace}, filtered ->
-        add_filtered_step(filtered, filter, time, dataspace)
+      Enum.reduce(1..(map_size(trace) - 1), base, fn time, filtered ->
+        add_filtered_step(filtered, filter, time, trace[time])
       end)
 
     %{trace: trace, filter: filter, filtered: filtered}
@@ -43,6 +46,19 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
 
     put_in(state, [:trace, next_time], dataspace)
     |> put_in([:filtered], add_filtered_step(state.filtered, state.filter, next_time, dataspace))
+  end
+
+  @spec update_filter(t(), filter(), non_neg_integer()) :: {t(), non_neg_integer()}
+  def update_filter(state, new_filter, prev_step) do
+    filtered = apply_filter(state.trace, new_filter)
+    prev_raw_idx = elem(state.filtered[prev_step], 1)
+
+    last_filtered =
+      Enum.filter(filtered.filtered, fn {idx, _} -> idx <= prev_raw_idx end)
+      |> Enum.max_by(fn {idx, _} -> idx end)
+      |> elem(0)
+
+    {%{trace: state.trace, filter: new_filter, filtered: filtered.filtered}, last_filtered}
   end
 
   def add_filtered_step(filtered, filter, time, dataspace) do

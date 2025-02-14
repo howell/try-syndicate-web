@@ -180,6 +180,41 @@ defmodule TrySyndicateWeb.EditorLive do
      assign(socket, current_trace_step: map_size(socket.assigns.trace_steps.filtered) - 1)}
   end
 
+  def handle_event(
+        "remove_trace_filter",
+        %{"filter_type" => type, "filter_value" => value},
+        socket
+      ) do
+    {:noreply, apply_filter_update(socket, type, &List.delete(&1, value))}
+  end
+
+  def handle_event("add_trace_filter", %{"filter_type" => type, "filter_value" => value}, socket) do
+    if value != "" do
+      {:noreply, apply_filter_update(socket, type, &Enum.dedup([value | &1]))}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def apply_filter_update(socket, key_name, updater) do
+    key =
+      case key_name do
+        "Name" -> :names
+        "PID" -> :pids
+      end
+
+    updated_filter = Map.update!(socket.assigns.trace_steps.filter, key, updater)
+
+    {next_trace, next_step} =
+      DataspaceTrace.update_filter(
+        socket.assigns.trace_steps,
+        updated_filter,
+        socket.assigns.current_trace_step
+      )
+
+    assign(socket, trace_steps: next_trace, current_trace_step: next_step)
+  end
+
   def handle_info(%{event: "update", payload: %{type: update_type, data: update_data}}, socket) do
     next_sock =
       case update_type do
@@ -305,7 +340,7 @@ defmodule TrySyndicateWeb.EditorLive do
           <i class="fas fa-chevron-down"></i>
         <% end %>
       </button>
-      <div class={"#{if @trace_filter_open, do: "", else: "hidden"} divide-y divide-gray-200"}>
+      <div class={"#{if @trace_filter_open, do: "", else: "hidden"} divide-y divide-gray-200 border rounded"}>
         <span class="text-xs uppercase">
           <.filter_grid_row type_label="Type" value_label="Value" />
         </span>
@@ -355,8 +390,8 @@ defmodule TrySyndicateWeb.EditorLive do
       <div class="grid grid-cols-6 p-2 font-medium">
         <div class="mr-2 justify-start">
           <select id="new-filter-type" name="filter_type" class="w-fit">
-            <option value="name">Name</option>
-            <option value="pid">PID</option>
+            <option value="Name">Name</option>
+            <option value="PID">PID</option>
           </select>
         </div>
         <div class="col-span-4 items-center mx-4">
@@ -368,10 +403,7 @@ defmodule TrySyndicateWeb.EditorLive do
           />
         </div>
         <div>
-          <button
-            type="submit"
-            class="text-green-600 hover:text-green-900 my-2"
-          >
+          <button type="submit" class="text-green-600 hover:text-green-900 my-2">
             Add
           </button>
         </div>
