@@ -29,7 +29,8 @@
 
 (define (spawn-cell name expr)
   (define bindings (set->list (extract-bindings expr)))
-  (spawn (stop-when (message (set-cell name _)))
+  (spawn #:name (format "cell ~a" name)
+         (stop-when (message (set-cell name _)))
          (field [inputs (for/hash [(b bindings)] (values b (void)))])
 
           (assert #:when (andmap non-void? (hash-values (inputs)))
@@ -41,14 +42,17 @@
               (on (asserted (cell b $value))
                   (inputs (hash-set (inputs) b value))))))
 
-(spawn (on (message (set-cell $name $expr))
+(spawn #:name 'cell-factory
+       (on (message (set-cell $name $expr))
            (spawn-cell name expr)))
 
-(spawn (on (asserted (cell $name $value))
+(spawn #:name 'observer
+       (on (asserted (cell $name $value))
            (printf ">>> ~a ~v\n" name value)
            (flush-output)))
 
-(spawn* (sleep 1)
+(spawn* #:name 'test-script
+        (sleep 1)
         (send! (set-cell 'Name "World"))
         (sleep 1)
         (send! (set-cell 'Greeting (format "Hello, ~a!" 'Name)))
