@@ -311,7 +311,6 @@ defmodule TrySyndicateWeb.EditorLive do
       <div class="flex flex-row items-start w-full ml-20">
         <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
       </div>
-      <pre><%= inspect(elem(@trace_steps.filtered[@current_trace_step], 0), pretty: true) %></pre>
     </div>
     """
   end
