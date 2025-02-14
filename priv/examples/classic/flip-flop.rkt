@@ -25,7 +25,7 @@
 (spawn #:name 'periodic-toggle
        (field [next-toggle-time (current-inexact-milliseconds)])
        (define deadline (+ (current-inexact-milliseconds) 10000))
-       (stop-when (later-than deadline))
+       (stop-when (asserted (later-than deadline)))
        (on (asserted (later-than (next-toggle-time)))
            (send! (toggle))
            (next-toggle-time (+ (next-toggle-time) 1000))))
