@@ -307,7 +307,9 @@ defmodule TrySyndicateWeb.EditorLive do
           disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
         />
       </div>
-      <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+      <div class="w-dvw h-auto mx-auto overflow-x-auto">
+        <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+      </div>
       <div class="flex flex-row items-start w-full ml-20">
         <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
       </div>

@@ -5,11 +5,14 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   def dims() do
     dataspace_width = 1000
     assertion_action_width = dataspace_width * 2 / 5
+    actor_x_offset = 10
+    actor_width = 150
+    dataspace_x = actor_x_offset + actor_width + 50
 
     %{
-      actor_box_width: 150,
+      actor_box_width: actor_width,
       actor_box_height: 50,
-      actor_x_offset: 100,
+      actor_x_offset: actor_x_offset,
       vertical_spacing: 30,
       vertical_padding: 40,
       horizontal_padding: 40,
@@ -18,7 +21,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       assertions_box_height: 20,
       assertions_box_padding: 4,
       dataspace_box_width: dataspace_width,
-      dataspace_box_x: 300,
+      dataspace_box_x: dataspace_x,
       pending_actions_box_width: assertion_action_width,
       action_height: 16,
       action_padding: 4
@@ -60,7 +63,13 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
   def render_dataspace_with_dims(assigns) do
     ~H"""
-    <svg id="ds_diagram" width={@svg_width} height={@svg_height}>
+    <svg
+      id="ds_diagram"
+      width={@svg_width}
+      height={@svg_height + 40}
+      viewBox={"0 0 #{@svg_width} #{@svg_height}"}
+      preserveAspectRatio="xMinYMin meet"
+    >
       <defs>
         <marker
           id="arrowhead-green-down"
@@ -123,7 +132,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     <g id="dataspace-state">
       <rect
         x={@dims.dataspace_box_x}
-        y="0"
+        y="1"
         width={@dims.dataspace_box_width}
         height={@svg_height}
         fill="none"
