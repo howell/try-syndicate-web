@@ -1,5 +1,5 @@
 defmodule TrySyndicateWeb.DataspaceComponent do
-  use TrySyndicateWeb, :live_component
+  use TrySyndicateWeb, :html
   alias TrySyndicate.Syndicate.{Dataspace, Actor, Core, SpaceTime}
 
   def dims() do
