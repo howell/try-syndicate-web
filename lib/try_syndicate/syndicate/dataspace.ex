@@ -2,7 +2,7 @@ defmodule TrySyndicate.Syndicate.Dataspace do
   @moduledoc """
   This module defines the data used to represent a dataspace.
   """
-  alias TrySyndicate.Syndicate.{Actor, SpaceTime, Core}
+  alias TrySyndicate.Syndicate.{Actor, SpaceTime, Core, Json}
 
   @type actor_id() :: binary()
 
@@ -81,8 +81,8 @@ defmodule TrySyndicate.Syndicate.Dataspace do
           Map.has_key?(json, "actions") ->
         with {:ok, event} <- Core.json_to_event(json["event"]),
              {:ok, actions} <-
-               parse_optional(json["actions"], fn json ->
-                 parse_list(json, &Core.json_to_action/1)
+               Json.parse_optional(json["actions"], fn json ->
+                 Json.parse_list(json, &Core.json_to_action/1)
                end) do
           {:ok, {json["actor"], event, actions}}
         else
@@ -106,30 +106,9 @@ defmodule TrySyndicate.Syndicate.Dataspace do
   @spec parse_recent_messages(term()) :: {:ok, [String.t()]} | {:error, String.t()}
   def parse_recent_messages(json) do
     if is_list(json) do
-      parse_list(json, &Core.json_to_message/1)
+      Json.parse_list(json, &Core.json_to_message/1)
     else
       {:error, "Invalid recent_messages: expected a list"}
-    end
-  end
-
-  def parse_list(json, parser) do
-    Enum.reduce_while(json, {:ok, []}, fn item_json, {:ok, acc} ->
-      case parser.(item_json) do
-        {:ok, item} -> {:cont, {:ok, [item | acc]}}
-        {:error, reason} -> {:halt, {:error, reason}}
-      end
-    end)
-    |> (fn
-          {:ok, items} -> {:ok, Enum.reverse(items)}
-          error -> error
-        end).()
-  end
-
-  def parse_optional(json, parser) do
-    if json do
-      parser.(json)
-    else
-      {:ok, json}
     end
   end
 
@@ -137,7 +116,7 @@ defmodule TrySyndicate.Syndicate.Dataspace do
           {:ok, [{SpaceTime.t(), [Core.action()]}]} | {:error, String.t()}
   def parse_pending_acts(json) do
     if is_list(json) and Enum.all?(json, &is_map/1) do
-      parse_list(json, &parse_pending_action/1)
+      Json.parse_list(json, &parse_pending_action/1)
     else
       {:error, "Invalid pending_actions: expected a list of maps"}
     end
@@ -146,7 +125,7 @@ defmodule TrySyndicate.Syndicate.Dataspace do
   def parse_pending_action(json) do
     if is_map(json) && json["origin"] && is_list(json["actions"]) do
       with {:ok, origin} <- SpaceTime.from_json(json["origin"]),
-           {:ok, actions} <- parse_list(json["actions"], &Core.json_to_action/1) do
+           {:ok, actions} <- Json.parse_list(json["actions"], &Core.json_to_action/1) do
         {:ok, {origin, actions}}
       else
         {:error, reason} -> {:error, reason}
