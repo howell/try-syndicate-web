@@ -1,4 +1,5 @@
 defmodule TrySyndicate.Syndicate.Srcloc do
+  alias TrySyndicate.Syndicate.Json
   @fields [:source, :line, :column, :position, :span]
 
   @type t() :: %__MODULE__{
@@ -15,11 +16,11 @@ defmodule TrySyndicate.Syndicate.Srcloc do
   @spec from_json(term()) :: {:ok, t()} | {:error, String.t()}
   def from_json(json) do
     if is_map(json) do
-      with {:ok, source} <- parse_src_field(json, "source"),
-           {:ok, line} <- parse_src_field(json, "line"),
-           {:ok, column} <- parse_src_field(json, "column"),
-           {:ok, position} <- parse_src_field(json, "position"),
-           {:ok, span} <- parse_src_field(json, "span") do
+      with {:ok, source} <- Json.parse_field(json, "source"),
+           {:ok, line} <- Json.parse_field(json, "line"),
+           {:ok, column} <- Json.parse_field(json, "column"),
+           {:ok, position} <- Json.parse_field(json, "position"),
+           {:ok, span} <- Json.parse_field(json, "span") do
         {:ok,
          %__MODULE__{
            source: source,
@@ -29,18 +30,11 @@ defmodule TrySyndicate.Syndicate.Srcloc do
            span: span
          }}
       else
-        {:error, reason} -> {:error, reason}
+        {:error, reason} -> {:error, "Invalid srcloc JSON: #{reason}"}
       end
     else
       {:error, "Invalid srcloc JSON: not a map"}
     end
   end
 
-  defp parse_src_field(json, field) do
-    if Map.has_key?(json, field) do
-      {:ok, json[field]}
-    else
-      {:error, "Invalid srcloc JSON: missing required field '#{field}'"}
-    end
-  end
 end
