@@ -24,7 +24,9 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
 
   describe "endpoint fromjson basic" do
     test "endpoint fromjson" do
-      raw_json = "{\"description\":\"'(assert 'hello)\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10}}"
+      raw_json =
+        "{\"description\":\"'(assert 'hello)\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10}}"
+
       endpoint_json = Jason.decode!(raw_json)
 
       result = Endpoint.from_json(endpoint_json)
@@ -45,7 +47,9 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
 
   describe "field fromjson basic" do
     test "field fromjson" do
-      raw_json = "{\"name\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}"
+      raw_json =
+        "{\"name\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}"
+
       field_json = Jason.decode!(raw_json)
 
       result = Field.from_json(field_json)
@@ -61,6 +65,37 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
                   span: 10
                 },
                 value: 1234
+              }} == result
+    end
+  end
+
+  describe "facet fromjson basic" do
+    test "facet fromjson" do
+      raw_json =
+        "{\"children\":[\"child1\",\"child2\"],\"eps\":[],\"fields\":[{\"name\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}],\"id\":\"test\"}"
+
+      facet_json = Jason.decode!(raw_json)
+
+      result = Facet.from_json(facet_json)
+
+      assert {:ok,
+              %Facet{
+                children: ["child1", "child2"],
+                eps: [],
+                fields: [
+                  %Field{
+                    name: "test",
+                    src: %Srcloc{
+                      column: 5,
+                      line: 1,
+                      position: 50,
+                      source: "test.rkt",
+                      span: 10
+                    },
+                    value: 1234
+                  }
+                ],
+                id: "test"
               }} == result
     end
   end
