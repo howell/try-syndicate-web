@@ -27,6 +27,15 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   def new(filter \\ %{names: [], pids: []}),
     do: %{trace: %{}, filter: filter, filtered: %{}, actors: %{}}
 
+  @spec actors_at_step(t(), non_neg_integer()) :: ActorEnv.t()
+  def actors_at_step(state, step) do
+    {_, raw_step} = state.filtered[step]
+    case most_recent_at(state.actors, raw_step) do
+      {_, actors} -> actors
+      _ -> %{}
+    end
+  end
+
   @spec apply_filter(raw_trace(), filter()) :: t()
   def apply_filter(trace, filter) when map_size(trace) == 0,
     do: new(filter)
@@ -66,10 +75,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
     filtered = apply_filter(state.trace, new_filter)
     prev_raw_idx = elem(state.filtered[prev_step], 1)
 
-    last_filtered =
-      Enum.filter(filtered.filtered, fn {idx, _} -> idx <= prev_raw_idx end)
-      |> Enum.max_by(fn {idx, _} -> idx end)
-      |> elem(0)
+    {last_filtered, _} = most_recent_at(filtered.filtered, prev_raw_idx)
 
     {%{trace: state.trace, filter: new_filter, actors: state.actors, filtered: filtered.filtered},
      last_filtered}
@@ -129,5 +135,12 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   def mostly_equal?(ds1, ds2) do
     ds1.actors == ds2.actors and ds1.active_actor == ds2.active_actor and
       MapSet.new(ds1.pending_actions) == MapSet.new(ds2.pending_actions)
+  end
+
+  @spec most_recent_at(Enumerable.t({non_neg_integer(), any()}), non_neg_integer()) ::
+          {non_neg_integer(), any()}
+  def most_recent_at(elems, time) do
+    Enum.filter(elems, fn {t, _} -> t <= time end)
+    |> Enum.max_by(fn {idx, _} -> idx end, fn -> nil end)
   end
 end
