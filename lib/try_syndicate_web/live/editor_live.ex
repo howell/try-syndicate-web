@@ -315,6 +315,9 @@ defmodule TrySyndicateWeb.EditorLive do
       <div class="flex flex-row items-start w-full ml-20">
         <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
       </div>
+      <div class="w-full h-auto mx-auto overflow-x-auto">
+        <.actors_view trace={@trace_steps} current_step={@current_trace_step} />
+      </div>
     </div>
     """
   end
@@ -479,6 +482,23 @@ defmodule TrySyndicateWeb.EditorLive do
     <td class="px-6 py-4 whitespace-nowrap">
       <%= render_slot(@inner_block) %>
     </td>
+    """
+  end
+
+  attr :trace, :any, required: true
+  attr :current_step, :any, required: true
+
+  def actors_view(assigns) do
+    ~H"""
+    <div class="flex flex-col w-full h-auto gap-4">
+      <h2 class="text-center text-2xl">Actors</h2>
+      <%= for {pid, actor} <- DataspaceTrace.actors_at_step(@trace, @current_step) do %>
+        <div class="flex flex-row items-center gap-4">
+          <span class="font-bold">PID:</span> <code><pre><%= pid %></pre></code>
+          <span class="font-bold">State:</span> <code><pre><%= inspect(actor, pretty: true) %></pre></code>
+        </div>
+      <% end %>
+    </div>
     """
   end
 end
