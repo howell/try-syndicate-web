@@ -1,11 +1,11 @@
 defmodule TrySyndicate.Syndicate.ActorEnv do
   alias TrySyndicate.Syndicate.{Dataspace, Facet, Json}
 
-  @type actor_env() :: %{Dataspace.actor_id() => actor_detail()}
+  @type t() :: %{Dataspace.actor_id() => actor_detail()}
 
   @type actor_detail() :: %{Facet.fid() => Facet.t()}
 
-  @spec from_json(term()) :: {:ok, actor_env()} | {:error, String.t()}
+  @spec from_json(term()) :: {:ok, t()} | {:error, String.t()}
   def from_json(json) do
     if is_map(json) do
       Map.to_list(json)

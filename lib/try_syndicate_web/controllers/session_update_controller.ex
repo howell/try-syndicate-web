@@ -1,8 +1,8 @@
 defmodule TrySyndicateWeb.SessionUpdateController do
   use TrySyndicateWeb, :controller
 
+  alias TrySyndicate.Syndicate.TraceNotification
   alias TrySyndicate.SessionManager
-  alias TrySyndicate.Syndicate.Dataspace
   require Logger
 
   def receive_update(conn, params) do
@@ -38,7 +38,7 @@ defmodule TrySyndicateWeb.SessionUpdateController do
   end
 
   def decode_data_for("trace", data) do
-    Dataspace.from_json(data)
+    TraceNotification.from_json(data)
   end
 
   def decode_data_for(_, data) do

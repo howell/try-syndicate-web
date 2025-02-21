@@ -4,7 +4,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   and related utilities.
   """
 
-  alias TrySyndicate.Syndicate.{Dataspace, Actor}
+  alias TrySyndicate.Syndicate.{Dataspace, Actor, ActorEnv, TraceNotification}
 
   @type raw_trace() :: %{
           non_neg_integer() => Dataspace.t()
@@ -18,16 +18,18 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   @type t() :: %{
           trace: raw_trace(),
           filter: filter(),
-          filtered: %{non_neg_integer() => {Dataspace.t(), non_neg_integer()}}
+          filtered: %{non_neg_integer() => {Dataspace.t(), non_neg_integer()}},
+          actors: %{non_neg_integer() => ActorEnv.t()}
         }
 
   @spec new() :: t()
   @spec new(filter()) :: t()
-  def new(filter \\ %{names: [], pids: []}), do: %{trace: %{}, filter: filter, filtered: %{}}
+  def new(filter \\ %{names: [], pids: []}),
+    do: %{trace: %{}, filter: filter, filtered: %{}, actors: %{}}
 
   @spec apply_filter(raw_trace(), filter()) :: t()
   def apply_filter(trace, filter) when map_size(trace) == 0,
-    do: %{trace: %{}, filter: filter, filtered: %{}}
+    do: new(filter)
 
   def apply_filter(trace, filter) do
     base = %{0 => {filter_ds(trace[0], filter), 0}}
@@ -37,7 +39,18 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
         add_filtered_step(filtered, filter, time, trace[time])
       end)
 
-    %{trace: trace, filter: filter, filtered: filtered}
+    %{trace: trace, filter: filter, filtered: filtered, actors: %{}}
+  end
+
+  @spec apply_notification(t(), TraceNotification.t()) :: t()
+  def apply_notification(state, notification) do
+    case notification do
+      %TraceNotification{type: :dataspace, detail: dataspace} ->
+        add_step(state, dataspace)
+
+      %TraceNotification{type: :actors, detail: actors} ->
+        put_in(state, [:actors, map_size(state.actors)], actors)
+    end
   end
 
   @spec add_step(t(), Dataspace.t()) :: t()
@@ -58,7 +71,8 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
       |> Enum.max_by(fn {idx, _} -> idx end)
       |> elem(0)
 
-    {%{trace: state.trace, filter: new_filter, filtered: filtered.filtered}, last_filtered}
+    {%{trace: state.trace, filter: new_filter, actors: state.actors, filtered: filtered.filtered},
+     last_filtered}
   end
 
   def add_filtered_step(filtered, filter, time, dataspace) do
