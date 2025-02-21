@@ -237,7 +237,9 @@ defmodule TrySyndicateWeb.EditorLive do
   @spec add_step(map(), [any()]) :: map()
   def add_step(socket, data) do
     update(socket, :trace_steps, fn existing ->
-      Enum.reduce(data, existing, fn step, existing -> DataspaceTrace.apply_notification(existing, step) end)
+      Enum.reduce(data, existing, fn step, existing ->
+        DataspaceTrace.apply_notification(existing, step)
+      end)
     end)
     |> update(:current_trace_step, fn curr -> curr || 0 end)
   end
