@@ -42,4 +42,26 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
               }} == result
     end
   end
+
+  describe "field fromjson basic" do
+    test "field fromjson" do
+      raw_json = "{\"name\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}"
+      field_json = Jason.decode!(raw_json)
+
+      result = Field.from_json(field_json)
+
+      assert {:ok,
+              %Field{
+                name: "test",
+                src: %Srcloc{
+                  column: 5,
+                  line: 1,
+                  position: 50,
+                  source: "test.rkt",
+                  span: 10
+                },
+                value: 1234
+              }} == result
+    end
+  end
 end
