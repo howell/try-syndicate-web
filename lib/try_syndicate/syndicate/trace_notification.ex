@@ -25,7 +25,7 @@ defmodule TrySyndicate.Syndicate.TraceNotification do
   def parse_dataspace_notification(json) do
     if is_map(json) do
       with {:ok, "dataspace"} <- Json.parse_field(json, "type"),
-           {:ok, detail} <- Dataspace.from_json(json) do
+           {:ok, detail} <- Json.parse_field(json, "detail", &Dataspace.from_json/1) do
         {:ok, %__MODULE__{type: :dataspace, detail: detail}}
       else
         {:error, reason} -> {:error, "Invalid dataspace notification JSON: #{reason}"}
@@ -41,7 +41,7 @@ defmodule TrySyndicate.Syndicate.TraceNotification do
   def parse_actors_notification(json) do
     if is_map(json) do
       with {:ok, "actors"} <- Json.parse_field(json, "type"),
-           {:ok, detail} <- ActorEnv.from_json(json) do
+           {:ok, detail} <- Json.parse_field(json, "detail", &ActorEnv.from_json/1) do
         {:ok, %__MODULE__{type: :actors, detail: detail}}
       else
         {:error, reason} -> {:error, "Invalid actors notification JSON: #{reason}"}
