@@ -99,4 +99,13 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
               }} == result
     end
   end
+
+  describe "actor_env fromjson" do
+    test "decode simple json" do
+      json = [%{"actor_id" => "(0)", "facets" => []}]
+      result = ActorEnv.from_json(json)
+      assert {:ok, %{"(0)" => fcts }} = result
+      assert %{} == fcts
+    end
+  end
 end
