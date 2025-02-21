@@ -49,7 +49,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
         add_step(state, dataspace)
 
       %TraceNotification{type: :actors, detail: actors} ->
-        put_in(state, [:actors, map_size(state.actors)], actors)
+        put_in(state, [:actors, max(0, map_size(state.trace) - 1)], actors)
     end
   end
 
