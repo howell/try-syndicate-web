@@ -19,7 +19,7 @@ defmodule TrySyndicate.Syndicate.Facet do
     if is_map(json) do
       with {:ok, id} <- Json.parse_field(json, "id"),
            {:ok, fields} <- Json.parse_field(json, "fields", fn json -> Json.parse_list(json, &Field.from_json/1) end),
-           {:ok, eps} <- Json.parse_field(json, "eps", fn json -> Json.parse_list(json, &Endpoint.from_json/1) end),
+           {:ok, eps} <- Json.parse_field(json, "endpoints", fn json -> Json.parse_list(json, &Endpoint.from_json/1) end),
            {:ok, children} <- Json.parse_field(json, "children", fn json -> Json.parse_list(json) end) do
         {:ok,
          %__MODULE__{

@@ -31,8 +31,8 @@ defmodule TrySyndicate.Syndicate.ActorEnv do
   end
 
   def parse_actor_detail_item(json) do
-    with {:ok, fid} <- Json.parse_field(json, "fid"),
-         {:ok, facet} <- Json.parse_field(json, "facet", &Facet.from_json/1) do
+    with {:ok, fid} <- Json.parse_field(json, "facet_id"),
+         {:ok, facet} <- Json.parse_field(json, "detail", &Facet.from_json/1) do
       {:ok, {fid, facet}}
     else
       {:error, reason} -> {:error, "Invalid actor detail item: #{reason}"}

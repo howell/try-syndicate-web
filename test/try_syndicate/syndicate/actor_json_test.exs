@@ -2,7 +2,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
   use ExUnit.Case, async: true
 
   alias Jason
-  alias TrySyndicate.Syndicate.{Actor, ActorEnv, Dataspace, Facet, Field, Endpoint, Srcloc}
+  alias TrySyndicate.Syndicate.{ActorEnv, Facet, Field, Endpoint, Srcloc}
 
   describe "srcloc fromjson basic" do
     test "srcloc fromjson" do
@@ -72,7 +72,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
   describe "facet fromjson basic" do
     test "facet fromjson" do
       raw_json =
-        "{\"children\":[\"child1\",\"child2\"],\"eps\":[],\"fields\":[{\"name\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}],\"id\":\"test\"}"
+        "{\"children\":[\"child1\",\"child2\"],\"endpoints\":[],\"fields\":[{\"name\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}],\"id\":\"test\"}"
 
       facet_json = Jason.decode!(raw_json)
 
@@ -104,8 +104,66 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
     test "decode simple json" do
       json = [%{"actor_id" => "(0)", "facets" => []}]
       result = ActorEnv.from_json(json)
-      assert {:ok, %{"(0)" => fcts }} = result
+      assert {:ok, %{"(0)" => fcts}} = result
       assert %{} == fcts
+    end
+
+    test "decode json with facets" do
+      json = [
+        %{"actor_id" => "(0)", "facets" => []},
+        %{"actor_id" => "(1)", "facets" => []},
+        %{"actor_id" => "(3)", "facets" => []},
+        %{
+          "actor_id" => "(4)",
+          "facets" => [
+            %{
+              "detail" => %{
+                "children" => [],
+                "endpoints" => [
+                  %{
+                    "description" => "(assert 67)",
+                    "src" => %{
+                      "column" => 0,
+                      "line" => 56,
+                      "position" => 1510,
+                      "source" =>
+                        "/Users/sam/git/syndicate-sandbox/syndicate-sandbox/tracing-facet-syntax.rkt",
+                      "span" => 44
+                    }
+                  }
+                ],
+                "fields" => [],
+                "id" => "(5)"
+              },
+              "facet_id" => "(5)"
+            }
+          ]
+        }
+      ]
+
+      result = ActorEnv.from_json(json)
+      assert {:ok, %{"(0)" => %{}, "(1)" => %{}, "(3)" => %{}, "(4)" => fcts}} = result
+
+      assert %{
+               "(5)" => %Facet{
+                 children: [],
+                 eps: [
+                   %Endpoint{
+                     description: "(assert 67)",
+                     src: %Srcloc{
+                       column: 0,
+                       line: 56,
+                       position: 1510,
+                       source:
+                         "/Users/sam/git/syndicate-sandbox/syndicate-sandbox/tracing-facet-syntax.rkt",
+                       span: 44
+                     }
+                   }
+                 ],
+                 fields: [],
+                 id: "(5)"
+               }
+             } == fcts
     end
   end
 end
