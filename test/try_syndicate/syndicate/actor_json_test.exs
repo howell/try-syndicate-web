@@ -2,7 +2,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
   use ExUnit.Case, async: true
 
   alias Jason
-  alias TrySyndicate.Syndicate.{Actor, ActorEnv, Dataspace, Facet, Field, Srcloc}
+  alias TrySyndicate.Syndicate.{Actor, ActorEnv, Dataspace, Facet, Field, Endpoint, Srcloc}
 
   describe "srcloc fromjson basic" do
     test "srcloc fromjson" do
@@ -18,6 +18,27 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
                 position: 50,
                 source: "test.rkt",
                 span: 10
+              }} == result
+    end
+  end
+
+  describe "endpoint fromjson basic" do
+    test "endpoint fromjson" do
+      raw_json = "{\"description\":\"'(assert 'hello)\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10}}"
+      endpoint_json = Jason.decode!(raw_json)
+
+      result = Endpoint.from_json(endpoint_json)
+
+      assert {:ok,
+              %Endpoint{
+                description: "'(assert 'hello)",
+                src: %Srcloc{
+                  column: 5,
+                  line: 1,
+                  position: 50,
+                  source: "test.rkt",
+                  span: 10
+                }
               }} == result
     end
   end
