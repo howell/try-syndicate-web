@@ -196,6 +196,7 @@ defmodule TrySyndicate.ExternalSessionManager do
 
     case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do
       {:ok, %Finch.Response{status: 200}} -> :ok
+      {:ok, %Finch.Response{status: s}} -> {:error, "Session not found (#{s})"}
       {:error, reason} -> {:error, reason}
     end
   end
