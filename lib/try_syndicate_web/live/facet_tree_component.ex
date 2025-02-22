@@ -9,6 +9,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   @horizontal_gap 50
   @vertical_gap 50
 
+  # Updated tree/1 to use dynamic SVG width from assign_coordinates
   def tree(assigns) do
     facets = assigns.actor
 
@@ -18,12 +19,20 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     root_ids = all_ids -- all_children
     root_id = Enum.at(root_ids, 0) || hd(all_ids)
 
-    # Build levels and accumulate edges {parent_id, child_id}
     {levels, edges} = build_levels(root_id, facets, 0, %{}, [])
-    coord_map = assign_coordinates(levels)
+    {coord_map, computed_width} = assign_coordinates(levels)
+
+    margin = @horizontal_gap
+    svg_width = computed_width + margin
+
+    svg_height =
+      (coord_map
+       |> Map.values()
+       |> Enum.map(fn %{y: y} -> y end)
+       |> Enum.max(fn -> 0 end)) + @box_height + @vertical_gap
 
     ~H"""
-    <svg width="800" height="600">
+    <svg width={svg_width} height={svg_height}>
       <defs>
         <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
@@ -48,6 +57,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   defp build_levels(facet_id, facets, depth, levels, edges) do
     levels = Map.update(levels, depth, [facet_id], fn list -> list ++ [facet_id] end)
     children = facets[facet_id].children || []
+
     {levels, edges} =
       Enum.reduce(children, {levels, edges}, fn child, {acc_levels, acc_edges} ->
         # Only include children present in facets
@@ -58,23 +68,39 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
           {acc_levels, acc_edges}
         end
       end)
+
     {levels, edges}
   end
 
-  # Revised assign_coordinates to center each row in a fixed SVG width of 800
+  # Revised assign_coordinates: compute coordinates for each row and return {coord_map, total_width}
   defp assign_coordinates(levels) do
-    svg_width = 800
-    Enum.reduce(levels, %{}, fn {depth, facet_ids}, acc ->
-      row_count = length(facet_ids)
-      total_row_width = row_count * @box_width + (row_count - 1) * @horizontal_gap
-      start_x = (svg_width - total_row_width) / 2
-      y = depth * (@box_height + @vertical_gap) + @vertical_gap
-      Enum.with_index(facet_ids)
-      |> Enum.reduce(acc, fn {facet_id, index}, acc_inner ->
-        x = start_x + index * (@box_width + @horizontal_gap)
-        Map.put(acc_inner, facet_id, %{x: x, y: y})
+    # First, compute each row's total width (without centering)
+    row_widths =
+      Enum.map(levels, fn {depth, facet_ids} ->
+        row_width = length(facet_ids) * @box_width + (length(facet_ids) - 1) * @horizontal_gap
+        {depth, row_width}
       end)
-    end)
+
+    overall_width =
+      row_widths
+      |> Enum.map(fn {_depth, w} -> w end)
+      |> Enum.max(fn -> 0 end)
+
+    # Now build coordinate map with each row centered relative to the overall_width
+    coord_map =
+      Enum.reduce(levels, %{}, fn {depth, facet_ids}, acc ->
+        row_width = length(facet_ids) * @box_width + (length(facet_ids) - 1) * @horizontal_gap
+        shift = (overall_width - row_width) / 2
+        y = depth * (@box_height + @vertical_gap) + @vertical_gap
+
+        Enum.with_index(facet_ids)
+        |> Enum.reduce(acc, fn {facet_id, index}, acc_inner ->
+          x = shift + index * (@box_width + @horizontal_gap)
+          Map.put(acc_inner, facet_id, %{x: x, y: y})
+        end)
+      end)
+
+    {coord_map, overall_width}
   end
 
   # Render an edge line from parent to child.
@@ -84,7 +110,10 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     y1_bottom = y1 + @box_height
     x2_center = x2 + @box_width / 2
     y2_top = y2
-    Phoenix.HTML.raw("<line x1='#{x1_center}' y1='#{y1_bottom}' x2='#{x2_center}' y2='#{y2_top}' stroke='black' stroke-width='1' marker-end='url(#arrow)' />")
+
+    Phoenix.HTML.raw(
+      "<line x1='#{x1_center}' y1='#{y1_bottom}' x2='#{x2_center}' y2='#{y2_top}' stroke='black' stroke-width='1' marker-end='url(#arrow)' />"
+    )
   end
 
   # Render a facet box with its ID, fields, and endpoints.
@@ -100,6 +129,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
       |> Enum.join("\n")
 
     content = "ID: #{id}\n#{fields}\n#{endpoints}"
+
     Phoenix.HTML.raw("""
     <g transform="translate(#{x}, #{y})">
       <rect width="#{@box_width}" height="#{@box_height}" fill="#EEF" stroke="#333" rx="5" ry="5" />
