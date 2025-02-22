@@ -61,13 +61,17 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     {levels, edges}
   end
 
-  # Assign coordinates to each node based on level and index.
+  # Revised assign_coordinates to center each row in a fixed SVG width of 800
   defp assign_coordinates(levels) do
+    svg_width = 800
     Enum.reduce(levels, %{}, fn {depth, facet_ids}, acc ->
+      row_count = length(facet_ids)
+      total_row_width = row_count * @box_width + (row_count - 1) * @horizontal_gap
+      start_x = (svg_width - total_row_width) / 2
       y = depth * (@box_height + @vertical_gap) + @vertical_gap
       Enum.with_index(facet_ids)
       |> Enum.reduce(acc, fn {facet_id, index}, acc_inner ->
-        x = index * (@box_width + @horizontal_gap) + @horizontal_gap
+        x = start_x + index * (@box_width + @horizontal_gap)
         Map.put(acc_inner, facet_id, %{x: x, y: y})
       end)
     end)
