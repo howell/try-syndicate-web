@@ -4,7 +4,7 @@ defmodule TrySyndicate.Syndicate.Field do
 
   @type t() :: %__MODULE__{
           name: String.t(),
-          value: any(),
+          value: String.t(),
           src: Srcloc.t(),
         }
 

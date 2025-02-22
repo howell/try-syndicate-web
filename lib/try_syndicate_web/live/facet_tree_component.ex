@@ -74,7 +74,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
   # Return list of lines for display in a facet box.
   defp box_lines(facet, id) do
-    field_lines = Enum.map(facet.fields, fn field -> "#{field.name}: #{inspect(field.value)}" end)
+    field_lines = Enum.map(facet.fields, fn field -> "#{field.name}: #{field.value}" end)
     endpoint_lines = Enum.map(facet.eps, fn ep -> ep.description end)
     [id, "Fields:"] ++ field_lines ++ ["Endpoints:"] ++ endpoint_lines
   end
