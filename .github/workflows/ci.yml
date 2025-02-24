@@ -34,7 +34,7 @@ jobs:
       - name: Set up Elixir
         uses: actions/setup-elixir@v1
         with:
-          elixir-version: '1.18'
+          elixir-version: 'main-latest'
           otp-version: '27'
 
       - name: Install dependencies
