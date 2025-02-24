@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-elixir@v1
         with:
           elixir-version: 'main-latest'
-          otp-version: '27'
+          otp-version: '26'
 
       - name: Install dependencies
         run: mix deps.get
