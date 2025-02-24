@@ -112,7 +112,9 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     max_width = infos |> Enum.map(fn {_ids, w, _h} -> w end) |> Enum.max(fn -> 0 end)
 
     total_height =
-      Enum.reduce(infos, dims.vertical_gap, fn {_ids, _w, h}, acc -> acc + h + dims.vertical_gap end)
+      Enum.reduce(infos, dims.vertical_gap, fn {_ids, _w, h}, acc ->
+        acc + h + dims.vertical_gap
+      end)
 
     {max_width, total_height, infos}
   end
@@ -192,10 +194,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
         ry="5"
       />
       <foreignObject x="0" y="0" width={@dims.box_width} height={box_height(@facet, @dims)}>
-        <div
-          xmlns="http://www.w3.org/1999/xhtml"
-          class="text-sm p-2 box-border"
-        >
+        <div xmlns="http://www.w3.org/1999/xhtml" class="text-sm p-2 box-border">
           <div class="text-center font-bold mb-2"><%= @id %></div>
           <div class="font-bold">Fields:</div>
           <ul class="list-disc list-inside ml-0 pl-4">
