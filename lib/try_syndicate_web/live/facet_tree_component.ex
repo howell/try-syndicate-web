@@ -1,22 +1,28 @@
 defmodule TrySyndicateWeb.FacetTreeComponent do
-require Logger
   use TrySyndicateWeb, :html
+  require Logger
 
-  @box_width 150
-  @horizontal_gap 50
-  @vertical_gap 50
-  @line_height 16
-  @vertical_padding 20
+  # New function that returns our "constants" as a map instead of module attributes.
+  defp dims do
+    %{
+      box_width: 150,
+      horizontal_gap: 50,
+      vertical_gap: 50,
+      line_height: 16,
+      vertical_padding: 20
+    }
+  end
 
   attr :actor, :any, required: true
 
   def tree(assigns) do
+    the_dims = dims()
     actor = assigns.actor
     root_id = compute_root(actor)
     {levels, edges} = build_levels(root_id, actor, 0, %{}, [])
-    {coord_map, computed_width, computed_height} = assign_coordinates(levels, actor)
-    svg_width = computed_width + @horizontal_gap
-    svg_height = computed_height + @horizontal_gap
+    {coord_map, computed_width, computed_height} = assign_coordinates(levels, actor, the_dims)
+    svg_width = computed_width + the_dims.horizontal_gap
+    svg_height = computed_height + the_dims.horizontal_gap
 
     assigns
     |> assign(:actor, actor)
@@ -24,6 +30,7 @@ require Logger
     |> assign(:svg_height, svg_height)
     |> assign(:edges, edges)
     |> assign(:coord_map, coord_map)
+    |> assign(:dims, the_dims)
     |> facet_tree()
   end
 
@@ -38,12 +45,16 @@ require Logger
       <g transform="translate(2,0)">
         <g>
           <%= for {parent, child} <- @edges do %>
-            <%= render_edge_line(@coord_map[parent], @coord_map[child]) %>
+            <.edge_line
+              parent_coord={@coord_map[parent]}
+              child_coord={@coord_map[child]}
+              dims={@dims}
+            />
           <% end %>
         </g>
         <g>
           <%= for {id, coord} <- @coord_map do %>
-            <%= render_facet_box(id, @actor[id], coord) %>
+            <.facet_box id={id} facet={@actor[id]} coord={coord} dims={@dims} />
           <% end %>
         </g>
       </g>
@@ -81,43 +92,43 @@ require Logger
   end
 
   # Simplified assign_coordinates: assign coordinates per row using helpers.
-  defp assign_coordinates(levels, facets) do
-    {overall_width, total_height, infos} = overall_dimensions(levels, facets)
+  defp assign_coordinates(levels, facets, dims) do
+    {overall_width, total_height, infos} = overall_dimensions(levels, facets, dims)
 
     {coord_map, _} =
-      Enum.reduce(Enum.with_index(infos), {%{}, @vertical_gap}, fn
+      Enum.reduce(Enum.with_index(infos), {%{}, dims.vertical_gap}, fn
         {row_detail = {_fids, _width, row_height}, _depth}, {acc, current_y} ->
-          new_coords = row_coords(facets, overall_width, row_detail, current_y)
-          {Map.merge(acc || %{}, new_coords), current_y + row_height + @vertical_gap}
+          new_coords = row_coords(facets, overall_width, row_detail, current_y, dims)
+          {Map.merge(acc || %{}, new_coords), current_y + row_height + dims.vertical_gap}
       end)
 
     {coord_map, overall_width, total_height}
   end
 
   # Helper: computes the overall (max) row width and total height from all rows.
-  defp overall_dimensions(levels, facets) do
+  defp overall_dimensions(levels, facets, dims) do
     depths = 0..(map_size(levels) - 1)
-    infos = Enum.map(depths, &row_info(&1, levels, facets))
+    infos = Enum.map(depths, &row_info(&1, levels, facets, dims))
     max_width = infos |> Enum.map(fn {_ids, w, _h} -> w end) |> Enum.max(fn -> 0 end)
 
     total_height =
-      Enum.reduce(infos, @vertical_gap, fn {_ids, _w, h}, acc -> acc + h + @vertical_gap end)
+      Enum.reduce(infos, dims.vertical_gap, fn {_ids, _w, h}, acc -> acc + h + dims.vertical_gap end)
 
     {max_width, total_height, infos}
   end
 
   # Helper: given a depth, returns {facet_ids, row_width, row_height}
-  defp row_info(depth, levels, facets) do
+  defp row_info(depth, levels, facets, dims) do
     facet_ids = Map.get(levels, depth, [])
 
     row_width =
       if facet_ids == [] do
         0
       else
-        length(facet_ids) * @box_width + (length(facet_ids) - 1) * @horizontal_gap
+        length(facet_ids) * dims.box_width + (length(facet_ids) - 1) * dims.horizontal_gap
       end
 
-    box_heights = Enum.map(facet_ids, fn fid -> box_height(facets[fid]) end)
+    box_heights = Enum.map(facet_ids, fn fid -> box_height(facets[fid], dims) end)
     row_height = Enum.max(box_heights ++ [0])
     {facet_ids, row_width, row_height}
   end
@@ -126,68 +137,81 @@ require Logger
          facets,
          overall_width,
          _row_info = {facet_ids, row_width, row_height},
-         current_y
+         current_y,
+         dims
        ) do
     shift = (overall_width - row_width) / 2
 
     Enum.with_index(facet_ids)
     |> Enum.reduce(%{}, fn {fid, idx}, inner_acc ->
-      b_height = box_height(facets[fid])
-      x = shift + idx * (@box_width + @horizontal_gap)
-      Logger.warning(("current_y: #{inspect(current_y)}, row_height: #{inspect(row_height)}, b_height: #{inspect(b_height)}"))
+      b_height = box_height(facets[fid], dims)
+      x = shift + idx * (dims.box_width + dims.horizontal_gap)
       y = current_y + (row_height - b_height) / 2
       Map.put(inner_acc, fid, %{x: x, y: y})
     end)
   end
 
   # Compute dynamic box height based on content.
-  defp box_height(facet) do
+  defp box_height(facet, dims) do
     lines = 1 + 1 + length(facet.fields) + 1 + length(facet.eps)
-    @vertical_padding + @line_height * lines
+    dims.vertical_padding + dims.line_height * lines
   end
 
-  # Render an edge line from parent to child.
-  defp render_edge_line(%{x: x1, y: y1}, %{x: x2, y: y2}) do
-    x1_center = x1 + @box_width / 2
-    # Adjust y1_bottom by computing parent's dynamic height from box_height if needed.
-    y1_bottom = y1 + 50
-    x2_center = x2 + @box_width / 2
-    y2_top = y2
+  attr :parent_coord, :map, required: true
+  attr :child_coord, :map, required: true
+  attr :dims, :map, required: true
 
-    Phoenix.HTML.raw(
-      "<line x1='#{x1_center}' y1='#{y1_bottom}' x2='#{x2_center}' y2='#{y2_top}' stroke='black' stroke-width='1' marker-end='url(#arrow)' />"
-    )
+  def edge_line(assigns) do
+    ~H"""
+    <line
+      x1={@parent_coord.x + @dims.box_width / 2}
+      y1={@parent_coord.y + 50}
+      x2={@child_coord.x + @dims.box_width / 2}
+      y2={@child_coord.y}
+      stroke="black"
+      stroke-width="1"
+      marker-end="url(#arrow)"
+    />
+    """
   end
 
-  # Revised render_facet_box to use foreignObject with HTML for rendering facet details.
-  defp render_facet_box(id, facet, %{x: x, y: y}) do
-    bh = box_height(facet)
+  attr :id, :string, required: true
+  attr :facet, :any, required: true
+  attr :coord, :map, required: true
+  attr :dims, :map, required: true
 
-    fields_html =
-      facet.fields
-      |> Enum.map(fn field -> "<li>#{field.name}: #{to_string(field.value)}</li>" end)
-      |> Enum.join("")
-
-    endpoints_html =
-      facet.eps
-      |> Enum.map(fn ep -> "<li>#{ep.description}</li>" end)
-      |> Enum.join("")
-
-    Phoenix.HTML.raw("""
-    <g transform="translate(#{x}, #{y})">
-      <rect width="#{@box_width}" height="#{bh}" fill="#EEF" stroke="#333" rx="5" ry="5" />
-      <foreignObject x="0" y="0" width="#{@box_width}" height="#{bh}">
-        <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px; padding:4px; box-sizing:border-box;">
-          <div style="text-align:center; font-weight:bold; margin-bottom:4px;">#{id}</div>
+  def facet_box(assigns) do
+    ~H"""
+    <g transform={"translate(#{@coord.x}, #{@coord.y})"}>
+      <rect
+        width={@dims.box_width}
+        height={box_height(@facet, @dims)}
+        fill="#EEF"
+        stroke="#333"
+        rx="5"
+        ry="5"
+      />
+      <foreignObject x="0" y="0" width={@dims.box_width} height={box_height(@facet, @dims)}>
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          style="font-size:12px; padding:4px; box-sizing:border-box;"
+        >
+          <div style="text-align:center; font-weight:bold; margin-bottom:4px;"><%= @id %></div>
           <div style="font-weight:bold;">Fields:</div>
-          <ul style="margin:0; padding-left:16px;">#{fields_html}</ul>
+          <ul style="margin:0; padding-left:16px;">
+            <%= for field <- @facet.fields do %>
+              <li><%= field.name %>: <%= to_string(field.value) %></li>
+            <% end %>
+          </ul>
           <div style="font-weight:bold; margin-top:4px;">Endpoints:</div>
-          <ul style="margin:0; padding-left:16px;">#{endpoints_html}</ul>
+          <ul style="margin:0; padding-left:16px;">
+            <%= for ep <- @facet.eps do %>
+              <li><%= ep.description %></li>
+            <% end %>
+          </ul>
         </div>
       </foreignObject>
     </g>
-    """)
+    """
   end
-
-  # ...existing code for DataspaceComponent and others remains unchanged...
 end
