@@ -124,30 +124,33 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     Phoenix.HTML.raw("<line x1='#{x1_center}' y1='#{y1_bottom}' x2='#{x2_center}' y2='#{y2_top}' stroke='black' stroke-width='1' marker-end='url(#arrow)' />")
   end
 
-  # Render a facet box using dynamic height and multiple text lines.
+  # Revised render_facet_box to use foreignObject with HTML for rendering facet details
   defp render_facet_box(id, facet, %{x: x, y: y}) do
     bh = box_height(facet)
-    lines = box_lines(facet, id)
-    # Build tspan elements: first line centered, rest left aligned.
-    ts =
-      Enum.with_index(lines)
-      |> Enum.map(fn {line, idx} ->
-        cond do
-          idx == 0 ->
-            # ID line: centered horizontally.
-            "<tspan x='#{@box_width / 2}' dy='0' text-anchor='middle' font-weight='bold'>#{line}</tspan>"
-          true ->
-            "<tspan x='#{5}' dy='#{@line_height}'>#{line}</tspan>"
-        end
-      end)
-      |> Enum.join("\n")
-
+    fields_html =
+      facet.fields
+      |> Enum.map(fn field -> "<li>#{field.name}: #{to_string(field.value)}</li>" end)
+      |> Enum.join("")
+    endpoints_html =
+      facet.eps
+      |> Enum.map(fn ep -> "<li>#{ep.description}</li>" end)
+      |> Enum.join("")
     Phoenix.HTML.raw("""
     <g transform="translate(#{x}, #{y})">
       <rect width="#{@box_width}" height="#{bh}" fill="#EEF" stroke="#333" rx="5" ry="5" />
-      <text y="#{@line_height}"font-size="12" fill="#000" style="white-space: pre;">
-        #{ts}
-      </text>
+      <foreignObject x="0" y="0" width="#{@box_width}" height="#{bh}">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px; padding:4px; box-sizing:border-box;">
+          <div style="text-align:center; font-weight:bold; margin-bottom:4px;">#{id}</div>
+          <div style="font-weight:bold;">Fields:</div>
+          <ul style="margin:0; padding-left:16px;">
+            #{fields_html}
+          </ul>
+          <div style="font-weight:bold; margin-top:4px;">Endpoints:</div>
+          <ul style="margin:0; padding-left:16px;">
+            #{endpoints_html}
+          </ul>
+        </div>
+      </foreignObject>
     </g>
     """)
   end
