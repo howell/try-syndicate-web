@@ -194,17 +194,17 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
       <foreignObject x="0" y="0" width={@dims.box_width} height={box_height(@facet, @dims)}>
         <div
           xmlns="http://www.w3.org/1999/xhtml"
-          style="font-size:12px; padding:4px; box-sizing:border-box;"
+          class="text-sm p-2 box-border"
         >
-          <div style="text-align:center; font-weight:bold; margin-bottom:4px;"><%= @id %></div>
-          <div style="font-weight:bold;">Fields:</div>
-          <ul style="margin:0; padding-left:16px;">
+          <div class="text-center font-bold mb-2"><%= @id %></div>
+          <div class="font-bold">Fields:</div>
+          <ul class="list-disc list-inside ml-0 pl-4">
             <%= for field <- @facet.fields do %>
               <li><%= field.name %>: <%= to_string(field.value) %></li>
             <% end %>
           </ul>
-          <div style="font-weight:bold; margin-top:4px;">Endpoints:</div>
-          <ul style="margin:0; padding-left:16px;">
+          <div class="font-bold mt-2">Endpoints:</div>
+          <ul class="list-disc list-inside ml-0 pl-4">
             <%= for ep <- @facet.eps do %>
               <li><%= ep.description %></li>
             <% end %>
