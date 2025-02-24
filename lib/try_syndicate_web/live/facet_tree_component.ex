@@ -33,15 +33,17 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
         </marker>
       </defs>
-      <g>
-        <%= for {parent, child} <- edges do %>
-          <%= render_edge_line(coord_map[parent], coord_map[child]) %>
-        <% end %>
-      </g>
-      <g>
-        <%= for {id, coord} <- coord_map do %>
-          <%= render_facet_box(id, facets[id], coord) %>
-        <% end %>
+      <g transform="translate(2, 0)">
+        <g>
+          <%= for {parent, child} <- edges do %>
+            <%= render_edge_line(coord_map[parent], coord_map[child]) %>
+          <% end %>
+        </g>
+        <g>
+          <%= for {id, coord} <- coord_map do %>
+            <%= render_facet_box(id, facets[id], coord) %>
+          <% end %>
+        </g>
       </g>
     </svg>
     """
