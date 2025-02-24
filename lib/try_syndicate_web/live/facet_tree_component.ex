@@ -5,10 +5,10 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   # New function that returns our "constants" as a map instead of module attributes.
   defp dims do
     %{
-      box_width: 150,
+      box_width: 250,
       horizontal_gap: 50,
       vertical_gap: 50,
-      line_height: 16,
+      line_height: 24,
       vertical_padding: 20
     }
   end
@@ -194,23 +194,42 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
         ry="5"
       />
       <foreignObject x="0" y="0" width={@dims.box_width} height={box_height(@facet, @dims)}>
-        <div xmlns="http://www.w3.org/1999/xhtml" class="text-sm p-2 box-border">
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          class={"width-[#{@dims.box_width}px] height-[#{box_height(@facet, @dims)}px] text-sm p-2 box-border text-nowrap overflow-auto"}
+        >
           <div class="text-center font-bold mb-2"><%= @id %></div>
           <div class="font-bold">Fields:</div>
-          <ul class="list-disc list-inside ml-0 pl-4">
+          <ul class="list-inside ml-0 pl-2 text-left">
             <%= for field <- @facet.fields do %>
-              <li><%= field.name %>: <%= field.value %></li>
+              <li class="">
+                <.facet_box_line>
+                  <%= field.name %>: <%= field.value %>
+                </.facet_box_line>
+              </li>
             <% end %>
           </ul>
           <div class="font-bold mt-2">Endpoints:</div>
-          <ul class="list-disc list-inside ml-0 pl-4">
+          <ul class="list-inside ml-0 pl-2">
             <%= for ep <- @facet.eps do %>
-              <li><%= ep.description %></li>
+              <li>
+                <.facet_box_line>
+                  <%= ep.description %>
+                </.facet_box_line>
+              </li>
             <% end %>
           </ul>
         </div>
       </foreignObject>
     </g>
+    """
+  end
+
+  def facet_box_line(assigns) do
+    ~H"""
+    <code>
+      <%= render_slot(@inner_block) %>
+    </code>
     """
   end
 end
