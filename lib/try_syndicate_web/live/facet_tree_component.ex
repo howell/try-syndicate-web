@@ -199,7 +199,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
           <div class="font-bold">Fields:</div>
           <ul class="list-disc list-inside ml-0 pl-4">
             <%= for field <- @facet.fields do %>
-              <li><%= field.name %>: <%= to_string(field.value) %></li>
+              <li><%= field.name %>: <%= field.value %></li>
             <% end %>
           </ul>
           <div class="font-bold mt-2">Endpoints:</div>
