@@ -169,18 +169,10 @@ defmodule TrySyndicateWeb.TraceViewComponent do
       </div>
 
       <div class="space-x-2">
-        <button phx-click="actor_to_first" phx-value-pid={@selected_actor} class="border px-2 py-1">
-          Earliest
-        </button>
-        <button phx-click="actor_to_prev_distinct" phx-value-pid={@selected_actor} class="border px-2 py-1">
-          Prev Distinct
-        </button>
-        <button phx-click="actor_to_next_distinct" phx-value-pid={@selected_actor} class="border px-2 py-1">
-          Next Distinct
-        </button>
-        <button phx-click="actor_to_last" phx-value-pid={@selected_actor} class="border px-2 py-1">
-          Latest
-        </button>
+        <.trace_button label="Earliest" action="actor_to_first" disabled={!@selected_actor} />
+        <.trace_button label="Previous" action="actor_to_prev_distinct" disabled={!@selected_actor} />
+        <.trace_button label="Next" action="actor_to_next_distinct" disabled={!@selected_actor} />
+        <.trace_button label="Latest" action="actor_to_last" disabled={!@selected_actor} />
       </div>
 
       <%= if @selected_actor do %>
