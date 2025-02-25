@@ -158,6 +158,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
     trace
     |> Map.values()
     |> Enum.flat_map(&(selector.(&1).actors))
+    |> Enum.map(fn {id, actor} -> {id, actor.name} end)
     |> Enum.uniq()
   end
 
