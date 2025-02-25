@@ -157,8 +157,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   defp all_actors_by(trace, selector) do
     trace
     |> Map.values()
-    |> Enum.flat_map(&(&1.actors))
-    |> Enum.map(selector)
+    |> Enum.flat_map(&(selector.(&1).actors))
     |> Enum.uniq()
   end
 
