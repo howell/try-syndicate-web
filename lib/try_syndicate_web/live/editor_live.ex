@@ -1,12 +1,10 @@
 defmodule TrySyndicateWeb.EditorLive do
-  alias TrySyndicateWeb.FacetTreeComponent
-  alias TrySyndicate.ExampleSupport
   use TrySyndicateWeb, :live_view
 
-  alias TrySyndicate.SessionManager
-  alias TrySyndicate.Syndicate.DataspaceTrace
   alias TrySyndicate.ExampleSupport
-  alias TrySyndicateWeb.{CheatSheetComponent, DataspaceComponent, FacetTreeComponent}
+  alias TrySyndicate.SessionManager
+  alias TrySyndicate.Syndicate.{Dataspace, DataspaceTrace}
+  alias TrySyndicateWeb.{CheatSheetComponent, DataspaceComponent, ActorExplorer}
 
   require Logger
 
@@ -51,7 +49,8 @@ defmodule TrySyndicateWeb.EditorLive do
           program_error: String.t(),
           stale: boolean(),
           trace_steps: DataspaceTrace.t(),
-          current_trace_step: integer() | false
+          current_trace_step: integer() | false,
+          selected_actor: Dataspace.actor_id() | false
         }
 
   @default_trace_filter %{
@@ -67,7 +66,8 @@ defmodule TrySyndicateWeb.EditorLive do
       program_output: "",
       program_error: "",
       trace_steps: DataspaceTrace.new(@default_trace_filter),
-      current_trace_step: false
+      current_trace_step: false,
+      selected_actor: false
     }
   end
 
@@ -83,7 +83,8 @@ defmodule TrySyndicateWeb.EditorLive do
       current_flavor: :classic,
       editor_prefill: "",
       trace_steps: DataspaceTrace.new(@default_trace_filter),
-      current_trace_step: false
+      current_trace_step: false,
+      selected_actor: false
     ]
 
     attrs =
@@ -195,6 +196,10 @@ defmodule TrySyndicateWeb.EditorLive do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_event("select_actor", %{"value" => actor_id}, socket) do
+    {:noreply, assign(socket, selected_actor: actor_id)}
   end
 
   def apply_filter_update(socket, key_name, updater) do
@@ -317,9 +322,7 @@ defmodule TrySyndicateWeb.EditorLive do
         <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
       </div>
       <div class="flex flex-col w-full h-auto mx-auto overflow-x-auto">
-        <%= for {_pid, actor} <- DataspaceTrace.actors_at_step(@trace_steps, @current_trace_step) do %>
-          <FacetTreeComponent.tree :if={!Enum.empty?(actor)} actor={actor} />
-        <% end %>
+        <ActorExplorer.component trace={@trace_steps} current_step={@current_trace_step} selected_actor={@selected_actor} />
         <.actors_view trace={@trace_steps} current_step={@current_trace_step} />
       </div>
     </div>
