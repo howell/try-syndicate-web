@@ -143,4 +143,36 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
     Enum.filter(elems, fn {t, _} -> t <= time end)
     |> Enum.max_by(fn {idx, _} -> idx end, fn -> nil end)
   end
+
+  @spec all_actors(t()) :: [{Dataspace.actor_id(), false | String.t()}]
+  def all_actors(state) do
+    all_actors_by(state.trace, &Function.identity/1)
+  end
+
+  @spec all_unfiltered_actors(t()) :: [{Dataspace.actor_id(), false | String.t()}]
+  def all_unfiltered_actors(state) do
+    all_actors_by(state.filtered, &elem(&1, 0))
+  end
+
+  defp all_actors_by(trace, selector) do
+    trace
+    |> Map.values()
+    |> Enum.flat_map(&(&1.actors))
+    |> Enum.map(selector)
+    |> Enum.uniq()
+  end
+
+  @spec actor_at(t(), non_neg_integer(), Dataspace.actor_id()) :: ActorEnv.actor_detail() | nil
+  def actor_at(trace, step, pid) do
+    actors_at_step(trace, step)
+    |> Map.get(pid)
+  end
+
+  @spec actor_present?(t(), non_neg_integer(), Dataspace.actor_id()) :: boolean()
+  def actor_present?(trace, step, pid) do
+    actors_at_step(trace, step)
+    |> Map.has_key?(pid)
+  end
+
+
 end
