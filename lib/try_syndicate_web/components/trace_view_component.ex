@@ -169,15 +169,13 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           </select>
         </div>
 
-        <div :if={@selected_actor} class="flex justify-center space-x-2">
-          <.actor_navigation
-            trace={@trace}
-            selected_actor={@selected_actor}
-            current_step={@current_step}
-            actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
-            actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
-          />
-        </div>
+        <.actor_navigation
+          trace={@trace}
+          selected_actor={@selected_actor}
+          current_step={@current_step}
+          actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
+          actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
+        />
 
         <div class="invisible"></div>
       </div>
@@ -199,33 +197,19 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def actor_navigation(assigns) do
     ~H"""
-    <span>
-      <.trace_button
-        label="Earliest"
-        action="step_actor_first"
-        disabled={@actor_idx == 0}
-      />
-      <span :if={@actor_idx != nil}>
-        <.trace_button
-          label="Previous"
-          action="step_actor_prev"
-          disabled={@actor_idx == 0}
-        />
-        <span class="text-lg text-center">
-          <%= @actor_idx + 1 %> / <%= @actor_count %>
-        </span>
-        <.trace_button
-          label="Next"
-          action="step_actor_next"
-          disabled={@actor_idx == @actor_count - 1}
-        />
+    <div :if={@selected_actor} class="flex justify-center gap-4">
+      <.trace_button label="Earliest" action="step_actor_first" disabled={@actor_idx == 0} />
+      <.trace_button label="Previous" action="step_actor_prev" disabled={!@actor_idx || @actor_idx == 0} />
+      <span class={"text-lg text-center #{if !@actor_idx, do: "invisible"}"}>
+        <%= (@actor_idx || -1) + 1 %> / <%= @actor_count %>
       </span>
+      <.trace_button label="Next" action="step_actor_next" disabled={!@actor_idx || @actor_idx == @actor_count - 1} />
       <.trace_button
         label="Latest"
         action="step_actor_last"
         disabled={@actor_idx == @actor_count - 1}
       />
-    </span>
+    </div>
     """
   end
 
