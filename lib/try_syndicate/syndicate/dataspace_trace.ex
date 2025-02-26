@@ -157,6 +157,13 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
     |> Enum.max_by(fn {idx, _} -> idx end, fn -> nil end)
   end
 
+  @spec earliest_after(Enumerable.t({non_neg_integer(), any()}), non_neg_integer()) ::
+          {non_neg_integer(), any()} | nil
+  def earliest_after(elems, time) do
+    Enum.filter(elems, fn {t, _} -> t >= time end)
+    |> Enum.min_by(fn {idx, _} -> idx end, fn -> nil end)
+  end
+
   @spec all_actors(t()) :: [{Dataspace.actor_id(), false | String.t()}]
   def all_actors(state) do
     all_actors_by(state.trace, &Function.identity/1)
@@ -300,7 +307,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   def filtered_step_to(raw_step, trace) do
     trace.filtered
     |> Enum.map(fn {filtered_step, {_, raw_step}} -> {raw_step, filtered_step} end)
-    |> most_recent_at(raw_step)
+    |> earliest_after(raw_step)
     |> case do
       {_, filtered_step} -> filtered_step
       _ -> nil
