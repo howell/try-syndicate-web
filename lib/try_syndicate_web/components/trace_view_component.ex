@@ -150,35 +150,42 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   def actor_explorer(assigns) do
     ~H"""
     <div class="space-y-4 p-4">
-      <div class="flex items-center space-x-2">
-        <label for="actor_select" class="font-semibold">Actor:</label>
-        <select
-          id="actor_select"
-          name="actor_select"
-          class="border px-2 py-1"
-          phx-hook="Formless"
-          data-event="select_actor"
-        >
-          <option value="">-- Choose an actor --</option>
-          <%= for {pid, name?} <- DataspaceTrace.all_unfiltered_actors(@trace) do %>
+      <div class="grid grid-cols-3 items-center w-full">
+        <div class="flex items-center space-x-2 justify-self-start">
+          <label for="actor_select" class="font-semibold">Actor:</label>
+          <select
+            id="actor_select"
+            name="actor_select"
+            class="border px-2 py-1"
+            phx-hook="Formless"
+            data-event="select_actor"
+          >
+            <option value="">-- Choose an actor --</option>
+            <%= for {pid, name?} <- DataspaceTrace.all_unfiltered_actors(@trace) do %>
               <option value={pid} selected={@selected_actor == pid}>
                 <%= actor_label(pid, name?) %>
               </option>
-          <% end %>
-        </select>
-      </div>
+            <% end %>
+          </select>
+        </div>
 
-      <div class="space-x-2">
-        <.trace_button label="Earliest" action="actor_to_first" disabled={!@selected_actor} />
-        <.trace_button label="Previous" action="actor_to_prev_distinct" disabled={!@selected_actor} />
-        <.trace_button label="Next" action="actor_to_next_distinct" disabled={!@selected_actor} />
-        <.trace_button label="Latest" action="actor_to_last" disabled={!@selected_actor} />
+        <div class="flex justify-center space-x-2">
+          <.trace_button label="Earliest" action="actor_to_first" disabled={!@selected_actor} />
+          <.trace_button label="Previous" action="actor_to_prev_distinct" disabled={!@selected_actor} />
+          <.trace_button label="Next" action="actor_to_next_distinct" disabled={!@selected_actor} />
+          <.trace_button label="Latest" action="actor_to_last" disabled={!@selected_actor} />
+        </div>
+
+        <div class="invisible">
+        </div>
       </div>
 
       <%= if @selected_actor do %>
         <div class="border p-2">
           <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
-            <FacetTreeComponent.tree actor={DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)} />
+            <FacetTreeComponent.tree actor={
+              DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
+            } />
           <% else %>
             <p class="text-gray-600">This actor is not active at step <%= @current_step %>.</p>
           <% end %>
@@ -195,7 +202,6 @@ defmodule TrySyndicateWeb.TraceViewComponent do
       pid
     end
   end
-
 
   def actors_view(assigns) do
     ~H"""
