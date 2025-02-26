@@ -181,7 +181,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
       </div>
 
       <%= if @selected_actor do %>
-        <div class="border p-2">
+        <div class="border p-2 flex justify-center min-h-64">
           <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
             <FacetTreeComponent.tree actor={
               DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
