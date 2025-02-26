@@ -169,15 +169,44 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           </select>
         </div>
 
-        <div class="flex justify-center space-x-2">
-          <.trace_button label="Earliest" action="actor_to_first" disabled={!@selected_actor} />
-          <.trace_button label="Previous" action="actor_to_prev_distinct" disabled={!@selected_actor} />
-          <.trace_button label="Next" action="actor_to_next_distinct" disabled={!@selected_actor} />
-          <.trace_button label="Latest" action="actor_to_last" disabled={!@selected_actor} />
+        <div :if={@selected_actor} class="flex justify-center space-x-2">
+          <.trace_button
+            label="Earliest"
+            action="step_actor_first"
+            disabled={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step) == 0}
+          />
+          <span :if={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step) != nil}>
+            <.trace_button
+              label="Previous"
+              action="step_actor_prev"
+              disabled={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step) == 0}
+            />
+            <span class="text-lg text-center">
+              <%= DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step) + 1 %> / <%= DataspaceTrace.actor_step_count(
+                @trace,
+                @selected_actor
+              ) %>
+            </span>
+            <.trace_button
+              label="Next"
+              action="step_actor_next"
+              disabled={
+                DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step) ==
+                  DataspaceTrace.actor_step_count(@trace, @selected_actor) - 1
+              }
+            />
+          </span>
+          <.trace_button
+            label="Latest"
+            action="step_actor_last"
+            disabled={
+              DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step) ==
+                DataspaceTrace.actor_step_count(@trace, @selected_actor) - 1
+            }
+          />
         </div>
 
-        <div class="invisible">
-        </div>
+        <div class="invisible"></div>
       </div>
 
       <%= if @selected_actor do %>

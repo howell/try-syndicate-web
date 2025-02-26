@@ -182,6 +182,49 @@ defmodule TrySyndicateWeb.EditorLive do
      assign(socket, current_trace_step: map_size(socket.assigns.trace_steps.filtered) - 1)}
   end
 
+  def handle_event("step_actor_first", _params, socket) do
+    {:noreply,
+     assign(socket,
+       current_trace_step:
+         DataspaceTrace.first_actor_step(
+           socket.assigns.trace_steps,
+           socket.assigns.selected_actor
+         )
+     )}
+  end
+
+  def handle_event("step_actor_prev", _params, socket) do
+    {:noreply,
+     assign(socket,
+       current_trace_step:
+         DataspaceTrace.prev_actor_step(
+           socket.assigns.trace_steps,
+           socket.assigns.selected_actor,
+           socket.assigns.current_trace_step
+         )
+     )}
+  end
+
+  def handle_event("step_actor_next", _params, socket) do
+    {:noreply,
+     assign(socket,
+       current_trace_step:
+         DataspaceTrace.next_actor_step(
+           socket.assigns.trace_steps,
+           socket.assigns.selected_actor,
+           socket.assigns.current_trace_step
+         )
+     )}
+  end
+
+  def handle_event("step_actor_last", _params, socket) do
+    {:noreply,
+     assign(socket,
+       current_trace_step:
+         DataspaceTrace.last_actor_step(socket.assigns.trace_steps, socket.assigns.selected_actor)
+     )}
+  end
+
   def handle_event(
         "remove_trace_filter",
         %{"filter_type" => type, "filter_value" => value},
@@ -293,5 +336,4 @@ defmodule TrySyndicateWeb.EditorLive do
     </div>
     """
   end
-
 end
