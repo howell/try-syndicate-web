@@ -79,12 +79,12 @@ defmodule TrySyndicateWeb.EditorLive do
       program_error: "",
       stale: false,
       cheatsheet_open: false,
-      trace_filter_open: false,
       current_flavor: :classic,
       editor_prefill: "",
       trace_steps: DataspaceTrace.new(@default_trace_filter),
       current_trace_step: false,
-      selected_actor: false
+      selected_actor: false,
+      show_filtered: false
     ]
 
     attrs =
@@ -128,16 +128,11 @@ defmodule TrySyndicateWeb.EditorLive do
 
   def handle_event("start_new_session", _params, socket) do
     {:ok, socket} = begin_session(socket)
-    Logger.debug("Starting new session. Assigns:\n#{inspect(socket.assigns, pretty: true)}")
     {:noreply, socket}
   end
 
   def handle_event("toggle_cheatsheet", _params, socket) do
     {:noreply, update(socket, :cheatsheet_open, &(!&1))}
-  end
-
-  def handle_event("toggle_trace_filter", _params, socket) do
-    {:noreply, update(socket, :trace_filter_open, &(!&1))}
   end
 
   def handle_event("example_selected", %{"value" => example_name}, socket) do
@@ -225,6 +220,11 @@ defmodule TrySyndicateWeb.EditorLive do
      )}
   end
 
+  def handle_event("toggle_show_filtered", _params, socket) do
+    {:noreply,
+     assign(socket, show_filtered: !socket.assigns.show_filtered) |> deselect_actor_if_filtered()}
+  end
+
   def handle_event(
         "remove_trace_filter",
         %{"filter_type" => type, "filter_value" => value},
@@ -235,7 +235,11 @@ defmodule TrySyndicateWeb.EditorLive do
 
   def handle_event("add_trace_filter", %{"filter_type" => type, "filter_value" => value}, socket) do
     if value != "" do
-      {:noreply, apply_filter_update(socket, type, &Enum.dedup([value | &1]))}
+      socket =
+        apply_filter_update(socket, type, &Enum.dedup([value | &1]))
+        |> deselect_actor_if_filtered()
+
+      {:noreply, socket}
     else
       {:noreply, socket}
     end
@@ -291,6 +295,20 @@ defmodule TrySyndicateWeb.EditorLive do
       end)
     end)
     |> update(:current_trace_step, fn curr -> curr || 0 end)
+  end
+
+  @doc """
+  If the user selects an actor then filters it while filtered actors aren't visible,
+  the actor explorer should not display any information about the actor.
+  """
+  def deselect_actor_if_filtered(socket) do
+    if !socket.assigns.show_filtered &&
+         socket.assigns.selected_actor &&
+         DataspaceTrace.filtered?(socket.assigns.trace_steps, pid: socket.assigns.selected_actor) do
+      assign(socket, selected_actor: false)
+    else
+      socket
+    end
   end
 
   def code_mirror_line(assigns) do

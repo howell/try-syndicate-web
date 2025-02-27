@@ -17,6 +17,11 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     """
   end
 
+  attr :trace_steps, :any, required: true
+  attr :current_trace_step, :integer, required: true
+  attr :selected_actor, :any, required: true
+  attr :show_filtered, :boolean, required: true
+
   def trace_view(assigns) do
     ~H"""
     <div
@@ -38,15 +43,16 @@ defmodule TrySyndicateWeb.TraceViewComponent do
             trace={@trace_steps}
             current_step={@current_trace_step}
             selected_actor={@selected_actor}
+            show_filtered={@show_filtered}
           />
         </div>
       </.section>
 
-      <.section title="Trace Filter" class="p-4">
+      <%!-- <.section title="Trace Filter" class="p-4">
         <div class="flex flex-row items-start w-full">
           <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
         </div>
-      </.section>
+      </.section> --%>
     </div>
     """
   end
@@ -83,12 +89,13 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   attr :trace, :any, required: true
   attr :selected_actor, :any, default: nil
   attr :current_step, :integer, required: true
+  attr :show_filtered, :boolean, required: true
 
   def actor_explorer(assigns) do
     ~H"""
     <div class="flex flex-row divide-x divide-gray-300 border-t border-gray-300 min-h-44">
       <div class="w-1/3">
-        <.actor_list trace={@trace} selected_actor={@selected_actor} />
+        <.actor_list trace={@trace} selected_actor={@selected_actor} show_filtered={@show_filtered} />
       </div>
       <div class="w-2/3 pl-4">
         <%= if @selected_actor do %>
@@ -120,19 +127,35 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     """
   end
 
+  attr :show_filtered, :boolean, required: true
+  attr :selected_actor, :any, required: true
+  attr :trace, :any, required: true
   def actor_list(assigns) do
     ~H"""
     <div class="overflow-y-auto max-h-[500px]">
+      <div class="p-2 flex items-center">
+        <label class="flex items-center gap-2 text-sm text-gray-600">
+          <input type="checkbox" phx-click="toggle_show_filtered" checked={@show_filtered} />
+          Show filtered actors
+        </label>
+      </div>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <.table_header>Name</.table_header>
-            <.table_header>PID</.table_header>
+            <.table_header class="text-left">Name</.table_header>
+            <.table_header class="text-center">PID</.table_header>
+            <.table_header class="text-center">Filter</.table_header>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <%= for {pid, name?} <- DataspaceTrace.all_unfiltered_actors(@trace) do %>
-            <.actor_row pid={pid} name={name?} selected={@selected_actor == pid} />
+          <%= for {pid, name?} <- DataspaceTrace.all_actors(@trace) do %>
+            <.actor_row
+              :if={@show_filtered || !DataspaceTrace.filtered?(@trace, pid: pid, name: name?)}
+              pid={pid}
+              name={name?}
+              selected={@selected_actor == pid}
+              filtered={DataspaceTrace.filtered?(@trace, pid: pid, name: name?)}
+            />
           <% end %>
         </tbody>
       </table>
@@ -140,13 +163,14 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     """
   end
 
+  attr :class, :string, default: ""
   slot :inner_block, required: true
 
   def table_header(assigns) do
     ~H"""
     <th
       scope="col"
-      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+      class={"px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider #{@class}"}
     >
       <%= render_slot(@inner_block) %>
     </th>
@@ -156,22 +180,35 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   attr :pid, :string, required: true
   attr :name, :string, required: true
   attr :selected, :boolean, default: false
+  attr :filtered, :boolean, default: false
 
   def actor_row(assigns) do
     ~H"""
     <tr
       class={[
         "cursor-pointer hover:bg-gray-50",
-        @selected && "bg-blue-50"
+        @selected && "bg-blue-50",
       ]}
       phx-click="select_actor"
       phx-value-actor={@pid}
     >
-      <.table_cell>
+      <.table_cell class="text-left">
         <%= if @name && @name != "false", do: @name, else: "-" %>
       </.table_cell>
-      <.table_cell class="text-gray-500">
+      <.table_cell class="text-center text-gray-500">
         <%= @pid %>
+      </.table_cell>
+      <.table_cell class="text-center">
+        <button
+          type="button"
+          class="text-gray-500 hover:text-gray-700"
+          phx-click={if @filtered, do: "remove_trace_filter", else: "add_trace_filter"}
+          phx-value-filter_type={if @name && @name != "false", do: "Name", else: "PID"}
+          phx-value-filter_value={if @name && @name != "false", do: @name, else: @pid}
+        >
+          <i class={"fas #{if @filtered, do: "fa-eye-slash text-red-500", else: "fa-eye"}"}>
+          </i>
+        </button>
       </.table_cell>
     </tr>
     """
@@ -227,86 +264,4 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     """
   end
 
-  def trace_filter(assigns) do
-    ~H"""
-    <div class="mt-4 p-4">
-      <button type="button" class="mb-2 font-bold gap-2" phx-click="toggle_trace_filter">
-        Trace Filter
-        <%= if @trace_filter_open do %>
-          <i class="fas fa-chevron-up"></i>
-        <% else %>
-          <i class="fas fa-chevron-down"></i>
-        <% end %>
-      </button>
-      <div class={"#{if @trace_filter_open, do: "", else: "hidden"} divide-y divide-gray-200 border rounded"}>
-        <span class="text-xs uppercase">
-          <.filter_grid_row type_label="Type" value_label="Value" />
-        </span>
-        <%= for name <- @trace_steps.filter.names do %>
-          <.filter_grid_row type_label="Name" value_label={name} remove_action="remove_trace_filter" />
-        <% end %>
-        <%= for pid <- @trace_steps.filter.pids do %>
-          <.filter_grid_row type_label="PID" value_label={pid} remove_action="remove_trace_filter" />
-        <% end %>
-        <.filter_grid_input_row />
-      </div>
-    </div>
-    """
-  end
-
-  attr :type_label, :any, required: true
-  attr :value_label, :any, required: true
-  attr :remove_action, :any, required: false, default: nil
-
-  def filter_grid_row(assigns) do
-    ~H"""
-    <div
-      class={"grid grid-cols-6 p-2 font-medium #{if @remove_action, do: "", else: "bg-slate-50"}"}
-      style=""
-    >
-      <div><%= @type_label %></div>
-      <div class="col-span-4"><%= @value_label %></div>
-      <div>
-        <button
-          :if={@remove_action}
-          type="button"
-          class="text-red-600 hover:text-red-900"
-          phx-click={@remove_action}
-          phx-value-filter_type={@type_label}
-          phx-value-filter_value={@value_label}
-        >
-          Remove
-        </button>
-      </div>
-    </div>
-    """
-  end
-
-  def filter_grid_input_row(assigns) do
-    ~H"""
-    <form phx-submit="add_trace_filter">
-      <div class="grid grid-cols-6 p-2 font-medium">
-        <div class="mr-2 justify-start">
-          <select id="new-filter-type" name="filter_type" class="w-fit">
-            <option value="Name">Name</option>
-            <option value="PID">PID</option>
-          </select>
-        </div>
-        <div class="col-span-4 items-center mx-4">
-          <input
-            id="new-filter-value"
-            name="filter_value"
-            placeholder="New filter value"
-            class="p-2 w-full"
-          />
-        </div>
-        <div>
-          <button type="submit" class="text-green-600 hover:text-green-900 my-2">
-            Add
-          </button>
-        </div>
-      </div>
-    </form>
-    """
-  end
 end

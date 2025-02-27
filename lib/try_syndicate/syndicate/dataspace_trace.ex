@@ -313,4 +313,36 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
       _ -> nil
     end
   end
+
+  @spec filtered?(t(), Keyword.t()) :: boolean()
+  @doc """
+  Returns true if the specified actor is filtered out of the trace.
+  Arguments:
+    - `trace`: the trace to check
+    - `opts`: a keyword list of options:
+      - `:pid`: the actor id to check
+      - `:name`: the actor name to check
+  """
+  def filtered?(trace, opts \\ []) do
+    pid = Keyword.get(opts, :pid)
+    name = Keyword.get(opts, :name)
+
+    pid in trace.filter.pids ||
+      name in trace.filter.names ||
+      actor_name(trace, pid) in trace.filter.names
+  end
+
+  @spec actor_name(t(), Dataspace.actor_id()) :: String.t() | false | nil
+  @doc """
+  Returns the name of the specified actor.
+  Returns nil if the actor is not found in the trace.
+  """
+  def actor_name(trace, pid) do
+    all_actors(trace)
+    |> Enum.find(fn {id, _name} -> id == pid end)
+    |> case do
+      {_, name} -> name
+      _ -> nil
+    end
+  end
 end
