@@ -89,7 +89,11 @@ defmodule TrySyndicateWeb.EditorLive do
 
     attrs =
       for {key, default_value} <- defaults, into: %{} do
-        val = assigns[key] || socket.assigns[key] || default_value
+        val = cond do
+          Access.get(assigns, key, :missing) != :missing -> assigns[key]
+          Access.get(socket.assigns, key, :missing) != :missing -> socket.assigns[key]
+          true -> default_value
+        end
         {key, val}
       end
 
