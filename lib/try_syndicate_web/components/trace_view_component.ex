@@ -6,37 +6,47 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def trace_view(assigns) do
     ~H"""
-    <div class="mt-4 w-auto mx-auto flex flex-col gap-4 items-center">
-      <h2 class="text-center text-2xl">Execution State</h2>
-      <div class="flex flex-row items-center gap-4">
-        <.trace_button label="First" action="step_first" disabled={@current_trace_step == 0} />
-        <.trace_button label="Previous" action="step_prev" disabled={@current_trace_step == 0} />
-        <span class="text-lg text-center">
-          <%= @current_trace_step + 1 %> / <%= map_size(@trace_steps.filtered) %>
-        </span>
-        <.trace_button
-          label="Next"
-          action="step_next"
-          disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
-        />
-        <.trace_button
-          label="Current"
-          action="step_current"
-          disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
-        />
+    <div class="mt-4 w-auto mx-auto flex flex-col gap-4 border border-gray-400 rounded-lg">
+      <div class="p-4 border-b border-gray-400">
+        <h2 class="text-center text-2xl mb-4">Dataspace Trace</h2>
+        <div class="flex flex-row items-center gap-4 justify-center mb-4">
+          <.trace_button label="First" action="step_first" disabled={@current_trace_step == 0} />
+          <.trace_button label="Previous" action="step_prev" disabled={@current_trace_step == 0} />
+          <span class="text-lg text-center">
+            <%= @current_trace_step + 1 %> / <%= map_size(@trace_steps.filtered) %>
+          </span>
+          <.trace_button
+            label="Next"
+            action="step_next"
+            disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
+          />
+          <.trace_button
+            label="Current"
+            action="step_current"
+            disabled={@current_trace_step == map_size(@trace_steps.filtered) - 1}
+          />
+        </div>
+        <div class="w-dvw h-auto mx-auto overflow-x-auto">
+          <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+        </div>
       </div>
-      <div class="w-dvw h-auto mx-auto overflow-x-auto">
-        <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+
+      <div class="p-4 border-b border-gray-400">
+        <h2 class="text-center text-2xl mb-4">Actor Explorer</h2>
+        <div class="flex flex-col w-full h-auto mx-auto overflow-x-auto">
+          <.actor_explorer
+            trace={@trace_steps}
+            current_step={@current_trace_step}
+            selected_actor={@selected_actor}
+          />
+        </div>
       </div>
-      <div class="flex flex-row items-start w-full ml-20">
-        <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
-      </div>
-      <div class="flex flex-col w-full h-auto mx-auto overflow-x-auto">
-        <.actor_explorer
-          trace={@trace_steps}
-          current_step={@current_trace_step}
-          selected_actor={@selected_actor}
-        />
+
+      <div class="p-4">
+        <h2 class="text-center text-2xl mb-4">Trace Filter</h2>
+        <div class="flex flex-row items-start w-full">
+          <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
+        </div>
       </div>
     </div>
     """
