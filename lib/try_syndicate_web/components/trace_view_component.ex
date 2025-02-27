@@ -37,7 +37,6 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           current_step={@current_trace_step}
           selected_actor={@selected_actor}
         />
-        <.actors_view trace={@trace_steps} current_step={@current_trace_step} />
       </div>
     </div>
     """
@@ -221,18 +220,4 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     end
   end
 
-  def actors_view(assigns) do
-    ~H"""
-    <div class="flex flex-col w-full h-auto gap-4">
-      <h2 class="text-center text-2xl">Actors</h2>
-      <%= for {pid, actor} <- DataspaceTrace.actors_at_step(@trace, @current_step) do %>
-        <div class="flex flex-row items-center gap-4">
-          <span class="font-bold">PID:</span> <code><pre><%= pid %></pre></code>
-          <span class="font-bold">State:</span>
-          <code><pre><%= inspect(actor, pretty: true) %></pre></code>
-        </div>
-      <% end %>
-    </div>
-    """
-  end
 end
