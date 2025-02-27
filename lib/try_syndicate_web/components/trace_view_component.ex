@@ -156,7 +156,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           <select
             id="actor_select"
             name="actor_select"
-            class="border px-2 py-1"
+            class="border pl-4 pr-8 py-1"
             phx-hook="Formless"
             data-event="select_actor"
           >
