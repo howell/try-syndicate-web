@@ -4,7 +4,7 @@ defmodule TrySyndicate.Syndicate.TraceNotification do
   @fields [:type, :detail]
 
   @type dataspace_notification() :: %__MODULE__{type: :dataspace, detail: Dataspace.t()}
-  @type actors_notification() :: %__MODULE__{type: :actors, detail: ActorEnv.actor_env()}
+  @type actors_notification() :: %__MODULE__{type: :actors, detail: ActorEnv.t()}
   @type t() :: dataspace_notification() | actors_notification()
 
   @enforce_keys @fields
