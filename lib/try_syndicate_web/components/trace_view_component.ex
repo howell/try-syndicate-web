@@ -21,9 +21,9 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     ~H"""
     <div
       :if={@trace_steps.filtered[@current_trace_step]}
-      class="mt-4 w-auto mx-auto flex flex-col gap-4 border border-gray-400 rounded-lg"
+      class="mt-4 w-auto mx-auto flex flex-col gap-4 border-2 border-gray-400 rounded-lg"
     >
-      <.section title="Dataspace Trace" class="p-4 border-b border-gray-400">
+      <.section title="Dataspace Trace" class="p-4 border-b-2 border-gray-400">
         <.dataspace_navigation current_trace_step={@current_trace_step} trace_steps={@trace_steps} />
         <div class="w-dvw h-auto mx-auto overflow-x-auto">
           <DataspaceComponent.dataspace dataspace={
@@ -32,7 +32,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
         </div>
       </.section>
 
-      <.section title="Actor Explorer" class="border-b border-gray-400">
+      <.section title="Actor Explorer" class="border-b-2 border-gray-400">
         <div class="flex flex-col w-full h-auto mx-auto overflow-x-auto">
           <.actor_explorer
             trace={@trace_steps}
