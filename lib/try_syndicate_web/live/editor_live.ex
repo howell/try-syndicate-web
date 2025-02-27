@@ -241,7 +241,7 @@ defmodule TrySyndicateWeb.EditorLive do
     end
   end
 
-  def handle_event("select_actor", %{"value" => actor_id}, socket) do
+  def handle_event("select_actor", %{"actor" => actor_id}, socket) do
     {:noreply, assign(socket, selected_actor: actor_id)}
   end
 

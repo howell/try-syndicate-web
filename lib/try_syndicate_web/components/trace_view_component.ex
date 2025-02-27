@@ -10,7 +10,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def section(assigns) do
     ~H"""
-    <div class={"p-4 #{@class}"}>
+    <div class={"#{@class}"}>
       <h2 class="text-center text-2xl mb-4"><%= @title %></h2>
       <%= render_slot(@inner_block) %>
     </div>
@@ -20,7 +20,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   def trace_view(assigns) do
     ~H"""
     <div class="mt-4 w-auto mx-auto flex flex-col gap-4 border border-gray-400 rounded-lg">
-      <.section title="Dataspace Trace" class="border-b border-gray-400">
+      <.section title="Dataspace Trace" class="p-4 border-b border-gray-400">
         <.dataspace_navigation current_trace_step={@current_trace_step} trace_steps={@trace_steps} />
         <div class="w-dvw h-auto mx-auto overflow-x-auto">
           <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
@@ -37,7 +37,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
         </div>
       </.section>
 
-      <.section title="Trace Filter">
+      <.section title="Trace Filter" class="p-4">
         <div class="flex flex-row items-start w-full">
           <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
         </div>
@@ -81,63 +81,104 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def actor_explorer(assigns) do
     ~H"""
-    <div class="space-y-4 p-4">
-      <div class="grid grid-cols-3 items-center w-full">
-        <.actor_selector trace={@trace} selected_actor={@selected_actor} />
-        <.actor_navigation
-          trace={@trace}
-          selected_actor={@selected_actor}
-          current_step={@current_step}
-          actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
-          actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
-        />
-        <div class="invisible"></div>
+    <div class="flex flex-row divide-x divide-gray-300 border-t border-gray-300 min-h-44">
+      <div class="w-1/3">
+        <.actor_list trace={@trace} selected_actor={@selected_actor} />
       </div>
-
-      <%= if @selected_actor do %>
-        <div class="border p-2 flex justify-center min-h-64">
-          <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
-            <FacetTreeComponent.tree actor={
-              DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
-            } />
-          <% else %>
-            <p class="text-gray-600">This actor is not active at step <%= @current_step %>.</p>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-    """
-  end
-
-  def actor_selector(assigns) do
-    ~H"""
-    <div class="flex items-center space-x-2 justify-self-start">
-      <label for="actor_select" class="font-semibold">Actor:</label>
-      <select
-        id="actor_select"
-        name="actor_select"
-        class="border pl-4 pr-8 py-1"
-        phx-hook="Formless"
-        data-event="select_actor"
-      >
-        <option value="">-- Choose an actor --</option>
-        <%= for {pid, name?} <- DataspaceTrace.all_unfiltered_actors(@trace) do %>
-          <option value={pid} selected={@selected_actor == pid}>
-            <%= actor_label(pid, name?) %>
-          </option>
+      <div class="w-2/3 pl-4">
+        <%= if @selected_actor do %>
+          <div class="space-y-4 pt-4">
+            <.actor_navigation
+              trace={@trace}
+              selected_actor={@selected_actor}
+              current_step={@current_step}
+              actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
+              actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
+            />
+            <div class="p-2 flex justify-center">
+              <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
+                <FacetTreeComponent.tree actor={
+                  DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
+                } />
+              <% else %>
+                <p class="text-gray-600">This actor is not active at step <%= @current_step %>.</p>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div class="flex items-center justify-center h-full text-gray-500">
+            Select an actor from the list to view details
+          </div>
         <% end %>
-      </select>
+      </div>
     </div>
     """
   end
 
-  defp actor_label(pid, name?) do
-    if name? && name? != "false" do
-      "#{name?} #{pid}"
-    else
-      pid
-    end
+  def actor_list(assigns) do
+    ~H"""
+    <div class="overflow-y-auto max-h-[500px]">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <.table_header>Name</.table_header>
+            <.table_header>PID</.table_header>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <%= for {pid, name?} <- DataspaceTrace.all_unfiltered_actors(@trace) do %>
+            <.actor_row pid={pid} name={name?} selected={@selected_actor == pid} />
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    """
   end
+
+  slot :inner_block, required: true
+  def table_header(assigns) do
+    ~H"""
+    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+      <%= render_slot(@inner_block) %>
+    </th>
+    """
+  end
+
+  attr :pid, :string, required: true
+  attr :name, :string, required: true
+  attr :selected, :boolean, default: false
+
+  def actor_row(assigns) do
+    ~H"""
+    <tr
+      class={[
+        "cursor-pointer hover:bg-gray-50",
+        @selected && "bg-blue-50"
+      ]}
+      phx-click="select_actor"
+      phx-value-actor={@pid}
+    >
+      <.table_cell>
+        <%= if @name && @name != "false", do: @name, else: "-" %>
+      </.table_cell>
+      <.table_cell class="text-gray-500">
+        <%= @pid %>
+      </.table_cell>
+    </tr>
+    """
+  end
+
+  attr :class, :string, default: ""
+  slot :inner_block, required: true
+
+  def table_cell(assigns) do
+    ~H"""
+    <td class={["px-6 py-4 whitespace-nowrap text-sm", @class]}>
+      <%= render_slot(@inner_block) %>
+    </td>
+    """
+  end
+
 
   def actor_navigation(assigns) do
     ~H"""
@@ -268,5 +309,6 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     </form>
     """
   end
+
 
 end
