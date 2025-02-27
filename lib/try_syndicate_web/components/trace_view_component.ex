@@ -19,11 +19,16 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def trace_view(assigns) do
     ~H"""
-    <div class="mt-4 w-auto mx-auto flex flex-col gap-4 border border-gray-400 rounded-lg">
+    <div
+      :if={@trace_steps.filtered[@current_trace_step]}
+      class="mt-4 w-auto mx-auto flex flex-col gap-4 border border-gray-400 rounded-lg"
+    >
       <.section title="Dataspace Trace" class="p-4 border-b border-gray-400">
         <.dataspace_navigation current_trace_step={@current_trace_step} trace_steps={@trace_steps} />
         <div class="w-dvw h-auto mx-auto overflow-x-auto">
-          <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+          <DataspaceComponent.dataspace dataspace={
+            elem(@trace_steps.filtered[@current_trace_step], 0)
+          } />
         </div>
       </.section>
 
@@ -136,9 +141,13 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   end
 
   slot :inner_block, required: true
+
   def table_header(assigns) do
     ~H"""
-    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+    <th
+      scope="col"
+      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+    >
       <%= render_slot(@inner_block) %>
     </th>
     """
@@ -178,7 +187,6 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     </td>
     """
   end
-
 
   def actor_navigation(assigns) do
     ~H"""
@@ -235,18 +243,10 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           <.filter_grid_row type_label="Type" value_label="Value" />
         </span>
         <%= for name <- @trace_steps.filter.names do %>
-          <.filter_grid_row
-            type_label="Name"
-            value_label={name}
-            remove_action="remove_trace_filter"
-          />
+          <.filter_grid_row type_label="Name" value_label={name} remove_action="remove_trace_filter" />
         <% end %>
         <%= for pid <- @trace_steps.filter.pids do %>
-          <.filter_grid_row
-            type_label="PID"
-            value_label={pid}
-            remove_action="remove_trace_filter"
-          />
+          <.filter_grid_row type_label="PID" value_label={pid} remove_action="remove_trace_filter" />
         <% end %>
         <.filter_grid_input_row />
       </div>
@@ -309,6 +309,4 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     </form>
     """
   end
-
-
 end
