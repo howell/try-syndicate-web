@@ -4,36 +4,50 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   alias TrySyndicate.Syndicate.DataspaceTrace
   alias TrySyndicateWeb.{DataspaceComponent, FacetTreeComponent}
 
+  attr :title, :string, required: true
+  attr :class, :string, default: ""
+  slot :inner_block, required: true
+
+  def section(assigns) do
+    ~H"""
+    <div class={"p-4 #{@class}"}>
+      <h2 class="text-center text-2xl mb-4"><%= @title %></h2>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
   def trace_view(assigns) do
     ~H"""
     <div class="mt-4 w-auto mx-auto flex flex-col gap-4 border border-gray-400 rounded-lg">
-      <.dataspace_stepper trace_steps={@trace_steps} current_trace_step={@current_trace_step} />
+      <.section title="Dataspace Trace" class="border-b border-gray-400">
+        <.dataspace_navigation current_trace_step={@current_trace_step} trace_steps={@trace_steps} />
+        <div class="w-dvw h-auto mx-auto overflow-x-auto">
+          <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
+        </div>
+      </.section>
 
-      <.actor_explorer
-        trace={@trace_steps}
-        current_step={@current_trace_step}
-        selected_actor={@selected_actor}
-      />
+      <.section title="Actor Explorer" class="border-b border-gray-400">
+        <div class="flex flex-col w-full h-auto mx-auto overflow-x-auto">
+          <.actor_explorer
+            trace={@trace_steps}
+            current_step={@current_trace_step}
+            selected_actor={@selected_actor}
+          />
+        </div>
+      </.section>
 
-      <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
+      <.section title="Trace Filter">
+        <div class="flex flex-row items-start w-full">
+          <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
+        </div>
+      </.section>
     </div>
     """
   end
 
   attr :trace_steps, :any, required: true
   attr :current_trace_step, :integer, required: true
-
-  def dataspace_stepper(assigns) do
-    ~H"""
-    <div class="p-4 border-b border-gray-400">
-      <h2 class="text-center text-2xl mb-4">Dataspace Trace</h2>
-      <.dataspace_navigation current_trace_step={@current_trace_step} trace_steps={@trace_steps} />
-      <div class="w-dvw h-auto mx-auto overflow-x-auto">
-        <DataspaceComponent.dataspace dataspace={elem(@trace_steps.filtered[@current_trace_step], 0)} />
-      </div>
-    </div>
-    """
-  end
 
   def dataspace_navigation(assigns) do
     ~H"""
@@ -67,37 +81,30 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def actor_explorer(assigns) do
     ~H"""
-    <div class="p-4 border-b border-gray-400">
-      <h2 class="text-center text-2xl mb-4">Actor Explorer</h2>
-      <div class="flex flex-col w-full h-auto mx-auto overflow-x-auto">
-        <div class="space-y-4 p-4">
-          <div class="grid grid-cols-3 items-center w-full">
-            <.actor_selector trace={@trace} selected_actor={@selected_actor} />
+    <div class="space-y-4 p-4">
+      <div class="grid grid-cols-3 items-center w-full">
+        <.actor_selector trace={@trace} selected_actor={@selected_actor} />
+        <.actor_navigation
+          trace={@trace}
+          selected_actor={@selected_actor}
+          current_step={@current_step}
+          actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
+          actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
+        />
+        <div class="invisible"></div>
+      </div>
 
-            <.actor_navigation
-              trace={@trace}
-              selected_actor={@selected_actor}
-              current_step={@current_step}
-              actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
-              actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
-            />
-
-            <div class="invisible"></div>
-          </div>
-
-          <%= if @selected_actor do %>
-            <div class="border p-2 flex justify-center min-h-64">
-              <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
-                <FacetTreeComponent.tree actor={
-                  DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
-                } />
-              <% else %>
-                <p class="text-gray-600">This actor is not active at step <%= @current_step %>.</p>
-              <% end %>
-            </div>
+      <%= if @selected_actor do %>
+        <div class="border p-2 flex justify-center min-h-64">
+          <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
+            <FacetTreeComponent.tree actor={
+              DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
+            } />
+          <% else %>
+            <p class="text-gray-600">This actor is not active at step <%= @current_step %>.</p>
           <% end %>
         </div>
-      </div>
+      <% end %>
     </div>
     """
   end
@@ -173,39 +180,34 @@ defmodule TrySyndicateWeb.TraceViewComponent do
 
   def trace_filter(assigns) do
     ~H"""
-    <div class="p-4">
-      <h2 class="text-center text-2xl mb-4">Trace Filter</h2>
-      <div class="flex flex-row items-start w-full">
-        <div class="mt-4 p-4">
-          <button type="button" class="mb-2 font-bold gap-2" phx-click="toggle_trace_filter">
-            Trace Filter
-            <%= if @trace_filter_open do %>
-              <i class="fas fa-chevron-up"></i>
-            <% else %>
-              <i class="fas fa-chevron-down"></i>
-            <% end %>
-          </button>
-          <div class={"#{if @trace_filter_open, do: "", else: "hidden"} divide-y divide-gray-200 border rounded"}>
-            <span class="text-xs uppercase">
-              <.filter_grid_row type_label="Type" value_label="Value" />
-            </span>
-            <%= for name <- @trace_steps.filter.names do %>
-              <.filter_grid_row
-                type_label="Name"
-                value_label={name}
-                remove_action="remove_trace_filter"
-              />
-            <% end %>
-            <%= for pid <- @trace_steps.filter.pids do %>
-              <.filter_grid_row
-                type_label="PID"
-                value_label={pid}
-                remove_action="remove_trace_filter"
-              />
-            <% end %>
-            <.filter_grid_input_row />
-          </div>
-        </div>
+    <div class="mt-4 p-4">
+      <button type="button" class="mb-2 font-bold gap-2" phx-click="toggle_trace_filter">
+        Trace Filter
+        <%= if @trace_filter_open do %>
+          <i class="fas fa-chevron-up"></i>
+        <% else %>
+          <i class="fas fa-chevron-down"></i>
+        <% end %>
+      </button>
+      <div class={"#{if @trace_filter_open, do: "", else: "hidden"} divide-y divide-gray-200 border rounded"}>
+        <span class="text-xs uppercase">
+          <.filter_grid_row type_label="Type" value_label="Value" />
+        </span>
+        <%= for name <- @trace_steps.filter.names do %>
+          <.filter_grid_row
+            type_label="Name"
+            value_label={name}
+            remove_action="remove_trace_filter"
+          />
+        <% end %>
+        <%= for pid <- @trace_steps.filter.pids do %>
+          <.filter_grid_row
+            type_label="PID"
+            value_label={pid}
+            remove_action="remove_trace_filter"
+          />
+        <% end %>
+        <.filter_grid_input_row />
       </div>
     </div>
     """
