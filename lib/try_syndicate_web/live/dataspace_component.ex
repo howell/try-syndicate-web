@@ -143,7 +143,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         x={@dims.dataspace_box_x + @dims.dataspace_box_width / 2}
         y="24"
         text-anchor="middle"
-        font-size="24"
+        font-size="18"
         font-weight="bold"
       >
         Dataspace
