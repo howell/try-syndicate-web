@@ -104,6 +104,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
               trace={@trace}
               selected_actor={@selected_actor}
               current_step={@current_step}
+              present={DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor)}
               actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
               actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
             />
@@ -113,7 +114,9 @@ defmodule TrySyndicateWeb.TraceViewComponent do
                   DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
                 } />
               <% else %>
-                <p class="text-gray-600">This actor is not active at step <%= @current_step + 1 %>.</p>
+                <p class="text-gray-600">
+                  This actor is not active at step <%= @current_step + 1 %>.
+                </p>
               <% end %>
             </div>
           </div>
@@ -130,6 +133,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   attr :show_filtered, :boolean, required: true
   attr :selected_actor, :any, required: true
   attr :trace, :any, required: true
+
   def actor_list(assigns) do
     ~H"""
     <div class="overflow-y-auto max-h-[500px]">
@@ -187,7 +191,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     <tr
       class={[
         "cursor-pointer hover:bg-gray-50",
-        @selected && "bg-blue-50",
+        @selected && "bg-blue-50"
       ]}
       phx-click="select_actor"
       phx-value-actor={@pid}
@@ -206,8 +210,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           phx-value-filter_type={if @name && @name != "false", do: "Name", else: "PID"}
           phx-value-filter_value={if @name && @name != "false", do: @name, else: @pid}
         >
-          <i class={"fas #{if @filtered, do: "fa-eye-slash text-red-500", else: "fa-eye"}"}>
-          </i>
+          <i class={"fas #{if @filtered, do: "fa-eye-slash text-red-500", else: "fa-eye"}"}></i>
         </button>
       </.table_cell>
     </tr>
@@ -228,24 +231,28 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   def actor_navigation(assigns) do
     ~H"""
     <div :if={@selected_actor} class="flex justify-center gap-4">
-      <.trace_button label="Earliest" action="step_actor_first" disabled={@actor_idx == 0} />
+      <.trace_button
+        label="Earliest"
+        action="step_actor_first"
+        disabled={@present && @actor_idx == 0}
+      />
       <.trace_button
         label="Previous"
         action="step_actor_prev"
-        disabled={!@actor_idx || @actor_idx == 0}
+        disabled={!@present || !@actor_idx || @actor_idx == 0}
       />
-      <span class={"text-lg text-center #{if !@actor_idx, do: "invisible"}"}>
+      <span class={"text-lg text-center #{if !@present || !@actor_idx, do: "invisible"}"}>
         <%= (@actor_idx || -1) + 1 %> / <%= @actor_count %>
       </span>
       <.trace_button
         label="Next"
         action="step_actor_next"
-        disabled={!@actor_idx || @actor_idx == @actor_count - 1}
+        disabled={!@present || !@actor_idx || @actor_idx == @actor_count - 1}
       />
       <.trace_button
         label="Latest"
         action="step_actor_last"
-        disabled={@actor_idx == @actor_count - 1}
+        disabled={@present && @actor_idx == @actor_count - 1}
       />
     </div>
     """
@@ -263,5 +270,4 @@ defmodule TrySyndicateWeb.TraceViewComponent do
     </button>
     """
   end
-
 end
