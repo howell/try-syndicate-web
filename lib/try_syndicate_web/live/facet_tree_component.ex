@@ -198,7 +198,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
           xmlns="http://www.w3.org/1999/xhtml"
           class={"width-[#{@dims.box_width}px] height-[#{box_height(@facet, @dims)}px] text-sm p-2 box-border text-nowrap overflow-auto"}
         >
-          <div class="text-center font-bold mb-2"><%= @id %></div>
+          <div class="text-center font-bold mb-2">ID: <%= @id %></div>
           <div class="font-bold">Fields:</div>
           <ul class="list-inside ml-0 pl-2 text-left">
             <%= for field <- @facet.fields do %>
