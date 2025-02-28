@@ -113,7 +113,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
                   DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
                 } />
               <% else %>
-                <p class="text-gray-600">This actor is not active at step <%= @current_step %>.</p>
+                <p class="text-gray-600">This actor is not active at step <%= @current_step + 1 %>.</p>
               <% end %>
             </div>
           </div>
