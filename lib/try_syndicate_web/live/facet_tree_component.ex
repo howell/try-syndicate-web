@@ -215,6 +215,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
               <li>
                 <.facet_box_line>
                   <%= ep.description %>
+                  <%= Logger.debug("Endpoint srcloc: #{inspect(ep.src, pretty: true)}") && ""%>
                 </.facet_box_line>
               </li>
             <% end %>
