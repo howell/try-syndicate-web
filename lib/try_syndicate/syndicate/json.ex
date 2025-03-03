@@ -18,7 +18,7 @@ defmodule TrySyndicate.Syndicate.Json do
     end
   end
 
-  def parse_field(_json, _field, _validator), do: {:error, "Invalid JSON: not a map"}
+  def parse_field(_json, field, _validator), do: {:error, "Invalid JSON for field #{field}: parent is not a map"}
 
   def parse_list(json, parser \\ &success/1)
   def parse_list(json, parser) when is_list(json) do
