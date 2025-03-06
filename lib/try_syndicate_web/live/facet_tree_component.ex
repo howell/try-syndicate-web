@@ -1,7 +1,6 @@
 defmodule TrySyndicateWeb.FacetTreeComponent do
   use TrySyndicateWeb, :html
   alias TrySyndicate.Syndicate.{ActorDetail, Endpoint, Facet, Srcloc}
-  require Logger
 
   # New function that returns our "constants" as a map instead of module attributes.
   defp dims do
@@ -279,7 +278,6 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   Replace the description of the endpoint with the source code that generated it.
   """
   def resolve_srcloc(ep, submissions) do
-    Logger.debug("Resolving srcloc for endpoint: #{inspect(ep, pretty: true)}")
 
     case Integer.parse(ep.src.source) do
       {n, _} ->
@@ -287,7 +285,6 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
         if submission do
           orig = Srcloc.resolve(submission, ep.src)
-          Logger.debug("Resolved srcloc for endpoint: #{inspect(orig, pretty: true)}")
           %Endpoint{ep | description: orig}
         else
           ep
