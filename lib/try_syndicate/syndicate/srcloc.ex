@@ -39,14 +39,33 @@ defmodule TrySyndicate.Syndicate.Srcloc do
 
   @spec resolve(String.t(), t()) :: String.t()
   @doc """
+  Extract the code from the submission at the given source location and trim whitespace
+  to preserve relative indentation.
+  """
+  def resolve(submission, srcloc) do
+    select(submission, srcloc)
+    |> trim_leading_whitespace(srcloc.column)
+  end
+
+  @spec select(String.t(), t()) :: String.t()
+  @doc """
   Extract the code from the submission at the given line and column.
   """
-  def resolve(submission, %__MODULE__{line: line, column: column, span: span}) do
+  def select(submission, %__MODULE__{line: line, column: column, span: span}) do
     lines = String.split(submission, "\n")
 
     lines
     |> Enum.drop(line - 1)
     |> Enum.join("\n")
     |> String.slice(column, span)
+  end
+
+  @spec trim_leading_whitespace(String.t(), non_neg_integer()) :: String.t()
+  @doc """
+  Remove at most `max_length` leading whitespace characters from each line of `string`.
+  """
+  def trim_leading_whitespace(string, max_length) do
+    regex = Regex.compile!("^\\s{0,#{max_length}}", [:multiline])
+    Regex.replace(regex, string, "")
   end
 end
