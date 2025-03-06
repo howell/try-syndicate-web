@@ -115,6 +115,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "#<void>",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",
@@ -180,6 +181,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "0",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",
@@ -245,6 +247,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "0",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",
@@ -330,6 +333,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "0",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",
@@ -418,6 +422,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "0",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",
@@ -503,6 +508,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "100",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",
@@ -588,6 +594,7 @@
           fields: [
             %TrySyndicate.Syndicate.Field{
               name: "balance",
+              id: "18",
               value: "70",
               src: %TrySyndicate.Syndicate.Srcloc{
                 source: "#<procedure:eval>",

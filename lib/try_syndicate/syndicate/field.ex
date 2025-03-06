@@ -1,9 +1,10 @@
 defmodule TrySyndicate.Syndicate.Field do
   alias TrySyndicate.Syndicate.{Json, Srcloc}
-  @fields [:name, :value, :src]
+  @fields [:name, :id, :value, :src]
 
   @type t() :: %__MODULE__{
           name: String.t(),
+          id: String.t(),
           value: String.t(),
           src: Srcloc.t(),
         }
@@ -16,10 +17,12 @@ defmodule TrySyndicate.Syndicate.Field do
     if is_map(json) do
       with {:ok, name} <- Json.parse_field(json, "name"),
            {:ok, value} <- Json.parse_field(json, "value"),
-           {:ok, src} <- Srcloc.from_json(json["src"]) do
+           {:ok, src} <- Srcloc.from_json(json["src"]),
+           {:ok, id} <- Json.parse_field(json, "id") do
         {:ok,
          %__MODULE__{
            name: name,
+           id: id,
            value: value,
            src: src
          }}
