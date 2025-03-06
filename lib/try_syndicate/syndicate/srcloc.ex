@@ -7,7 +7,7 @@ defmodule TrySyndicate.Syndicate.Srcloc do
           line: false | non_neg_integer(),
           column: false | non_neg_integer(),
           position: false | non_neg_integer(),
-          span: false | non_neg_integer(),
+          span: false | non_neg_integer()
         }
 
   @enforce_keys @fields
@@ -37,4 +37,16 @@ defmodule TrySyndicate.Syndicate.Srcloc do
     end
   end
 
+  @spec resolve(String.t(), t()) :: String.t()
+  @doc """
+  Extract the code from the submission at the given line and column.
+  """
+  def resolve(submission, %__MODULE__{line: line, column: column, span: span}) do
+    lines = String.split(submission, "\n")
+
+    lines
+    |> Enum.drop(line - 1)
+    |> Enum.join("\n")
+    |> String.slice(column - 1, span)
+  end
 end
