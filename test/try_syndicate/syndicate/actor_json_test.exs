@@ -25,7 +25,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
   describe "endpoint fromjson basic" do
     test "endpoint fromjson" do
       raw_json =
-        "{\"description\":\"'(assert 'hello)\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10}}"
+        "{\"description\":\"'(assert 'hello)\",\"id\":\"test\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10}}"
 
       endpoint_json = Jason.decode!(raw_json)
 
@@ -34,6 +34,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
       assert {:ok,
               %Endpoint{
                 description: "'(assert 'hello)",
+                id: "test",
                 src: %Srcloc{
                   column: 5,
                   line: 1,
@@ -122,6 +123,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
                 "endpoints" => [
                   %{
                     "description" => "(assert 67)",
+                    "id" => "test",
                     "src" => %{
                       "column" => 0,
                       "line" => 56,
@@ -150,6 +152,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
                  eps: [
                    %Endpoint{
                      description: "(assert 67)",
+                     id: "test",
                      src: %Srcloc{
                        column: 0,
                        line: 56,
