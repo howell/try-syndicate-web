@@ -47,6 +47,6 @@ defmodule TrySyndicate.Syndicate.Srcloc do
     lines
     |> Enum.drop(line - 1)
     |> Enum.join("\n")
-    |> String.slice(column - 1, span)
+    |> String.slice(column, span)
   end
 end
