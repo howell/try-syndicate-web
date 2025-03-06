@@ -1,9 +1,10 @@
 defmodule TrySyndicate.SessionManager do
   @type session_id() :: String.t()
+  @type name() :: String.t()
   @type output_src() :: String.t()
 
   @callback start_session() :: {:ok, session_id()} | {:error, session_id()}
-  @callback execute_code(session_id(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @callback execute_code(session_id(), String.t(), name()) :: {:ok, String.t()} | {:error, String.t()}
   @callback session_status(session_id()) :: {:ok, :running | :finished} | {:error, String.t()}
   @callback notify_termination(session_id(), String.t()) :: :ok
   @callback keep_alive(session_id()) :: :ok
@@ -11,7 +12,7 @@ defmodule TrySyndicate.SessionManager do
 
 
   def start_session(), do: impl().start_session()
-  def execute_code(session_id, code), do: impl().execute_code(session_id, code)
+  def execute_code(session_id, code, name), do: impl().execute_code(session_id, code, name)
   def session_status(session_id), do: impl().session_status(session_id)
   def notify_termination(session_id, reason), do: impl().notify_termination(session_id, reason)
   def keep_alive(session_id), do: impl().keep_alive(session_id)

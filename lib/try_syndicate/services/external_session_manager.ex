@@ -114,8 +114,8 @@ defmodule TrySyndicate.ExternalSessionManager do
     GenServer.cast(__MODULE__, {:keep_alive, session_id})
   end
 
-  def execute_code(session_id, code) do
-    GenServer.call(__MODULE__, {:execute_code, session_id, code})
+  def execute_code(session_id, code, name) do
+    GenServer.call(__MODULE__, {:execute_code, session_id, code, name})
   end
 
   def session_status(session_id) do
@@ -135,9 +135,9 @@ defmodule TrySyndicate.ExternalSessionManager do
     end
   end
 
-  def handle_call({:execute_code, session_id, code}, _from, state) do
+  def handle_call({:execute_code, session_id, code, name}, _from, state) do
     if Map.get(state, session_id) do
-      case send_code(session_id, code) do
+      case send_code(session_id, code, name) do
         {:ok, output} -> {:reply, {:ok, output}, state}
         {:error, reason} -> {:reply, {:error, reason}, Map.delete(state, session_id)}
       end
@@ -224,9 +224,9 @@ defmodule TrySyndicate.ExternalSessionManager do
     end
   end
 
-  defp send_code(session_id, code) do
+  defp send_code(session_id, code, name) do
     url = "#{sandbox_url()}/submit"
-    body = Jason.encode!(%{session_id: session_id, code: code})
+    body = Jason.encode!(%{session_id: session_id, code: code, name: name})
     headers = [{"Content-Type", "application/json"}]
 
     case Finch.build(:post, url, headers, body) |> Finch.request(TrySyndicate.Finch) do

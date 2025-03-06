@@ -119,7 +119,8 @@ defmodule TrySyndicateWeb.EditorLive do
         {:noreply, put_flash(socket, :error, "Session not started")}
 
       session_id ->
-        case SessionManager.execute_code(session_id, code) do
+        name = "#{length(socket.assigns.submissions)}"
+        case SessionManager.execute_code(session_id, code, name) do
           {:ok, result} ->
             submissions = socket.assigns.submissions ++ [%{code: code, output: result}]
             {:noreply, assign(socket, output: "", submissions: submissions)}
