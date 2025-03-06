@@ -75,6 +75,7 @@
       current_trace_step={@current_trace_step}
       selected_actor={@selected_actor}
       show_filtered={@show_filtered}
+      submissions={for s <- @submissions, do: s.code}
     />
   </div>
 </div>

@@ -4,23 +4,11 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   alias TrySyndicate.Syndicate.DataspaceTrace
   alias TrySyndicateWeb.{DataspaceComponent, FacetTreeComponent}
 
-  attr :title, :string, required: true
-  attr :class, :string, default: ""
-  slot :inner_block, required: true
-
-  def section(assigns) do
-    ~H"""
-    <div class={"#{@class}"}>
-      <h2 class="text-center text-2xl mb-4"><%= @title %></h2>
-      <%= render_slot(@inner_block) %>
-    </div>
-    """
-  end
-
   attr :trace_steps, :any, required: true
   attr :current_trace_step, :integer, required: true
   attr :selected_actor, :any, required: true
   attr :show_filtered, :boolean, required: true
+  attr :submissions, :list, required: true
 
   def trace_view(assigns) do
     ~H"""
@@ -44,15 +32,23 @@ defmodule TrySyndicateWeb.TraceViewComponent do
             current_step={@current_trace_step}
             selected_actor={@selected_actor}
             show_filtered={@show_filtered}
+            submissions={@submissions}
           />
         </div>
       </.section>
+    </div>
+    """
+  end
 
-      <%!-- <.section title="Trace Filter" class="p-4">
-        <div class="flex flex-row items-start w-full">
-          <.trace_filter trace_steps={@trace_steps} trace_filter_open={@trace_filter_open} />
-        </div>
-      </.section> --%>
+  attr :title, :string, required: true
+  attr :class, :string, default: ""
+  slot :inner_block, required: true
+
+  def section(assigns) do
+    ~H"""
+    <div class={"#{@class}"}>
+      <h2 class="text-center text-2xl mb-4"><%= @title %></h2>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -90,7 +86,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
   attr :selected_actor, :any, default: nil
   attr :current_step, :integer, required: true
   attr :show_filtered, :boolean, required: true
-
+  attr :submissions, :list, required: true
   def actor_explorer(assigns) do
     ~H"""
     <div class="flex flex-row divide-x divide-gray-300 border-t border-gray-300 min-h-44">
@@ -112,7 +108,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
               <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
                 <FacetTreeComponent.tree actor={
                   DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
-                } />
+                } submissions={@submissions} />
               <% else %>
                 <p class="text-gray-600">
                   This actor is not active at step <%= @current_step + 1 %>.

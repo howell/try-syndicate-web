@@ -1,5 +1,6 @@
 defmodule TrySyndicateWeb.FacetTreeComponent do
   use TrySyndicateWeb, :html
+  alias TrySyndicate.Syndicate.{ActorEnv, Endpoint, Facet, Srcloc}
   require Logger
 
   # New function that returns our "constants" as a map instead of module attributes.
@@ -14,10 +15,11 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   end
 
   attr :actor, :any, required: true
+  attr :submissions, :list, required: true
 
   def tree(assigns) do
     the_dims = dims()
-    actor = assigns.actor
+    actor = resolve_srclocs(assigns.actor, assigns.submissions)
     root_id = compute_root(actor)
     {levels, edges} = build_levels(root_id, actor, 0, %{}, [])
     {coord_map, computed_width, computed_height} = assign_coordinates(levels, actor, the_dims)
@@ -155,8 +157,20 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
   # Compute dynamic box height based on content.
   defp box_height(facet, dims) do
-    lines = 1 + 1 + length(facet.fields) + 1 + length(facet.eps)
+    lines = 1 + 1 + length(facet.fields) + 1 + endpoint_lines(facet.eps)
     dims.vertical_padding + dims.line_height * lines
+  end
+
+  defp endpoint_lines(endpoints) do
+    endpoints
+    |> Enum.map(&count_lines(&1.description))
+    |> Enum.sum()
+  end
+
+  defp count_lines(description) do
+    description
+    |> String.split("\n")
+    |> length()
   end
 
   attr :parent_coord, :map, required: true
@@ -196,41 +210,88 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
       <foreignObject x="0" y="0" width={@dims.box_width} height={box_height(@facet, @dims)}>
         <div
           xmlns="http://www.w3.org/1999/xhtml"
-          class={"width-[#{@dims.box_width}px] height-[#{box_height(@facet, @dims)}px] text-sm p-2 box-border text-nowrap overflow-auto"}
+          class={"width-[#{@dims.box_width}px] height-[#{box_height(@facet, @dims)}px] text-xs p-2 text-left text-nowrap overflow-auto"}
         >
           <div class="text-center font-bold mb-2">ID: <%= @id %></div>
-          <div class="font-bold">Fields:</div>
-          <ul class="list-inside ml-0 pl-2 text-left">
+          <.facet_subheader>Fields:</.facet_subheader>
+          <.facet_box_list>
             <%= for field <- @facet.fields do %>
-              <li class="">
-                <.facet_box_line>
-                  <%= field.name %>: <%= field.value %>
-                </.facet_box_line>
+              <li class="pt-1">
+                <.facet_box_line><%= field.name %>: <%= field.value %></.facet_box_line>
               </li>
             <% end %>
-          </ul>
-          <div class="font-bold mt-2">Endpoints:</div>
-          <ul class="list-inside ml-0 pl-2">
+          </.facet_box_list>
+          <.facet_subheader class="mt-2">Endpoints:</.facet_subheader>
+          <.facet_box_list>
             <%= for ep <- @facet.eps do %>
-              <li>
-                <.facet_box_line>
-                  <%= ep.description %>
-                  <%= Logger.debug("Endpoint srcloc: #{inspect(ep.src, pretty: true)}") && ""%>
-                </.facet_box_line>
+              <li class="pt-1">
+                <.facet_box_line><%= ep.description %></.facet_box_line>
               </li>
             <% end %>
-          </ul>
+          </.facet_box_list>
         </div>
       </foreignObject>
     </g>
     """
   end
 
+  slot :inner_block, required: true
+  def facet_box_list(assigns) do
+    ~H"""
+    <ul class="space-y-1 divide-y divide-black divide-dashed">
+      <%= render_slot(@inner_block) %>
+    </ul>
+    """
+  end
+
+  slot :inner_block, required: true
+  attr :class, :string, default: ""
+  def facet_subheader(assigns) do
+    ~H"""
+    <div class={"text-sm font-bold #{@class}"}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  slot :inner_block, required: true
   def facet_box_line(assigns) do
     ~H"""
-    <code>
-      <%= render_slot(@inner_block) %>
-    </code>
+    <code><pre><%= render_slot(@inner_block) %></pre></code>
     """
+  end
+
+  @spec resolve_srclocs(ActorEnv.actor_detail(), [String.t()]) :: ActorEnv.actor_detail()
+  @doc """
+  Replace the description of each endpoint with the source code that generated it.
+  """
+  def resolve_srclocs(actor, submissions) do
+    for {fid, facet} <- actor, into: %{} do
+      {fid, %Facet{facet | eps: Enum.map(facet.eps, &resolve_srcloc(&1, submissions))}}
+    end
+  end
+
+  @spec resolve_srcloc(Endpoint.t(), [String.t()]) :: Endpoint.t()
+  @doc """
+  Replace the description of the endpoint with the source code that generated it.
+  """
+  def resolve_srcloc(ep, submissions) do
+    Logger.debug("Resolving srcloc for endpoint: #{inspect(ep, pretty: true)}")
+
+    case Integer.parse(ep.src.source) do
+      {n, _} ->
+        submission = Enum.at(submissions, n)
+
+        if submission do
+          orig = Srcloc.resolve(submission, ep.src)
+          Logger.debug("Resolved srcloc for endpoint: #{inspect(orig, pretty: true)}")
+          %Endpoint{ep | description: orig}
+        else
+          ep
+        end
+
+      _ ->
+        ep
+    end
   end
 end
