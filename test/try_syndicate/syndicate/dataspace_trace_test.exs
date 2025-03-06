@@ -5,9 +5,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
     DataspaceTrace,
     Dataspace,
     Actor,
-    ActorEnv,
-    TraceNotification,
-    Core
   }
 
   describe "all_unfiltered_actors/1" do

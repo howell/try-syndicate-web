@@ -1,11 +1,15 @@
 defmodule TrySyndicate.Syndicate.TraceNotificationTest do
   use ExUnit.Case, async: true
 
-  alias TrySyndicate.Syndicate.{Dataspace, ActorEnv, TraceNotification}
+  alias TrySyndicate.Syndicate.TraceNotification
 
   describe "trace notification from json" do
     test "decode simple actors notification" do
-      json = %{"detail" => [%{"actor_id" => "(0)", "facets" => []}], "type" => "actors"}
+      json = %{
+        "detail" => [%{"actor_id" => "(0)", "detail" => %{"facets" => [], "dataflow" => []}}],
+        "type" => "actors"
+      }
+
       result = TraceNotification.from_json(json)
       assert {:ok, %TraceNotification{type: :actors}} = result
     end

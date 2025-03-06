@@ -1,6 +1,6 @@
 defmodule TrySyndicateWeb.FacetTreeComponent do
   use TrySyndicateWeb, :html
-  alias TrySyndicate.Syndicate.{ActorEnv, Endpoint, Facet, Srcloc}
+  alias TrySyndicate.Syndicate.{ActorDetail, Endpoint, Facet, Srcloc}
   require Logger
 
   # New function that returns our "constants" as a map instead of module attributes.
@@ -20,9 +20,9 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   def tree(assigns) do
     the_dims = dims()
     actor = resolve_srclocs(assigns.actor, assigns.submissions)
-    root_id = compute_root(actor)
-    {levels, edges} = build_levels(root_id, actor, 0, %{}, [])
-    {coord_map, computed_width, computed_height} = assign_coordinates(levels, actor, the_dims)
+    root_id = compute_root(actor.facets)
+    {levels, edges} = build_levels(root_id, actor.facets, 0, %{}, [])
+    {coord_map, computed_width, computed_height} = assign_coordinates(levels, actor.facets, the_dims)
     svg_width = computed_width + the_dims.horizontal_gap
     svg_height = computed_height + the_dims.horizontal_gap
 
@@ -56,7 +56,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
         </g>
         <g>
           <%= for {id, coord} <- @coord_map do %>
-            <.facet_box id={id} facet={@actor[id]} coord={coord} dims={@dims} />
+            <.facet_box id={id} facet={@actor.facets[id]} coord={coord} dims={@dims} />
           <% end %>
         </g>
       </g>
@@ -261,14 +261,17 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     """
   end
 
-  @spec resolve_srclocs(ActorEnv.actor_detail(), [String.t()]) :: ActorEnv.actor_detail()
+  @spec resolve_srclocs(ActorDetail.t(), [String.t()]) :: ActorDetail.t()
   @doc """
   Replace the description of each endpoint with the source code that generated it.
   """
   def resolve_srclocs(actor, submissions) do
-    for {fid, facet} <- actor, into: %{} do
-      {fid, %Facet{facet | eps: Enum.map(facet.eps, &resolve_srcloc(&1, submissions))}}
-    end
+    facets =
+      for {fid, facet} <- actor.facets, into: %{} do
+        {fid, %Facet{facet | eps: Enum.map(facet.eps, &resolve_srcloc(&1, submissions))}}
+      end
+
+    %ActorDetail{actor | facets: facets}
   end
 
   @spec resolve_srcloc(Endpoint.t(), [String.t()]) :: Endpoint.t()

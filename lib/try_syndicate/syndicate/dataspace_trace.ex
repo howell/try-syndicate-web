@@ -4,7 +4,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
   and related utilities.
   """
 
-  alias TrySyndicate.Syndicate.{Dataspace, Actor, ActorEnv, TraceNotification}
+  alias TrySyndicate.Syndicate.{Dataspace, Actor, ActorEnv, ActorDetail, TraceNotification}
 
   @type raw_trace() :: %{
           non_neg_integer() => Dataspace.t()
@@ -182,7 +182,7 @@ defmodule TrySyndicate.Syndicate.DataspaceTrace do
     |> Enum.uniq()
   end
 
-  @spec actor_at(t(), non_neg_integer(), Dataspace.actor_id()) :: ActorEnv.actor_detail() | nil
+  @spec actor_at(t(), non_neg_integer(), Dataspace.actor_id()) :: ActorDetail.t() | nil
   def actor_at(trace, step, pid) do
     actors_at_step(trace, step)
     |> Map.get(pid)
