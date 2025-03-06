@@ -2,9 +2,11 @@ defmodule TrySyndicate.Syndicate.Endpoint do
   alias TrySyndicate.Syndicate.{Srcloc, Json}
   @fields [:description, :src, :id]
 
+  @type eid() :: String.t()
+
   @type t() :: %__MODULE__{
           description: String.t(),
-          id: String.t(),
+          id: eid(),
           src: Srcloc.t()
         }
 

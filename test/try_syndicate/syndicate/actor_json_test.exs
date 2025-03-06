@@ -181,4 +181,13 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
              } == fcts
     end
   end
+
+  describe "actor_detail fromjson" do
+    test "decode a non-empty dataflow graph" do
+      dfg_json = [%{"dests" => [["(23)", "0"]], "source" => "9"}]
+      json = %{"facets" => [], "dataflow" => dfg_json}
+      result = ActorDetail.from_json(json)
+      assert {:ok, %ActorDetail{facets: %{}, dataflow: %{"9" => [{"(23)", "0"}]}}} == result
+    end
+  end
 end
