@@ -1,14 +1,15 @@
 defmodule TrySyndicateWeb.FacetTreeComponent do
   use TrySyndicateWeb, :html
   alias TrySyndicate.Syndicate.{ActorDetail, Endpoint, Facet, Srcloc}
+  require Logger
 
   # New function that returns our "constants" as a map instead of module attributes.
   defp dims do
     %{
-      box_width: 250,
+      box_width: 500,
       horizontal_gap: 50,
       vertical_gap: 50,
-      line_height: 24,
+      line_height: 22,
       vertical_padding: 20
     }
   end
@@ -21,15 +22,30 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     actor = resolve_srclocs(assigns.actor, assigns.submissions)
     root_id = compute_root(actor.facets)
     {levels, edges} = build_levels(root_id, actor.facets, 0, %{}, [])
-    {coord_map, computed_width, computed_height} = assign_coordinates(levels, actor.facets, the_dims)
+
+    {coord_map, computed_width, computed_height} =
+      assign_coordinates(levels, actor.facets, the_dims)
+
     svg_width = computed_width + the_dims.horizontal_gap
     svg_height = computed_height + the_dims.horizontal_gap
+
+    # Extract dataflow connections
+    dataflow_edges = extract_dataflow_edges(actor.dataflow, actor.facets)
+
+    Logger.warning(
+      "Computing dataflow edges for actor #{inspect(actor, pretty: true, charlists: :as_lists)}"
+    )
+
+    Logger.warning(
+      "Dataflow edges: #{inspect(dataflow_edges, pretty: true, charlists: :as_lists)}"
+    )
 
     assigns
     |> assign(:actor, actor)
     |> assign(:svg_width, svg_width)
     |> assign(:svg_height, svg_height)
     |> assign(:edges, edges)
+    |> assign(:dataflow_edges, dataflow_edges)
     |> assign(:coord_map, coord_map)
     |> assign(:dims, the_dims)
     |> facet_tree()
@@ -37,13 +53,16 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
   def facet_tree(assigns) do
     ~H"""
-    <svg width={@svg_width} height={@svg_height}>
+    <svg width={@svg_width + 200} height={@svg_height}>
       <defs>
         <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
         </marker>
+        <marker id="dataflow-arrow" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#3366CC" />
+        </marker>
       </defs>
-      <g transform="translate(2,0)">
+      <g transform="translate(200,0)">
         <g>
           <%= for {parent, child} <- @edges do %>
             <.edge_line
@@ -56,6 +75,17 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
         <g>
           <%= for {id, coord} <- @coord_map do %>
             <.facet_box id={id} facet={@actor.facets[id]} coord={coord} dims={@dims} />
+          <% end %>
+        </g>
+        <g>
+          <%= for {src_fid, target_fid, source_y_offset, target_y_offset, _} <- @dataflow_edges do %>
+            <.dataflow_edge_line
+              source_coord={@coord_map[src_fid]}
+              target_coord={@coord_map[target_fid]}
+              source_y_offset={source_y_offset}
+              target_y_offset={target_y_offset}
+              dims={@dims}
+            />
           <% end %>
         </g>
       </g>
@@ -211,7 +241,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
           xmlns="http://www.w3.org/1999/xhtml"
           class={"width-[#{@dims.box_width}px] height-[#{box_height(@facet, @dims)}px] text-xs p-2 text-left text-nowrap overflow-auto"}
         >
-          <div class="text-center font-bold mb-2">ID: <%= @id %></div>
+          <div class="text-center font-bold">ID: <%= @id %></div>
           <.facet_subheader>Fields:</.facet_subheader>
           <.facet_box_list>
             <%= for field <- @facet.fields do %>
@@ -220,7 +250,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
               </li>
             <% end %>
           </.facet_box_list>
-          <.facet_subheader class="mt-2">Endpoints:</.facet_subheader>
+          <.facet_subheader class="">Endpoints:</.facet_subheader>
           <.facet_box_list>
             <%= for ep <- @facet.eps do %>
               <li class="pt-1">
@@ -235,6 +265,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   end
 
   slot :inner_block, required: true
+
   def facet_box_list(assigns) do
     ~H"""
     <ul class="space-y-1 divide-y divide-black divide-dashed">
@@ -245,6 +276,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
   slot :inner_block, required: true
   attr :class, :string, default: ""
+
   def facet_subheader(assigns) do
     ~H"""
     <div class={"text-sm font-bold #{@class}"}>
@@ -254,6 +286,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   end
 
   slot :inner_block, required: true
+
   def facet_box_line(assigns) do
     ~H"""
     <code><pre><%= render_slot(@inner_block) %></pre></code>
@@ -278,7 +311,6 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
   Replace the description of the endpoint with the source code that generated it.
   """
   def resolve_srcloc(ep, submissions) do
-
     case Integer.parse(ep.src.source) do
       {n, _} ->
         submission = Enum.at(submissions, n)
@@ -293,5 +325,94 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
       _ ->
         ep
     end
+  end
+
+  # Extract dataflow edges for visualization
+  def extract_dataflow_edges(dataflow, facets) do
+    dataflow
+    |> Enum.flat_map(fn {src, dests} ->
+      Enum.map(dests, fn {target_facet_id, target_endpoint_id} ->
+        # Find which facet contains the source and its position
+        case find_field_position(facets, src) do
+          nil ->
+            nil
+
+          {source_facet_id, field_y_offset} ->
+            # Find target endpoint position in the target facet
+            endpoint_y_offset =
+              find_endpoint_position(facets[target_facet_id], target_endpoint_id)
+
+            {source_facet_id, target_facet_id, field_y_offset, endpoint_y_offset,
+             target_endpoint_id}
+        end
+      end)
+    end)
+    |> Enum.filter(&(&1 != nil))
+  end
+
+  # Find which facet contains a field with the given ID and its vertical position within the facet
+  def find_field_position(facets, field_id, line_height \\ dims().line_height) do
+    Enum.find_value(facets, fn {facet_id, facet} ->
+      # Calculate line positions for the fields section
+      # Start with header lines (ID and Fields header)
+      header_offset = 2 * line_height
+
+      # Try to find the field index in the list
+      field_index = Enum.find_index(facet.fields, fn field -> field.id == field_id end)
+
+      if field_index != nil do
+        # Found the field - return its position
+        field_y_offset = header_offset + (field_index + 0.5) * line_height
+        {facet_id, field_y_offset}
+      else
+        nil
+      end
+    end)
+  end
+
+  # Find the vertical position of an endpoint within a facet
+  def find_endpoint_position(facet, endpoint_id, line_height \\ dims().line_height) do
+    # Start with header lines (ID, Fields header)
+    header_offset = 2 * line_height
+
+    # Add fields section height
+    fields_offset = length(facet.fields) * line_height
+
+    # Add endpoints header
+    endpoints_header_offset = line_height
+
+    base_offset = header_offset + fields_offset + endpoints_header_offset
+
+    # Find the endpoint index and calculate its position
+    ep_idx = Enum.find_index(facet.eps, fn ep -> ep.id == endpoint_id end)
+    ep_height = line_height * count_lines(Enum.at(facet.eps, ep_idx).description)
+
+    ep_offset =
+      Enum.take(facet.eps, ep_idx)
+      |> Enum.map(fn ep -> line_height * count_lines(ep.description) end)
+      |> Enum.sum()
+
+    base_offset + ep_offset + ep_height / 2
+  end
+
+  attr :source_coord, :map, required: true
+  attr :target_coord, :map, required: true
+  attr :source_y_offset, :float, required: true
+  attr :target_y_offset, :float, required: true
+  attr :dims, :map, required: true
+
+  def dataflow_edge_line(assigns) do
+    ~H"""
+    <path
+      d={"M#{@source_coord.x} #{@source_coord.y + @source_y_offset}
+         Q#{(@source_coord.x + @target_coord.x) / 2 - 100} #{(@source_coord.y + @source_y_offset + @target_coord.y + @target_y_offset) / 2},
+         #{@target_coord.x - 3} #{@target_coord.y + @target_y_offset - 10}"}
+      fill="none"
+      stroke="#3366CC"
+      stroke-width="2"
+      stroke-dasharray="5,5"
+      marker-end="url(#dataflow-arrow)"
+    />
+    """
   end
 end
