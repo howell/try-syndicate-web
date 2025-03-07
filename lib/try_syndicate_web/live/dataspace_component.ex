@@ -546,11 +546,11 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         block_height = max(actor_box_height, assertions_box_height + event_space + action_space)
         c_y = y_offset + event_height + (block_height - actor_height) / 2
         s_y = y_offset + event_height + (block_height - assertions_box_height) / 2
-        event_y = c_y - event_height - vertical_padding
+        event_y = c_y - event_height - (vertical_padding / 2) - max(actor_box_height, assertions_box_height) / 2
 
         actions_y =
           c_y + actor_box_height / 2 + max(actor_box_height, assertions_box_height) / 2 +
-            vertical_padding
+            (vertical_padding / 2)
 
         layout = %{
           c_y: c_y,
