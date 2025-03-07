@@ -9,8 +9,7 @@ defmodule TrySyndicate.TraceTest do
         "active_actor" => %{"actions" => false, "actor" => "(0)", "event" => "boot"},
         "actors" => [%{"assertions" => [], "id" => "(0)", "name" => "repl-supervisor"}],
         "last_op" => "spawn-actor",
-        "pending_actions" => [],
-        "recent_messages" => []
+        "pending_actions" => []
       },
       %{
         "active_actor" => %{
@@ -63,8 +62,7 @@ defmodule TrySyndicate.TraceTest do
             ],
             "origin" => %{"space" => "(0)", "time" => 33517}
           }
-        ],
-        "recent_messages" => []
+        ]
       },
       %{
         "active_actor" => false,
@@ -94,8 +92,7 @@ defmodule TrySyndicate.TraceTest do
             ],
             "origin" => %{"space" => "(0)", "time" => 33517}
           }
-        ],
-        "recent_messages" => []
+        ]
       }
     ]
 
@@ -119,8 +116,7 @@ defmodule TrySyndicate.TraceTest do
         "active_actor" => %{"actions" => false, "actor" => "(0)", "event" => "boot"},
         "actors" => [%{"assertions" => [], "id" => "(0)", "name" => "repl-supervisor"}],
         "last_op" => "spawn-actor",
-        "pending_actions" => [],
-        "recent_messages" => []
+        "pending_actions" => []
       }
 
       {:ok, ds} = Dataspace.from_json(ds_json)
@@ -159,8 +155,7 @@ defmodule TrySyndicate.TraceTest do
                     active_actor: :none,
                     actors: %{},
                     last_op: "spawn-actor",
-                    pending_actions: [],
-                    recent_messages: []
+                    pending_actions: []
                   }, 0}
              }
 

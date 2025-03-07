@@ -9,7 +9,6 @@ defmodule TrySyndicate.Syndicate.Dataspace do
   @type t() :: %__MODULE__{
           actors: %{actor_id() => Actor.t()},
           active_actor: :none | {actor_id(), Core.event(), false | [Core.action()]},
-          recent_messages: [String.t()],
           pending_actions: [{SpaceTime.t(), [Core.action()]}],
           last_op: false | String.t()
         }
@@ -17,7 +16,6 @@ defmodule TrySyndicate.Syndicate.Dataspace do
   @fields [
     :actors,
     :active_actor,
-    :recent_messages,
     :pending_actions,
     :last_op
   ]
@@ -30,14 +28,12 @@ defmodule TrySyndicate.Syndicate.Dataspace do
     if is_map(json) and Enum.all?(@fields, &Map.has_key?(json, to_string(&1))) do
       with {:ok, actors} <- parse_actors(json["actors"]),
            {:ok, active_actor} <- parse_active_actor(json["active_actor"]),
-           {:ok, recent_messages} <- parse_recent_messages(json["recent_messages"]),
            {:ok, pending_actions} <- parse_pending_acts(json["pending_actions"]),
            {:ok, last_op} <- parse_last_op(json["last_op"]) do
         {:ok,
          %__MODULE__{
            actors: actors,
            active_actor: active_actor,
-           recent_messages: recent_messages,
            pending_actions: pending_actions,
            last_op: last_op
          }}
@@ -100,15 +96,6 @@ defmodule TrySyndicate.Syndicate.Dataspace do
       {:ok, json}
     else
       {:error, "Invalid last_op JSON: expected a string or false"}
-    end
-  end
-
-  @spec parse_recent_messages(term()) :: {:ok, [String.t()]} | {:error, String.t()}
-  def parse_recent_messages(json) do
-    if is_list(json) do
-      Json.parse_list(json, &Core.json_to_message/1)
-    else
-      {:error, "Invalid recent_messages: expected a list"}
     end
   end
 

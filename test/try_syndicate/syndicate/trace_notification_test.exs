@@ -65,8 +65,7 @@ defmodule TrySyndicate.Syndicate.TraceNotificationTest do
               ],
               "origin" => %{"space" => "(0)", "time" => 246}
             }
-          ],
-          "recent_messages" => []
+          ]
         },
         "type" => "dataspace"
       }

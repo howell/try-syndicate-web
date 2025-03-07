@@ -22,7 +22,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 10564}
           }
         ],
-        "recent_messages" => [],
         "last_op" => false
       }
 
@@ -30,7 +29,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
       assert dataspace.active_actor == :none
       assert dataspace.actors == %{}
       assert length(dataspace.pending_actions) == 1
-      assert dataspace.recent_messages == []
       assert dataspace.last_op == false
     end
 
@@ -80,7 +78,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 10564}
           }
         ],
-        "recent_messages" => [],
         "last_op" => "action-interpreted"
       }
 
@@ -88,7 +85,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
       assert dataspace.active_actor == :none
       assert map_size(dataspace.actors) == 1
       assert length(dataspace.pending_actions) == 2
-      assert dataspace.recent_messages == []
       assert dataspace.last_op == "action-interpreted"
     end
 
@@ -138,7 +134,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 10564}
           }
         ],
-        "recent_messages" => [],
         "last_op" => "spawn-actor"
       }
 
@@ -146,7 +141,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
       assert dataspace.active_actor == :none
       assert map_size(dataspace.actors) == 1
       assert length(dataspace.pending_actions) == 2
-      assert dataspace.recent_messages == []
       assert dataspace.last_op == "spawn-actor"
     end
   end
@@ -166,14 +160,12 @@ defmodule TrySyndicate.Syndicate.JsonTest do
             "origin" => %{"space" => "(meta)", "time" => 100}
           }
         ],
-        "recent_messages" => [],
         "last_op" => false
       }
       assert {:ok, dataspace} = Dataspace.from_json(json)
       assert dataspace.active_actor == :none
       assert dataspace.actors == %{}
       assert length(dataspace.pending_actions) == 1
-      assert dataspace.recent_messages == []
       assert dataspace.last_op == false
     end
   end
@@ -208,18 +200,6 @@ defmodule TrySyndicate.Syndicate.JsonTest do
 
     test "returns error for incomplete active actor JSON" do
       assert {:error, _} = Dataspace.parse_active_actor(%{})
-    end
-  end
-
-  describe "Dataspace.parse_recent_messages/1" do
-    test "parses valid list of strings" do
-      msgs = [["message", "hello"], ["message", "world"]]
-      assert {:ok, result} = Dataspace.parse_recent_messages(msgs)
-      assert result == [{:message, "hello"}, {:message, "world"}]
-    end
-
-    test "returns error for list with non-string elements" do
-      assert {:error, _} = Dataspace.parse_recent_messages([1, 2])
     end
   end
 

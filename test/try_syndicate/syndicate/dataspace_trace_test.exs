@@ -24,7 +24,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       dataspace = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -52,7 +51,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       dataspace = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -82,7 +80,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       dataspace = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -112,7 +109,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       dataspace = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -154,7 +150,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       dataspace = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -198,7 +193,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       ds0 = %Dataspace{
         actors: %{actor_id1 => actor1},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -206,7 +200,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       ds1 = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: {actor_id2, false, false},
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }
@@ -214,7 +207,6 @@ defmodule TrySyndicate.Syndicate.DataspaceTraceTest do
       ds2 = %Dataspace{
         actors: %{actor_id1 => actor1, actor_id2 => actor2},
         active_actor: :none,
-        recent_messages: [],
         pending_actions: [],
         last_op: false
       }

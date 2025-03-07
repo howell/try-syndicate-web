@@ -662,29 +662,21 @@
     0 => {%TrySyndicate.Syndicate.Dataspace{
        actors: %{},
        active_actor: :none,
-       recent_messages: [],
+
        pending_actions: [],
        last_op: "spawn-actor"
      }, 0},
     1 => {%TrySyndicate.Syndicate.Dataspace{
        actors: %{"(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}},
        active_actor: {"(4)", :boot, false},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "spawn-actor"
      }, 40},
     2 => {%TrySyndicate.Syndicate.Dataspace{
        actors: %{"(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}},
        active_actor: {"(4)", :boot, [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
           [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]}
@@ -694,12 +686,7 @@
     3 => {%TrySyndicate.Syndicate.Dataspace{
        actors: %{"(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}},
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
           [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]}
@@ -714,12 +701,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "action-interpreted"
      }, 48},
@@ -732,12 +714,7 @@
          "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
        },
        active_actor: {"(5)", :boot, false},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "spawn-actor"
      }, 49},
@@ -750,12 +727,7 @@
          "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
        },
        active_actor: {"(5)", :boot, [{["'#s(observe #s(account ★))"], []}]},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
           [{["'#s(observe #s(account ★))"], []}]}
@@ -771,13 +743,7 @@
          "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
           [{["'#s(observe #s(account ★))"], []}]}
@@ -796,13 +762,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "action-interpreted"
      }, 55},
@@ -818,13 +778,7 @@
          }
        },
        active_actor: {"(5)", {["'#s(account 0)"], []}, false},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "dispatch-event"
      }, 56},
@@ -840,13 +794,7 @@
          }
        },
        active_actor: {"(5)", {["'#s(account 0)"], []}, []},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "actions-produced"
      }, 57},
@@ -863,13 +811,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: {"(6)", :boot, false},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "spawn-actor"
      }, 58},
@@ -886,13 +828,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: {"(6)", :boot, [{["'#s(observe #s(observe #s(deposit ★)))"], []}]},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11961},
           [{["'#s(observe #s(observe #s(deposit ★)))"], []}]}
@@ -912,13 +848,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11961},
           [{["'#s(observe #s(observe #s(deposit ★)))"], []}]}
@@ -941,13 +871,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "action-interpreted"
      }, 61},
@@ -967,13 +891,7 @@
          }
        },
        active_actor: {"(6)", {["'#s(observe #s(deposit ★))"], []}, false},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "dispatch-event"
      }, 62},
@@ -999,13 +917,7 @@
           {:message, "'#s(message #s(deposit -30))"},
           :quit
         ]},
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
           [
@@ -1033,13 +945,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
           [
@@ -1064,13 +970,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
           [
@@ -1094,14 +994,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
           [{:message, "'#s(message #s(deposit -30))"}, :quit]}
@@ -1121,14 +1014,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: {"(4)", {:message, "'#s(message #s(deposit 100))"}, false},
-       recent_messages: [
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
           [{:message, "'#s(message #s(deposit -30))"}, :quit]}
@@ -1149,14 +1035,7 @@
        },
        active_actor: {"(4)", {:message, "'#s(message #s(deposit 100))"},
         [{["'#s(account 100)"], ["'#s(account 0)"]}]},
-       recent_messages: [
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11987},
           [{["'#s(account 100)"], ["'#s(account 0)"]}]},
@@ -1178,15 +1057,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977}, [:quit]},
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11987},
@@ -1207,15 +1078,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: {"(4)", {:message, "'#s(message #s(deposit -30))"}, false},
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977}, [:quit]},
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11987},
@@ -1237,15 +1100,7 @@
        },
        active_actor: {"(4)", {:message, "'#s(message #s(deposit -30))"},
         [{["'#s(account 70)"], ["'#s(account 100)"]}]},
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
           [{["'#s(account 70)"], ["'#s(account 100)"]}]},
@@ -1268,15 +1123,7 @@
          "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977}, [:quit]},
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
@@ -1298,15 +1145,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
           [{["'#s(account 70)"], ["'#s(account 100)"]}]},
@@ -1327,15 +1166,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
           [{["'#s(account 70)"], ["'#s(account 100)"]}]}
@@ -1354,15 +1185,7 @@
          }
        },
        active_actor: {"(5)", {["'#s(account 100)"], ["'#s(account 0)"]}, false},
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
           [{["'#s(account 70)"], ["'#s(account 100)"]}]}
@@ -1381,15 +1204,7 @@
          }
        },
        active_actor: {"(5)", {["'#s(account 100)"], ["'#s(account 0)"]}, []},
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [
          {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
           [{["'#s(account 70)"], ["'#s(account 100)"]}]}
@@ -1408,15 +1223,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "action-interpreted"
      }, 77},
@@ -1432,15 +1239,7 @@
          }
        },
        active_actor: {"(5)", {["'#s(account 70)"], ["'#s(account 100)"]}, false},
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "dispatch-event"
      }, 78},
@@ -1456,15 +1255,7 @@
          }
        },
        active_actor: {"(5)", {["'#s(account 70)"], ["'#s(account 100)"]}, []},
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "actions-produced"
      }, 79},
@@ -1480,15 +1271,7 @@
          }
        },
        active_actor: :none,
-       recent_messages: [
-         message: "'#s(message #s(deposit -30))",
-         message: "'#s(message #s(deposit 100))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-         message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-         message: "'#s(message flush!166627)"
-       ],
+
        pending_actions: [],
        last_op: "actions-produced"
      }, 80}
@@ -1497,7 +1280,7 @@
     0 => %TrySyndicate.Syndicate.Dataspace{
       actors: %{"(0)" => %TrySyndicate.Syndicate.Actor{name: "repl-supervisor", assertions: []}},
       active_actor: {"(0)", :boot, false},
-      recent_messages: [],
+
       pending_actions: [],
       last_op: "spawn-actor"
     },
@@ -1513,7 +1296,7 @@
          {["'#s(observe flush!166627)"], []},
          {:message, "'#s(message flush!166627)"}
        ]},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11828},
          [
@@ -1531,7 +1314,7 @@
     2 => %TrySyndicate.Syndicate.Dataspace{
       actors: %{"(0)" => %TrySyndicate.Syndicate.Actor{name: "repl-supervisor", assertions: []}},
       active_actor: :none,
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11828},
          [
@@ -1555,7 +1338,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11828},
          [
@@ -1578,7 +1361,7 @@
         "(1)" => %TrySyndicate.Syndicate.Actor{name: "drivers/repl", assertions: []}
       },
       active_actor: {"(1)", :boot, false},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11828},
          [{["'#s(observe flush!166627)"], []}, {:message, "'#s(message flush!166627)"}]}
@@ -1599,7 +1382,7 @@
          {["'#s(up command-handler)", "'#s(observe #s(up repl-supervisor))",
            "'#s(observe #s(stay-up command-handler))"], []}
        ]},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11839},
          [
@@ -1621,7 +1404,7 @@
         "(1)" => %TrySyndicate.Syndicate.Actor{name: "drivers/repl", assertions: []}
       },
       active_actor: {"(1)", :boot, [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
@@ -1649,7 +1432,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
@@ -1672,7 +1455,7 @@
         }
       },
       active_actor: {"(0)", {["'#s(up command-handler)"], []}, false},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
@@ -1695,7 +1478,7 @@
         }
       },
       active_actor: {"(0)", {["'#s(up command-handler)"], []}, []},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
@@ -1719,7 +1502,7 @@
       },
       active_actor: {"(1)", {["'#s(up repl-supervisor)", "'#s(stay-up command-handler)"], []},
        false},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
@@ -1742,7 +1525,7 @@
         }
       },
       active_actor: {"(1)", {["'#s(up repl-supervisor)", "'#s(stay-up command-handler)"], []}, []},
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]},
@@ -1765,7 +1548,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11828},
          [message: "'#s(message flush!166627)"]},
@@ -1788,7 +1571,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]}
@@ -1809,7 +1592,7 @@
         }
       },
       active_actor: {"(0)", {:message, "'#s(message flush!166627)"}, false},
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11840},
          [{["'#s(observe #s(inbound #s(command ★ ★)))"], []}]}
@@ -1831,7 +1614,7 @@
       },
       active_actor: {"(0)", {:message, "'#s(message flush!166627)"},
        [{[], ["'#s(observe flush!166627)"]}]},
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11855},
          [{[], ["'#s(observe flush!166627)"]}]},
@@ -1854,7 +1637,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11855},
          [{[], ["'#s(observe flush!166627)"]}]},
@@ -1880,7 +1663,7 @@
        {:message,
         "'#s(message #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f)))))"},
        false},
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(0)", time: 11855},
          [{[], ["'#s(observe flush!166627)"]}]},
@@ -1908,7 +1691,7 @@
        [
          message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))"
        ]},
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11866},
          [
@@ -1936,7 +1719,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11866},
          [
@@ -1962,7 +1745,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [message: "'#s(message flush!166627)"],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11866},
          [
@@ -1986,10 +1769,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "action-interpreted"
     },
@@ -2011,10 +1791,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "dispatch-event"
     },
@@ -2036,10 +1813,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))"},
        [spawn: [], spawn: []]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11873}, [spawn: [], spawn: []]}
       ],
@@ -2060,10 +1834,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11873}, [spawn: [], spawn: []]}
       ],
@@ -2085,10 +1856,7 @@
         "(2)" => %TrySyndicate.Syndicate.Actor{name: "drivers/timer", assertions: []}
       },
       active_actor: {"(2)", :boot, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11873}, [spawn: []]}],
       last_op: "spawn-actor"
     },
@@ -2112,10 +1880,7 @@
          {["'#s(advertise #s(timer-expired ★ ★))", "'#s(observe #s(set-timer ★ ★ ★))"],
           []}
        ]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(2)", time: 11882},
          [
@@ -2143,10 +1908,7 @@
         "(3)" => %TrySyndicate.Syndicate.Actor{name: "drivers/timestate", assertions: []}
       },
       active_actor: {"(3)", :boot, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(2)", time: 11882},
          [
@@ -2173,10 +1935,7 @@
         "(3)" => %TrySyndicate.Syndicate.Actor{name: "drivers/timestate", assertions: []}
       },
       active_actor: {"(3)", :boot, [{["'#s(observe #s(observe #s(later-than ★)))"], []}]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(3)", time: 11884},
          [{["'#s(observe #s(observe #s(later-than ★)))"], []}]},
@@ -2205,10 +1964,7 @@
         "(3)" => %TrySyndicate.Syndicate.Actor{name: "drivers/timestate", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(3)", time: 11884},
          [{["'#s(observe #s(observe #s(later-than ★)))"], []}]},
@@ -2241,10 +1997,7 @@
         "(3)" => %TrySyndicate.Syndicate.Actor{name: "drivers/timestate", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(3)", time: 11884},
          [{["'#s(observe #s(observe #s(later-than ★)))"], []}]}
@@ -2275,10 +2028,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "action-interpreted"
     },
@@ -2309,10 +2059,7 @@
        {:message,
         "'#s(message #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>)))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "dispatch-event"
     },
@@ -2345,10 +2092,7 @@
        [
          message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))"
        ]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11905},
          [
@@ -2381,11 +2125,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "action-interpreted"
     },
@@ -2416,11 +2156,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "dispatch-event"
     },
@@ -2451,11 +2187,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))"},
        [spawn: []]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11910}, [spawn: []]}],
       last_op: "actions-produced"
     },
@@ -2483,11 +2215,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11910}, [spawn: []]}],
       last_op: "actions-produced"
     },
@@ -2518,11 +2246,7 @@
        {:message,
         "'#s(message #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>)))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11910}, [spawn: []]}],
       last_op: "dispatch-event"
     },
@@ -2555,11 +2279,7 @@
        [
          message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))"
        ]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11918},
          [
@@ -2594,11 +2314,7 @@
         "(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}
       },
       active_actor: {"(4)", :boot, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11918},
          [
@@ -2632,11 +2348,7 @@
         "(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}
       },
       active_actor: {"(4)", :boot, [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
          [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]},
@@ -2672,12 +2384,7 @@
         "(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
          [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]}
@@ -2712,12 +2419,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
          [{["'#s(account 0)", "'#s(observe #s(deposit ★))"], []}]}
@@ -2752,12 +2454,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))"},
        [spawn: []]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11925}, [spawn: []]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
@@ -2790,12 +2487,7 @@
         "(4)" => %TrySyndicate.Syndicate.Actor{name: "banker", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11925}, [spawn: []]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
@@ -2831,12 +2523,7 @@
        {:message,
         "'#s(message #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>)))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11925}, [spawn: []]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11920},
@@ -2874,12 +2561,7 @@
        [
          message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))"
        ]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11936},
          [
@@ -2919,12 +2601,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11936},
          [
@@ -2963,12 +2640,7 @@
         "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
       },
       active_actor: {"(5)", :boot, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(meta)", time: 11936},
          [
@@ -3006,12 +2678,7 @@
         "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
       },
       active_actor: {"(5)", :boot, [{["'#s(observe #s(account ★))"], []}]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
          [{["'#s(observe #s(account ★))"], []}]},
@@ -3051,13 +2718,7 @@
         "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
          [{["'#s(observe #s(account ★))"], []}]}
@@ -3096,13 +2757,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))"},
        false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
          [{["'#s(observe #s(account ★))"], []}]}
@@ -3141,13 +2796,7 @@
        {:message,
         "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))"},
        [spawn: []]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11944}, [spawn: []]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
@@ -3184,13 +2833,7 @@
         "(5)" => %TrySyndicate.Syndicate.Actor{name: "observer", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11944}, [spawn: []]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(5)", time: 11939},
@@ -3230,13 +2873,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11944}, [spawn: []]}],
       last_op: "action-interpreted"
     },
@@ -3272,13 +2909,7 @@
         }
       },
       active_actor: {"(5)", {["'#s(account 0)"], []}, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11944}, [spawn: []]}],
       last_op: "dispatch-event"
     },
@@ -3314,13 +2945,7 @@
         }
       },
       active_actor: {"(5)", {["'#s(account 0)"], []}, []},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [{%TrySyndicate.Syndicate.SpaceTime{space: "(1)", time: 11944}, [spawn: []]}],
       last_op: "actions-produced"
     },
@@ -3357,13 +2982,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: {"(6)", :boot, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "spawn-actor"
     },
@@ -3400,13 +3019,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: {"(6)", :boot, [{["'#s(observe #s(observe #s(deposit ★)))"], []}]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11961},
          [{["'#s(observe #s(observe #s(deposit ★)))"], []}]}
@@ -3446,13 +3059,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11961},
          [{["'#s(observe #s(observe #s(deposit ★)))"], []}]}
@@ -3495,13 +3102,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "action-interpreted"
     },
@@ -3541,13 +3142,7 @@
         }
       },
       active_actor: {"(6)", {["'#s(observe #s(deposit ★))"], []}, false},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "dispatch-event"
     },
@@ -3593,13 +3188,7 @@
          {:message, "'#s(message #s(deposit -30))"},
          :quit
        ]},
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
          [
@@ -3647,13 +3236,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
          [
@@ -3698,13 +3281,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
          [
@@ -3748,14 +3325,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
          [{:message, "'#s(message #s(deposit -30))"}, :quit]}
@@ -3795,14 +3365,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: {"(4)", {:message, "'#s(message #s(deposit 100))"}, false},
-      recent_messages: [
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977},
          [{:message, "'#s(message #s(deposit -30))"}, :quit]}
@@ -3843,14 +3406,7 @@
       },
       active_actor: {"(4)", {:message, "'#s(message #s(deposit 100))"},
        [{["'#s(account 100)"], ["'#s(account 0)"]}]},
-      recent_messages: [
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11987},
          [{["'#s(account 100)"], ["'#s(account 0)"]}]},
@@ -3892,15 +3448,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977}, [:quit]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11987},
@@ -3941,15 +3489,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: {"(4)", {:message, "'#s(message #s(deposit -30))"}, false},
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977}, [:quit]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11987},
@@ -3991,15 +3531,7 @@
       },
       active_actor: {"(4)", {:message, "'#s(message #s(deposit -30))"},
        [{["'#s(account 70)"], ["'#s(account 100)"]}]},
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
          [{["'#s(account 70)"], ["'#s(account 100)"]}]},
@@ -4042,15 +3574,7 @@
         "(6)" => %TrySyndicate.Syndicate.Actor{name: "client", assertions: []}
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(6)", time: 11977}, [:quit]},
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
@@ -4092,15 +3616,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
          [{["'#s(account 70)"], ["'#s(account 100)"]}]},
@@ -4141,15 +3657,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
          [{["'#s(account 70)"], ["'#s(account 100)"]}]}
@@ -4188,15 +3696,7 @@
         }
       },
       active_actor: {"(5)", {["'#s(account 100)"], ["'#s(account 0)"]}, false},
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
          [{["'#s(account 70)"], ["'#s(account 100)"]}]}
@@ -4235,15 +3735,7 @@
         }
       },
       active_actor: {"(5)", {["'#s(account 100)"], ["'#s(account 0)"]}, []},
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [
         {%TrySyndicate.Syndicate.SpaceTime{space: "(4)", time: 11992},
          [{["'#s(account 70)"], ["'#s(account 100)"]}]}
@@ -4282,15 +3774,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "action-interpreted"
     },
@@ -4326,15 +3810,7 @@
         }
       },
       active_actor: {"(5)", {["'#s(account 70)"], ["'#s(account 100)"]}, false},
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "dispatch-event"
     },
@@ -4370,15 +3846,7 @@
         }
       },
       active_actor: {"(5)", {["'#s(account 70)"], ["'#s(account 100)"]}, []},
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "actions-produced"
     },
@@ -4414,15 +3882,7 @@
         }
       },
       active_actor: :none,
-      recent_messages: [
-        message: "'#s(message #s(deposit -30))",
-        message: "'#s(message #s(deposit 100))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:174:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:spawn #<procedure:...te/drivers/repl.rkt:168:16>))))",
-        message: "'#s(message #s(inbound #s(command #<async-channel> #s(instr:perform-actions activate (#s(actor #<procedure:.../syndicate/core.rkt:203:11> #f) #s(actor #<procedure:.../syndicate/core.rkt:203:11> #f))))))",
-        message: "'#s(message flush!166627)"
-      ],
+
       pending_actions: [],
       last_op: "actions-produced"
     }
