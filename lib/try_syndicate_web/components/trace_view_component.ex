@@ -93,7 +93,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
       <div class="w-1/3">
         <.actor_list trace={@trace} selected_actor={@selected_actor} show_filtered={@show_filtered} />
       </div>
-      <div class="w-2/3 pl-4">
+      <div class="w-2/3 pl-4 overflow-hidden">
         <%= if @selected_actor do %>
           <div class="space-y-4 pt-4">
             <.actor_navigation
@@ -104,11 +104,13 @@ defmodule TrySyndicateWeb.TraceViewComponent do
               actor_idx={DataspaceTrace.actor_step_idx(@trace, @selected_actor, @current_step)}
               actor_count={DataspaceTrace.actor_step_count(@trace, @selected_actor)}
             />
-            <div class="p-2 flex justify-center">
+            <div class="p-2 overflow-auto max-h-[600px]">
               <%= if DataspaceTrace.actor_present?(@trace, @current_step, @selected_actor) do %>
-                <FacetTreeComponent.tree actor={
-                  DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
-                } submissions={@submissions} />
+                <div class="overflow-auto min-w-full">
+                  <FacetTreeComponent.tree actor={
+                    DataspaceTrace.actor_at(@trace, @current_step, @selected_actor)
+                  } submissions={@submissions} />
+                </div>
               <% else %>
                 <p class="text-gray-600">
                   This actor is not active at step <%= @current_step + 1 %>.
