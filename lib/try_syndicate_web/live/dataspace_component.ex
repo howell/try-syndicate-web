@@ -18,7 +18,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       horizontal_padding: 40,
       assertions_box_x_offset: 50,
       assertions_box_width: assertion_action_width,
-      assertions_box_height: 20,
+      assertions_line_height: 16,
+      assertions_line_spacing: 10,
       assertions_box_padding: 4,
       dataspace_box_width: dataspace_width,
       dataspace_box_x: dataspace_x,
@@ -328,11 +329,11 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       <foreignObject width={@dims.assertions_box_width} height={@layout.assertions_box_height}>
         <div
           xmlns="http://www.w3.org/1999/xhtml"
-          class="width-full height-full text-left truncate text-xs overflow-auto p-2"
+          class="width-full height-full text-left truncate text-xs overflow-auto"
         >
-          <ul>
+          <ul class="space-y-1 divide-y divide-slate-300 divide-dashed">
             <%= for assertion <- @assertions do %>
-              <li><code><pre><%= assertion %></pre></code></li>
+              <li class="pl-2 pt-1 last:pb-1"><code><pre><%= assertion %></pre></code></li>
             <% end %>
           </ul>
         </div>
@@ -379,7 +380,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     <g transform={"translate(0, #{@layout.y})"}>
       <text
         x={-2}
-        y={@dims.assertions_box_height / 2}
+        y={@dims.assertions_line_height / 2}
         dominant-baseline="middle"
         text-anchor="end"
         fill="#000"
@@ -511,7 +512,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
           {[{Dataspace.actor_id(), Actor.t(), actor_layout()}], integer()}
   def compute_actor_layout(actors, active_actor, dims) do
     actor_box_height = dims[:actor_box_height]
-    state_item_height = dims[:assertions_box_height]
+    state_item_height = dims[:assertions_line_height]
+    state_item_spacing = dims[:assertions_line_spacing]
     assertions_box_padding = dims[:assertions_box_padding]
     vertical_spacing = dims[:vertical_spacing]
     vertical_padding = dims[:vertical_padding]
@@ -519,7 +521,9 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     Enum.map_reduce(actors, vertical_padding, fn
       {id, actor}, y_offset ->
         assertions_box_height =
-          assertions_box_padding * 2 + max(length(actor.assertions), 1) * state_item_height
+          assertions_box_padding * 2 +
+            max(length(actor.assertions), 1) * state_item_height +
+            max(length(actor.assertions) - 1, 0) * state_item_spacing
 
         {event_height, actions_height} =
           case(active_actor) do
