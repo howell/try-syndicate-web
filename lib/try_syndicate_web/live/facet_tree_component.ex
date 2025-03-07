@@ -53,7 +53,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
   def facet_tree(assigns) do
     ~H"""
-    <svg width={@svg_width + 200} height={@svg_height}>
+    <svg width={@svg_width + 100} height={@svg_height} style="min-width: 100%; min-height: 100%;" preserveAspectRatio="xMinYMin meet">
       <defs>
         <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
@@ -62,7 +62,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
           <path d="M0,0 L0,6 L6,3 z" fill="#3366CC" />
         </marker>
       </defs>
-      <g transform="translate(200,0)">
+      <g transform="translate(100,0)">
         <g>
           <%= for {parent, child} <- @edges do %>
             <.edge_line
