@@ -55,7 +55,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     ~H"""
     <svg width={@svg_width + 100} height={@svg_height} style="min-width: 100%; min-height: 100%;" preserveAspectRatio="xMinYMin meet">
       <defs>
-        <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+        <marker id="arrow" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
         </marker>
         <marker id="dataflow-arrow" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
@@ -409,7 +409,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
          #{@target_coord.x - 3} #{@target_coord.y + @target_y_offset - 10}"}
       fill="none"
       stroke="#3366CC"
-      stroke-width="2"
+      stroke-width="1"
       stroke-dasharray="5,5"
       marker-end="url(#dataflow-arrow)"
     />
