@@ -55,7 +55,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
         <marker id="arrow" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
         </marker>
-        <marker id="dataflow-arrow" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
+        <marker id="dataflow-arrow" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#3366CC" />
         </marker>
       </defs>
@@ -403,7 +403,7 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     <path
       d={"M#{@source_coord.x} #{@source_coord.y + @source_y_offset}
          Q#{(@source_coord.x + @target_coord.x) / 2 - 100} #{(@source_coord.y + @source_y_offset + @target_coord.y + @target_y_offset) / 2},
-         #{@target_coord.x - 3} #{@target_coord.y + @target_y_offset - 10}"}
+         #{@target_coord.x} #{@target_coord.y + @target_y_offset}"}
       fill="none"
       stroke="#3366CC"
       stroke-width="1"
