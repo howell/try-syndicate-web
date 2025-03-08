@@ -59,7 +59,16 @@ Hooks.CodeMirror = {
     this.editor = new EditorView({
       state: EditorState.create({
         doc: code,
-        extensions: [basicSetup, StreamLanguage.define(scheme), EditorView.editable.of(this.active)]
+        extensions: [
+          basicSetup, 
+          StreamLanguage.define(scheme), 
+          EditorView.editable.of(this.active),
+          EditorView.theme({
+            "&": {
+              fontSize: "16px"  // You can adjust this value as needed
+            }
+          })
+        ]
       }),
       parent: this.el
     });
