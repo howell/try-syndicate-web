@@ -32,14 +32,6 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
     # Extract dataflow connections
     dataflow_edges = extract_dataflow_edges(actor.dataflow, actor.facets)
 
-    Logger.warning(
-      "Computing dataflow edges for actor #{inspect(actor, pretty: true, charlists: :as_lists)}"
-    )
-
-    Logger.warning(
-      "Dataflow edges: #{inspect(dataflow_edges, pretty: true, charlists: :as_lists)}"
-    )
-
     assigns
     |> assign(:actor, actor)
     |> assign(:svg_width, svg_width)
@@ -53,7 +45,12 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
   def facet_tree(assigns) do
     ~H"""
-    <svg width={@svg_width + 100} height={@svg_height} style="min-width: 100%; min-height: 100%;" preserveAspectRatio="xMinYMin meet">
+    <svg
+      width={@svg_width + 100}
+      height={@svg_height}
+      style="min-width: 100%; min-height: 100%;"
+      preserveAspectRatio="xMinYMin meet"
+    >
       <defs>
         <marker id="arrow" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill="#000" />
