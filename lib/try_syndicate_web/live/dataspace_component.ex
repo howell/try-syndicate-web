@@ -25,7 +25,8 @@ defmodule TrySyndicateWeb.DataspaceComponent do
       dataspace_box_x: dataspace_x,
       pending_actions_box_width: assertion_action_width,
       action_height: 16,
-      action_padding: 4
+      action_padding: 4,
+      action_spacing: 10
     }
   end
 
@@ -421,10 +422,12 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         stroke-width="1"
       />
       <foreignObject width={@width} height={@height}>
-        <div xmlns="http://www.w3.org/1999/xhtml" class="text-left text-xs truncate overflow-auto p-2">
-          <ul class="gap-y-2 divide-y divide-slate-300 divide-dashed">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="text-left text-xs truncate overflow-auto">
+          <ul class="space-y-1 divide-y divide-slate-300 divide-dashed">
             <%= for action <- @actions do %>
-              <li><code><pre><%= render_action(action) %></pre></code></li>
+              <li class="pl-2 pt-1 last:pb-1">
+                <code><pre><%= render_action(action) %></pre></code>
+              </li>
             <% end %>
           </ul>
         </div>
@@ -521,19 +524,35 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     Enum.map_reduce(actors, vertical_padding, fn
       {id, actor}, y_offset ->
         assertions_box_height =
-          assertions_box_padding * 2 +
-            max(length(actor.assertions), 1) * state_item_height +
-            max(length(actor.assertions) - 1, 0) * state_item_spacing
+          box_height(
+            length(actor.assertions),
+            max(1, length(actor.assertions)),
+            state_item_height,
+            assertions_box_padding,
+            state_item_spacing
+          )
 
         {event_height, actions_height} =
           case(active_actor) do
             {^id, evt, acts} ->
               {if(is_receiving_event?(id, active_actor),
-                 do: height_for_actions([evt], dims.action_height, dims.action_padding),
+                 do:
+                   height_for_actions(
+                     [evt],
+                     dims.action_height,
+                     dims.action_padding,
+                     dims.action_spacing
+                   ),
                  else: 0
                ),
                if(acts,
-                 do: height_for_actions(acts, dims.action_height, dims.action_padding),
+                 do:
+                   height_for_actions(
+                     acts,
+                     dims.action_height,
+                     dims.action_padding,
+                     dims.action_spacing
+                   ),
                  else: 0
                )}
 
@@ -546,7 +565,9 @@ defmodule TrySyndicateWeb.DataspaceComponent do
 
         block_height = max(actor_box_height, assertions_box_height + event_space + action_space)
         actor_y = y_offset + event_space + max(0, assertions_box_height - actor_box_height) / 2
-        assertions_y = y_offset + event_space + max(0, actor_box_height - assertions_box_height) / 2
+
+        assertions_y =
+          y_offset + event_space + max(0, actor_box_height - assertions_box_height) / 2
 
         event_y =
           actor_y - event_height - vertical_padding / 2 -
@@ -578,12 +599,13 @@ defmodule TrySyndicateWeb.DataspaceComponent do
   def sort_and_layout_actions(pending_actions, dims) do
     action_height = dims[:action_height]
     action_padding = dims[:action_padding]
+    action_spacing = dims[:action_spacing]
     vertical_padding = dims[:vertical_padding]
 
     pending_actions
     |> Enum.sort_by(fn {st, _} -> st.time end)
     |> Enum.map_reduce(vertical_padding, fn {st, actions}, y_offset ->
-      height = height_for_actions(actions, action_height, action_padding)
+      height = height_for_actions(actions, action_height, action_padding, action_spacing)
 
       layout = %{y: y_offset, height: height}
 
@@ -591,8 +613,12 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     end)
   end
 
-  def height_for_actions(actions, line_height, padding) do
+  def height_for_actions(actions, line_height, padding, spacing) do
     action_lines = Enum.sum(Enum.map(actions, &lines_for_action/1))
-    line_height * max(1, action_lines) + 2 * padding + padding * max(0, length(actions) - 1)
+    box_height(length(actions), max(1, action_lines), line_height, padding, spacing)
+  end
+
+  def box_height(no_items, no_lines, line_height, padding, spacing) do
+    no_lines * line_height + 2 * padding + spacing * max(0, no_items - 1)
   end
 end
