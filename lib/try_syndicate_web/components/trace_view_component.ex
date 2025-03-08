@@ -150,7 +150,7 @@ defmodule TrySyndicateWeb.TraceViewComponent do
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <%= for {pid, name?} <- DataspaceTrace.all_actors(@trace) do %>
+          <%= for {pid, name?} <- Enum.sort_by(DataspaceTrace.all_actors(@trace), fn {id, _} -> {String.length(id), id} end) do %>
             <.actor_row
               :if={@show_filtered || !DataspaceTrace.filtered?(@trace, pid: pid, name: name?)}
               pid={pid}
