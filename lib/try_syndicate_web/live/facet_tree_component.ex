@@ -159,14 +159,14 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
       end
 
     box_heights = Enum.map(facet_ids, fn fid -> box_height(facets[fid], dims) end)
-    row_height = Enum.max(box_heights ++ [0])
+    row_height = Enum.max(box_heights, fn -> 0 end)
     {facet_ids, row_width, row_height}
   end
 
   defp row_coords(
-         facets,
+         _facets,
          overall_width,
-         _row_info = {facet_ids, row_width, row_height},
+         _row_info = {facet_ids, row_width, _row_height},
          current_y,
          dims
        ) do
@@ -174,9 +174,8 @@ defmodule TrySyndicateWeb.FacetTreeComponent do
 
     Enum.with_index(facet_ids)
     |> Enum.reduce(%{}, fn {fid, idx}, inner_acc ->
-      b_height = box_height(facets[fid], dims)
       x = shift + idx * (dims.box_width + dims.horizontal_gap)
-      y = current_y + (row_height - b_height) / 2
+      y = current_y
       Map.put(inner_acc, fid, %{x: x, y: y})
     end)
   end
