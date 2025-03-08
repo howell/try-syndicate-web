@@ -15,12 +15,25 @@
 //     import "some-package"
 //
 
-import {EditorState} from "@codemirror/state";
-import {EditorView, basicSetup} from "codemirror";
-import {StreamLanguage} from "@codemirror/language"
-import {scheme} from "@codemirror/legacy-modes/mode/scheme"
+import { EditorState, StateEffect } from "@codemirror/state";
+import { EditorView, basicSetup } from "codemirror";
+import { StreamLanguage } from "@codemirror/language"
+import { scheme } from "@codemirror/legacy-modes/mode/scheme"
 
 let Hooks = {};
+
+function codeMirrorExtensions(editable) {
+  return [
+    basicSetup,
+    StreamLanguage.define(scheme),
+    EditorView.editable.of(editable),
+    EditorView.theme({
+      "&": {
+        fontSize: "16px"
+      }
+    }),
+  ]
+}
 
 Hooks.CodeMirror = {
   mounted() {
@@ -53,46 +66,34 @@ Hooks.CodeMirror = {
   },
 
   initializeEditor() {
-    const code = this.el.dataset.code || "";
-    this.active = this.el.dataset.active === "true";
-
     this.editor = new EditorView({
       state: EditorState.create({
-        doc: code,
-        extensions: [
-          basicSetup, 
-          StreamLanguage.define(scheme), 
-          EditorView.editable.of(this.active),
-          EditorView.theme({
-            "&": {
-              fontSize: "16px"  // You can adjust this value as needed
-            }
-          })
-        ]
+        extensions: codeMirrorExtensions(true)
       }),
       parent: this.el
     });
-    if (this.active) {
-      window.addEventListener("phx:example_selected", (e) => {
-        this.editor.dispatch({
-          changes: { from: 0, to: this.editor.state.doc.length, insert: e.detail.content }
-        });
+    this.handleExampleSelected = (e) => {
+      this.editor.dispatch({
+        changes: { from: 0, to: this.editor.state.doc.length, insert: e.detail.content }
       });
     }
+    window.addEventListener("phx:example_selected", this.handleExampleSelected);
   },
 
   attachSubmitListener() {
-    if (this.active) {
-      const runButton = document.getElementById("run-button");
-      if (runButton && runButton !== this.runButton) {
-        this.runButton = runButton;
-        runButton.addEventListener("click", () => {
-          document.getElementById("code-input").value = this.editor.state.doc.toString();
-          this.editor.dispatch({
-            changes: { from: 0, to: this.editor.state.doc.length, insert: "" }
-          });
+    const runButton = document.getElementById("run-button");
+    if (runButton && runButton !== this.runButton) {
+      this.handleRunButtonClick = () => {
+        runButton.removeEventListener("click", this.handleRunButtonClick);
+        window.removeEventListener("phx:example_selected", this.handleExampleSelected);
+        document.getElementById("code-input").value = this.editor.state.doc.toString();
+
+        this.editor.dispatch({
+          effects: StateEffect.reconfigure.of(codeMirrorExtensions(false))
         });
       }
+      this.runButton = runButton;
+      runButton.addEventListener("click", this.handleRunButtonClick);
     }
   }
 };
@@ -124,19 +125,19 @@ Hooks.Formless = {
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
+import { Socket } from "phoenix"
+import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   hooks: Hooks,
-  params: {_csrf_token: csrfToken}
+  params: { _csrf_token: csrfToken }
 })
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 

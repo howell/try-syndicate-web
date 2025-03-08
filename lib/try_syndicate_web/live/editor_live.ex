@@ -375,8 +375,6 @@ defmodule TrySyndicateWeb.EditorLive do
           <%= live_component(%{
             module: TrySyndicateWeb.CodeMirrorComponent,
             id: @id,
-            content: @content,
-            active: @active
           }) %>
         </div>
         <div class="">

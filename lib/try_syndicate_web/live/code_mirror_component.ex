@@ -3,7 +3,7 @@ defmodule TrySyndicateWeb.CodeMirrorComponent do
 
   def render(assigns) do
     ~H"""
-      <div id={@id} phx-hook="CodeMirror" data-code={@content} data-active={if @active, do: "true", else: "false" }
+      <div id={@id} phx-hook="CodeMirror"
        class="h-fit w-full border border-gray-300 rounded-lg items-center"></div>
     """
   end

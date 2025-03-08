@@ -18,16 +18,14 @@
 
       <%= for {submission, i} <- Enum.with_index(@submissions) do %>
         <.code_mirror_line
-          id={"editor_#{i + 1}"}
+          id={"editor_#{i}"}
           label={i + 1}
-          content={submission.code}
-          active={false}
           output={submission.output}
         />
       <% end %>
 
       <form phx-submit="run_code" class="">
-        <.code_mirror_line id="active_editor" label=">" content="" active={true} output="" />
+        <.code_mirror_line id={"editor_#{length(@submissions)}"} label=">" output="" />
         <input type="hidden" name="code" id="code-input" />
         <button
           :if={@session_id}
