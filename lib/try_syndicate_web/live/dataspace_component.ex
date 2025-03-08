@@ -528,7 +528,10 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         {event_height, actions_height} =
           case(active_actor) do
             {^id, evt, acts} ->
-              {height_for_actions([evt], dims.action_height, dims.action_padding),
+              {if(is_receiving_event?(id, active_actor),
+                 do: height_for_actions([evt], dims.action_height, dims.action_padding),
+                 else: 0
+               ),
                if(acts,
                  do: height_for_actions(acts, dims.action_height, dims.action_padding),
                  else: 0
@@ -544,7 +547,10 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         block_height = max(actor_box_height, assertions_box_height + event_space + action_space)
         c_y = y_offset + event_space + max(0, assertions_box_height - actor_box_height) / 2
         s_y = y_offset + event_space + max(0, actor_box_height - assertions_box_height) / 2
-        event_y = c_y - event_height - (vertical_padding / 2) - max(actor_box_height, assertions_box_height) / 2
+
+        event_y =
+          c_y - event_height - vertical_padding / 2 -
+            max(actor_box_height, assertions_box_height) / 2
 
         actions_y =
           c_y + actor_box_height / 2 + max(actor_box_height, assertions_box_height) / 2 +
