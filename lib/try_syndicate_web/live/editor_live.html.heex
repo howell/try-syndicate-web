@@ -78,4 +78,33 @@
       submissions={for s <- @submissions, do: s.code}
     />
   </div>
+  
+  <%= if @pending_example do %>
+    <div id="example-modal" class="fixed inset-0 min-h-full w-full bg-gray-800 bg-opacity-75 flex items-center justify-center">
+      <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+        <h2 class="text-2xl font-bold mb-4">Load Example</h2>
+        <p class="mb-4">You have code running in the current session. How would you like to load the example "<%= @pending_example.name %>"?</p>
+        <div class="flex flex-row justify-center gap-4">
+          <button
+            phx-click="use_current_session"
+            class="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          >
+            Use Current Session
+          </button>
+          <button
+            phx-click="use_new_session"
+            class="bg-green-500 text-white px-4 py-2 rounded-lg"
+          >
+            Start New Session
+          </button>
+          <button
+            phx-click="cancel_example_selection"
+            class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

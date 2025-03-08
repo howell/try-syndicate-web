@@ -84,7 +84,8 @@ defmodule TrySyndicateWeb.EditorLive do
       trace_steps: DataspaceTrace.new(@default_trace_filter),
       current_trace_step: false,
       selected_actor: false,
-      show_filtered: false
+      show_filtered: false,
+      pending_example: nil
     ]
 
     attrs =
@@ -145,16 +146,63 @@ defmodule TrySyndicateWeb.EditorLive do
       {:ok, content} ->
         Logger.debug("Loaded example: #{example_name}")
 
-        socket =
-          socket
-          |> assign(editor_prefill: content)
-          |> push_event("example_selected", %{content: content})
+        if socket.assigns.session_id && length(socket.assigns.submissions) > 0 do
+          socket =
+            socket
+            |> assign(pending_example: %{name: example_name, content: content})
+            |> push_event("show_example_modal", %{})
 
-        {:noreply, socket}
+          {:noreply, socket}
+        else
+          socket =
+            socket
+            |> assign(editor_prefill: content)
+            |> push_event("example_selected", %{content: content})
+
+          {:noreply, socket}
+        end
 
       {:error, reason} ->
         {:noreply, put_flash(socket, :error, "Failed to load example: #{reason}")}
     end
+  end
+
+  def handle_event("use_current_session", _params, socket) do
+    if socket.assigns.pending_example do
+      content = socket.assigns.pending_example.content
+
+      socket =
+        socket
+        |> assign(editor_prefill: content)
+        |> assign(pending_example: nil)
+        |> push_event("example_selected", %{content: content})
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("use_new_session", _params, socket) do
+    if socket.assigns.pending_example do
+      content = socket.assigns.pending_example.content
+
+      {:ok, socket} = begin_session(socket)
+
+      socket =
+        socket
+        |> assign(editor_prefill: content)
+        |> assign(pending_example: nil)
+        |> push_event("example_selected", %{content: content})
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("cancel_example_selection", _params, socket) do
+    {:noreply, assign(socket, pending_example: nil)}
   end
 
   def handle_event("keep_alive", _params, socket) do
