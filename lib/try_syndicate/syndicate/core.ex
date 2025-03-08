@@ -1,4 +1,6 @@
 defmodule TrySyndicate.Syndicate.Core do
+  alias TrySyndicate.Syndicate.Json
+
   @type trie() :: [String.t()]
   @type patch() :: {trie(), trie()}
   @type spawn() :: {:spawn, trie()}
@@ -6,13 +8,22 @@ defmodule TrySyndicate.Syndicate.Core do
   @type action() :: event() | :quit | spawn()
   @type event() :: patch() | message() | false | :boot
 
+  @spec json_to_formatted_value(term()) :: {:ok, String.t()} | {:error, String.t()}
+  @doc """
+    Accepts a JSON string representing a Racket value (but doesn't check it)
+    and formats it in a more readable way. Specifically, it removes quote and struct prefixes
+    '#s and #s.
+  """
+  def json_to_formatted_value(json) when is_binary(json) do
+    quote_pattern = ~r/'?#s/
+    {:ok, String.replace(json, quote_pattern, "")}
+  end
+
+  def json_to_formatted_value(_json), do: {:error, "Invalid value: not a string"}
+
   @spec json_to_trie(term()) :: {:ok, trie()} | {:error, String.t()}
   def json_to_trie(json) do
-    if is_list(json) and Enum.all?(json, &is_binary/1) do
-      {:ok, json}
-    else
-      {:error, "Invalid trie: expected list of strings"}
-    end
+    Json.parse_list(json, &json_to_formatted_value/1)
   end
 
   @spec json_to_patch(term()) :: {:ok, patch()} | {:error, String.t()}
@@ -59,7 +70,11 @@ defmodule TrySyndicate.Syndicate.Core do
   @spec json_to_message(term()) :: {:ok, message()} | {:error, String.t()}
   def json_to_message(json) do
     if is_list(json) and length(json) == 2 and hd(json) == "message" do
-      {:ok, {:message, Enum.at(json, 1)}}
+      with {:ok, message} <- json_to_formatted_value(Enum.at(json, 1)) do
+        {:ok, {:message, message}}
+      else
+        {:error, reason} -> {:error, "Invalid message: " <> reason}
+      end
     else
       {:error, "Invalid message format"}
     end

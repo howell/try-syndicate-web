@@ -49,7 +49,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
   describe "field fromjson basic" do
     test "field fromjson" do
       raw_json =
-        "{\"name\":\"test\",\"id\":\"10\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}"
+        "{\"name\":\"test\",\"id\":\"10\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":\"1234\"}"
 
       field_json = Jason.decode!(raw_json)
 
@@ -66,7 +66,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
                   source: "test.rkt",
                   span: 10
                 },
-                value: 1234
+                value: "1234"
               }} == result
     end
   end
@@ -74,7 +74,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
   describe "facet fromjson basic" do
     test "facet fromjson" do
       raw_json =
-        "{\"children\":[\"child1\",\"child2\"],\"endpoints\":[],\"fields\":[{\"name\":\"test\",\"id\":\"10\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":1234}],\"id\":\"test\"}"
+        "{\"children\":[\"child1\",\"child2\"],\"endpoints\":[],\"fields\":[{\"name\":\"test\",\"id\":\"10\",\"src\":{\"column\":5,\"line\":1,\"position\":50,\"source\":\"test.rkt\",\"span\":10},\"value\":\"1234\"}],\"id\":\"test\"}"
 
       facet_json = Jason.decode!(raw_json)
 
@@ -95,7 +95,7 @@ defmodule TrySyndicate.Syndicate.ActorJsonTest do
                       source: "test.rkt",
                       span: 10
                     },
-                    value: 1234
+                    value: "1234"
                   }
                 ],
                 id: "test"
