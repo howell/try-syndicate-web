@@ -521,7 +521,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
     vertical_spacing = dims[:vertical_spacing]
     vertical_padding = dims[:vertical_padding]
 
-    Enum.map_reduce(actors, vertical_padding, fn
+    Enum.map_reduce(Enum.sort_by(actors, fn {id, _} -> {String.length(id), id} end), vertical_padding, fn
       {id, actor}, y_offset ->
         assertions_box_height =
           box_height(
