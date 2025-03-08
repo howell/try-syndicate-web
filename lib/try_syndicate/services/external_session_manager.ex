@@ -122,8 +122,8 @@ defmodule TrySyndicate.ExternalSessionManager do
     GenServer.call(__MODULE__, {:session_status, session_id})
   end
 
-  def receive_output(session_id, src, seq_no, data) do
-    GenServer.cast(__MODULE__, {:receive_output, session_id, src, seq_no, data})
+  def receive_outputs(session_id, src, outputs) do
+    GenServer.cast(__MODULE__, {:receive_outputs, session_id, src, outputs})
   end
 
   def handle_call({:start_session, session_id}, _from, state) do
@@ -185,8 +185,8 @@ defmodule TrySyndicate.ExternalSessionManager do
     end
   end
 
-  def handle_cast({:receive_output, session_id, src, seq_no, data}, state) do
-    {:noreply, handle_output(session_id, src, seq_no, data, state)}
+  def handle_cast({:receive_outputs, session_id, src, outputs}, state) do
+    {:noreply, handle_outputs(session_id, src, outputs, state)}
   end
 
   defp send_keep_alive(session_id) do
@@ -242,20 +242,22 @@ defmodule TrySyndicate.ExternalSessionManager do
     end
   end
 
-  defp handle_output(session_id, src, seq_no, data, state) do
+  defp handle_outputs(session_id, src, outputs, state) do
     case Map.get(state, session_id) do
       nil ->
-        Logger.warning("Received output for unknown session: #{session_id}")
+        Logger.warning("Received outputs for unknown session: #{session_id}")
         state
 
       session ->
-        {ready_output, new_status} =
-          OutputStatus.handle_session_output(session.sources[src], seq_no, data)
+        {outputs, new_status} = Enum.reduce(outputs, {[], session.sources[src]}, fn {seq_no, data}, {ready_outputs, status} ->
+          {more_ready, new_status} = OutputStatus.handle_session_output(status, seq_no, data)
+          {ready_outputs ++ more_ready, new_status}
+        end)
 
-        if ready_output != [] do
+        if outputs != [] do
           TrySyndicateWeb.Endpoint.broadcast("session:#{session_id}", "update", %{
             type: src,
-            data: ready_output
+            data: outputs
           })
         end
 

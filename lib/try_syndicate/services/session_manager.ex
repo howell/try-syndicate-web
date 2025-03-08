@@ -15,7 +15,7 @@ defmodule TrySyndicate.SessionManager do
   @callback session_status(session_id()) :: {:ok, :running | :finished} | {:error, String.t()}
   @callback notify_termination(session_id(), String.t()) :: :ok
   @callback keep_alive(session_id()) :: :ok
-  @callback receive_output(session_id(), output_src(), non_neg_integer(), String.t()) :: :ok
+  @callback receive_outputs(session_id(), output_src(), [{non_neg_integer(), term()}]) :: :ok
 
   @doc """
   Request to start a new session.
@@ -41,10 +41,18 @@ defmodule TrySyndicate.SessionManager do
   Get the status of the session.
   Arguments:
     - session_id: the ID of the session
-    - reason: the reason for the termination
   Returns
-    - {:ok, :running | :finished} if successful, indicating the session as running or had already finished
+    - {:ok, :running | :finished} if successful, indicating the session as running or finished
     - {:error, reason} if unsuccessful
+  """
+  def session_status(session_id), do: impl().session_status(session_id)
+
+  @doc """
+  Notify the session manager that the session has terminated.
+  Arguments:
+    - session_id: the ID of the session
+    - reason: the reason for the termination
+  Returns :ok
   """
   def notify_termination(session_id, reason), do: impl().notify_termination(session_id, reason)
 
@@ -57,14 +65,14 @@ defmodule TrySyndicate.SessionManager do
   def keep_alive(session_id), do: impl().keep_alive(session_id)
 
   @doc """
-  Receive output from the session.
+  Receive multiple outputs from the session.
   Arguments:
     - session_id: the ID of the session
-    - src: the source type of the output
-    - seq_no: the sequence number of the output
-    - data: the data to receive
+    - src: the source type of the outputs
+    - outputs: a list of tuples containing the sequence number and data
   Returns :ok
   """
-  def receive_output(session_id, src, seq_no, data), do: impl().receive_output(session_id, src, seq_no, data)
+  def receive_outputs(session_id, src, outputs), do: impl().receive_outputs(session_id, src, outputs)
+
   defp impl, do: Application.get_env(:try_syndicate, :session_manager, TrySyndicate.ExternalSessionManager)
 end

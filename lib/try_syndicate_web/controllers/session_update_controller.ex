@@ -40,9 +40,7 @@ defmodule TrySyndicateWeb.SessionUpdateController do
   def send_outputs(session_id, outputs) do
     for output <- outputs do
       Logger.debug("Session #{session_id} received #{length(output.entries)} update for #{output.type}")
-      for {seq_no, data} <- Enum.sort_by(output.entries, &elem(&1, 0)) do
-        SessionManager.receive_output(session_id, output.type, seq_no, data)
-      end
+      SessionManager.receive_outputs(session_id, output.type, output.entries)
     end
   end
 
