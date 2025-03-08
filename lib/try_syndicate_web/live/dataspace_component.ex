@@ -461,7 +461,7 @@ defmodule TrySyndicateWeb.DataspaceComponent do
         "spawn #{render_trie(trie, "", "\n      ")}"
 
       {:message, message} ->
-        "message #{message}"
+        message
 
       {added, removed} ->
         updates = Enum.join(prefix_all(added, "+") ++ prefix_all(removed, "-"), "\n      ")
