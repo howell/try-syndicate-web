@@ -5,7 +5,6 @@
 - should avoid printing/sending large inputs and outpus
 
 ## Features
-- visualization of facets in actor
 - support additional flavors of syndicate
   - typed syndicate-classic
   - syndicate-rkt ("modern syndicate")
